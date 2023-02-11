@@ -1,0 +1,188 @@
+<html lang="en">
+
+<%- include('./partials/_layout.ejs') %>
+
+<section class="home">
+    <div class="intro">
+        <div class="container">
+            <h6 class="text p-0 mt-4"> Последние изменения </h6>
+            <div class="content collectonme">
+
+                <ul class="list-group">
+                    <% const event_type = ['Изображение', 'WEB-форма', 'Видео']; %>
+                    <% if (logData) { %>
+                        <% for (var i in logData) { %>
+                            <% try { logData[i][0].username; %>
+                                
+                                <!-- -----------------ПОСЛЕДОВАТЕЛЬНОСТЬ ОТОБРАЖЕНИЯ----------------- -->
+                                <!-- Посследовательность изменена -->
+                                <li class="list-group-item justify-content-between align-items-center">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <div>
+                                            <strong>
+                                                Изменена последовальнсоть отображения
+                                            </strong>
+                                            <small><i>@<%= logData[i][0].username %></i></small>
+                                        </div>
+                                        <small class="text-muted"> <%= logData[i][logData[i].length - 1].date %> <%= logData[i][logData[i].length - 1].time %> </small>
+                                    </div>
+                                    <ul class="list-group">
+                                        <% for (var j in logData[i]) { %>
+                                            <% if (logData[i][j].type === 1) { %>
+                                                <!-- Добавлен элемент -->
+                                                <li class="list-group-item justify-content-between align-items-center">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <div>
+                                                            <strong> Добавлен элемент отображения </strong>
+                                                        </div>
+                                                        <small class="text-muted"> <%= logData[i][j].date %> <%= logData[i][j].time %> </small>
+                                                    </div>
+                                                    <small class="d-flex w-100 justify-content-between">
+                                                        <div>Имя события: "<i><%= logData[i][j].name %></i>"</div>
+                                                        <div>Тип ресурса: "<i><%= event_type[logData[i][j].e_src_type_s] %></i>"</div>
+                                                        <div>Длительность: <i><%= logData[i][j].e_timing_s %> сек</i></div>
+                                                        <i><a href="<%= logData[i][j].e_src_s %>">Ссылка</a></i>
+                                                    </small>
+                                                </li>
+                                            <% } else if (logData[i][j].type === 0) { %>
+                                                <!-- Удалён элемент -->
+                                                <li class="list-group-item justify-content-between align-items-center">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <div>
+                                                            <strong> Удалён элемент отображения </strong>
+                                                        </div>
+                                                        <small class="text-muted"> <%= logData[i][j].date %> <%= logData[i][j].time %> </small>
+                                                    </div>
+                                                    <small class="d-flex w-100 justify-content-between">
+                                                        <div>Имя события: "<i><%= logData[i][j].name %></i>"</div>
+                                                        <div>Тип ресурса: "<i><%= event_type[logData[i][j].e_src_type_s] %></i>"</div>
+                                                        <div>Длительность: <i><%= logData[i][j].e_timing_s %> сек</i></div>
+                                                        <i><a href="<%= logData[i][j].e_src_s %>">Ссылка</a></i>
+                                                    </small>
+                                                </li>
+                                            <% } else if (logData[i][j].type === 4) { %>
+                                                <!-- Удалён элемент -->
+                                                <li class="list-group-item justify-content-between align-items-center">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <div>
+                                                            <strong> Изменен порядок отображения событий </strong>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            <% } else if (logData[i][j].type === 2) { %>
+                                                <!-- Изменён элемент -->
+                                                <li class="list-group-item justify-content-between align-items-center">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <div>
+                                                            <strong> Изменён элемент отображения </strong>
+                                                        </div>
+                                                        <small class="text-muted"> <%= logData[i][j].date %> <%= logData[i][j].time %> </small>
+                                                    </div>
+                                                    <small class="d-flex w-100 justify-content-between">
+                                                        Стало:
+                                                        <div>Имя события: "<i><%= logData[i][j].e_name_e %></i>"</div>
+                                                        <div>Тип ресурса: "<i><%= event_type[logData[i][j].e_src_type_e] %></i>"</div>
+                                                        <div>Длительность: <i><%= logData[i][j].e_timing_e %> сек</i></div>
+                                                        <i><a href="<%= logData[i][j].e_src_e %>">Ссылка</a></i>
+                                                    </small>
+                                                    <small class="d-flex w-100 justify-content-between">
+                                                        Было:
+                                                        <div>Имя события: "<i><%= logData[i][j].name %></i>"</div>
+                                                        <div>Тип ресурса: "<i><%= event_type[logData[i][j].e_src_type_s] %></i>"</div>
+                                                        <div>Длительность: <i><%= logData[i][j].e_timing_s %> сек</i></div>
+                                                        <i><a href="<%= logData[i][j].e_src_s %>">Ссылка</a></i>
+                                                    </small>
+                                                </li>
+                                            <% } %>
+                                        <% } %>
+                                    </ul>
+                                </li>
+                            <% } catch (err) { %>
+                                <!-- -----------------ОБЪЯВЛЕНИЯ----------------- -->
+                                <!-- Удалено объявление (вручную) -->
+                                <% if (logData[i].type === 0 && !logData[i].a_isauto) { %>
+                                    <li class="list-group-item justify-content-between align-items-center">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <div>
+                                                <strong> Удалено объявление </strong>
+                                                <small><i>@<%= logData[i].username %></i></small>
+                                            </div>
+                                            <small class="text-muted"><%= logData[i].date %> <%= logData[i].time %></small>
+                                        </div>
+                                        <small class="d-flex w-100 justify-content-between">
+                                            <div>Заголовок: "<i><%= logData[i].name %></i>"</div>
+                                            <div>Вывод на экран: "<i><% if (logData[i].a_translate) { %><%= 'Да' %><% } else { %><%= 'Нет' %><% } %></i>"</div>
+                                            <div>До: <%= logData[i].a_timeout %></div>
+                                        </small>
+                                        <small class="d-flex w-100 justify-content-between">
+                                            <div>
+                                                Текст объявления: "<i><%= logData[i].a_comment %></i>"
+                                            </div>
+                                            <div>Автор: <i>@<%= logData[i].a_author %></i></div>
+                                        </small>
+                                    </li>
+                                <% } else if (logData[i].type === 0 && logData[i].a_isauto) { %>
+                                    <!-- Удалено объявление (автоматисески) -->
+                                    <li class="list-group-item justify-content-between align-items-center">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <div>
+                                                <strong> Удалено объявление </strong>
+                                                <small><i>@system</i></small>
+                                            </div>
+                                            <small class="text-muted"><%= logData[i].date %> <%= logData[i].time %></small>
+                                        </div>
+                                        <small>
+                                            Автоматическое удаление объявления (истёк установленный срок
+                                            актуальности)
+                                        </small>
+                                        <small class="d-flex w-100 justify-content-between">
+                                            <div>Заголовок: "<i><%= logData[i].name %></i>"</div>
+                                            <div>Вывод на экран: "<i><% if (logData[i].a_translate) { %><%= 'Да' %><% } else { %><%= 'Нет' %><% } %></i>"</div>
+                                            <div>До: <%= logData[i].a_timeout %></div>
+                                        </small>
+                                        <small class="d-flex w-100 justify-content-between">
+                                            <div>
+                                                Текст объявления: "<i><%= logData[i].a_comment %></i>"
+                                            </div>
+                                            <div>Автор: <i>@<%= logData[i].a_author %></i></div>
+                                        </small>
+                                    </li>
+                                <% } else if (logData[i].type === 1) { %>
+                                    <!-- Добавлено объявление -->
+                                    <li class="list-group-item justify-content-between align-items-center">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <div>
+                                                <strong> Добавлено объявление </strong>
+                                                <small><i>@<%= logData[i].username %></i></small>
+                                            </div>
+                                            <small class="text-muted"><%= logData[i].date %> <%= logData[i].time %></small>
+                                        </div>
+                                        <small class="d-flex w-100 justify-content-between">
+                                            <div>Заголовок: "<i><%= logData[i].name %></i>"</div>
+                                            <div>Вывод на экран: "<i><% if (logData[i].a_translate) { %><%= 'Да' %><% } else { %><%= 'Нет' %><% } %></i>"</div>
+                                            <div>До: <%= logData[i].a_timeout %></div>
+                                        </small>
+                                        <small>
+                                            Текст объявления: "<i><%= logData[i].a_comment %></i>"
+                                        </small>
+                                    </li>
+                                <% } %>
+                            <% } %>  <!-- type detect -->
+                        <% } %>   <!-- for -->
+                    <% } %>   <!-- if (logData) -->
+            
+                </ul>
+            
+            </div>
+        </div>
+    </div>
+    <script src="/js/snowfall.jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(document).snowfall({
+                collection: ".collectonme",
+                flakeCount: 75 // Количество снежинок
+            });
+        });
+    </script> 
+</section>

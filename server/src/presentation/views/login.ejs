@@ -1,0 +1,53 @@
+<%- include('./partials/_layout.ejs') %>
+
+<section class="home">
+    <link href="/css/main.css" rel="stylesheet" />
+    <div class="intro">
+        <div class="row">
+            <div class="col-md-4">
+                <form action="/account/login" method="post" class="content">
+                    <h3>ВХОД</h3>
+                    <br />
+                    <!-- <div class="form-floating">
+                        <% if (message) { %>
+                            <div class="text"></div>
+                        <% } %>        
+                        <input type="text" id="name" name="name" placeholder="Логин" required />
+                    </div> -->
+                    <div class="form-floating">
+
+                        <div class="form-floating is-invalid">
+                          <input type="text" class="form-control" name="name" id="floatingInputGroup2" placeholder="Логин" required>
+                          <label for="floatingInputGroup2">Логин</label>
+                        </div>     
+                    </div>
+                    <div class="form-floating is-invalid">
+                        <input type="password" class="form-control" id="floatingInputGroup2" name="password" placeholder="Пароль" required>
+                        <label for="floatingInputGroup2">Пароль</label>
+                    </div>
+
+                    <% if (message === 2) { %>
+                        <div class="invalid-feedback">
+                            Пароль не верный
+                        </div>
+                    <% } else if (message === 1) { %>
+                        <div class="invalid-feedback">
+                            Пользователь не найден
+                        </div>
+                    <% } %>
+
+                    <button type="submit" class="w-100 btn btn-lg btn-success">Войти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="/js/snowfall.jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(document).snowfall({
+                collection: ".collectonme",
+                flakeCount: 75 // Количество снежинок
+            });
+        });
+    </script> 
+</section>

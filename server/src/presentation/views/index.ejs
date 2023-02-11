@@ -1,0 +1,63 @@
+<html lang="en">
+
+<%- include('./partials/_layout.ejs') %>
+
+<section class="home">
+    <div class="intro">
+        <div class="p-3 m-3">
+            <h6 class="text p-0 mt-4"> События К3 МФ МГТУ </h6>
+            <!-- <div id="miniframe"> -->
+                <!-- <iframe src="http://www.localhost:5173" class="myminiframe collectonme"> </div>" scrolling="no" id="myminiframe"> </iframe> -->
+            <!-- </div>      -->
+            <div class="row row-cols-1 row-cols-md-3 g-3">
+                <% if (ads) { for (var i in ads) { %>
+                <div class="col-sm-4 mb-3 mb-sm-0">
+                    <div class="card h-100">
+                        <div class="card-header"> <%= ads[i].author %> </div>
+                        <div class="card-body">
+                            <h5 class="card-title"> <%= ads[i].name %> </h5>
+                            <p class="card-text"> <%= ads[i].comment %> </p>
+                        </div>
+                        <div class="card-footer">Актуально до: <%= ads[i].timeOfLife %></div>
+                    </div>
+                </div>
+                <% } } %>
+            </div>
+        </div>
+    </div>
+</section>
+    
+<script src="/js/snowfall.jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(document).snowfall({
+            collection: ".collectonme",
+            flakeCount: 75 // Количество снежинок
+        });
+    });
+</script>
+
+<style>
+    .myminiframe {
+        margin-left: 30px;
+        position: absolute;
+        border-radius: 20px;
+        -moz-border-radius: 20px;
+        border-radius: 20px;
+        overflow: hidden;
+        padding: 0px;
+        display: inline-block;
+        width: 100% !important;
+        height: 100% !important;
+        width: 480px;
+        height: 270px;
+        /* margin: 80px auto; */
+        -ms-zoom: 0.75;
+        -moz-transform: scale(0.4);
+        -moz-transform-origin: 0 0;
+        -o-transform: scale(0.4);
+        -o-transform-origin: 0 0;
+        -webkit-transform: scale(0.4);
+        -webkit-transform-origin: 0 0;
+    }
+</style>

@@ -1,0 +1,19 @@
+<html lang="en">
+
+<%- include('./partials/_layout.ejs') %>
+
+<section class="home">
+    <div id="eventsForm"> </div>
+	<script>const process = {};process.env = {}; process.env.NODE_ENV = "development";
+						process.env.API_URL = "http://www.localhost:3000"</script>
+    <script type="text/javascript"  src="/js/vue.js"></script>
+    <script src="/js/snowfall.jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(document).snowfall({
+                collection: ".collectonme",
+                flakeCount: 75 // Количество снежинок
+            });
+        });
+    </script> 
+</section>

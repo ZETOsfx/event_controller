@@ -1,0 +1,127 @@
+<html lang="en">
+  <body>
+    <img src="" name="myimg" class="unvisible" id="myimg">
+    <div id="frame" class="unvisible">
+        <iframe src="" name="myframe" scrolling="no" id="myframe" class="visible"> </iframe>
+    </div>
+  </body>
+</html>
+
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+    }
+
+    .visible {
+        height: 100vh;
+        width: 100vw;
+    }
+
+    .unvisible {
+        height: 0vh;
+        width: 0vw;
+    }
+    /* Указываем box sizing */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+    
+    /* Убираем внутренние отступы */
+    ul[class],
+    ol[class] {
+      padding: 0;
+    }
+    
+    /* Убираем внешние отступы */
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    ul[class],
+    ol[class],
+    li,
+    figure,
+    figcaption,
+    blockquote,
+    dl,
+    dd {
+      margin: 0;
+    }
+    
+    /* Удаляем стандартную стилизацию для всех ul и il, у которых есть атрибут class*/
+    ul[class],
+    ol[class] {
+      list-style: none;
+    }
+    
+    /* Элементы a, у которых нет класса, сбрасываем до дефолтных стилей */
+    a:not([class]) {
+      text-decoration-skip-ink: auto;
+    }
+    
+    /* Указываем понятную периодичность в потоке данных у article*/
+    article > * + * {
+      margin-top: 1em;
+    }
+    
+    /* Наследуем шрифты для инпутов и кнопок */
+    input,
+    button,
+    textarea,
+    select {
+      font: inherit;
+    }
+</style>
+
+<script>
+  /*
+    var i = 0; // Start point
+    var urls = [];
+    var times = [];
+    var type = []; // 0 - img, 1 - webform;
+
+    type[0] = 0;
+    type[1] = 1;
+    type[2] = 1;
+    type[3] = 0;
+
+    function GetAllDataInNewOrder() {
+        // urls = @Html.Raw(Json.Serialize(Model.ImgList));
+        // times = @Html.Raw(Json.Serialize(Model.TimeList));
+    }
+        
+    // Change Url
+    function SwitchEvent() {
+        if (type[i] === 0) { // Img
+            document.getElementById("myimg").src = urls[i];
+            document.getElementById("frame").className = "unvisible";
+            document.getElementById("myimg").className = "visible";
+
+        }
+        else { // form
+            document.getElementById("myframe").src = urls[i];
+            document.getElementById("myimg").className = "unvisible";
+            document.getElementById("frame").className = "visible";
+        }
+        setTimeout("SwitchEvent()", times[i]);
+        if (i < urls.length - 1) {
+            i++;
+        }
+        else {
+            i = 0;
+        }
+    }
+    
+    function Main() {
+        GetAllDataInNewOrder();
+        SwitchEvent();
+    }
+
+    window.onload = Main;
+    */
+</script>

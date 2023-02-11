@@ -1,0 +1,206 @@
+/* open-sans-regular - latin_cyrillic */
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('ru'), url('../fonts/open-sans-v34-latin_cyrillic-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/open-sans-v34-latin_cyrillic-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* open-sans-500 - latin_cyrillic */
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 500;
+    src: local('ru'), url('../fonts/open-sans-v34-latin_cyrillic-500.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/open-sans-v34-latin_cyrillic-500.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* open-sans-700 - latin_cyrillic */
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: local('ru'), url('../fonts/open-sans-v34-latin_cyrillic-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/open-sans-v34-latin_cyrillic-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+@font-face {
+    font-family: 'VK Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: local('ru'), url('../fonts/vksans.woff') format('woff'); /* Chrome 26+, Opera 23+, Firefox 39+ */
+}
+
+@font-face {
+    font-family: 'Mustica';
+    font-style: normal;
+    font-weight: 600;
+    src: local('ru'), url('../fonts/MusticaPro-SemiBold.otf') format('otf'); /* Chrome 26+, Opera 23+, Firefox 39+ */
+}
+
+body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #333;
+    background: url("../img/bg2.png") center top repeat;
+    /* background-attachment: fixed; */
+    -webkit-background-size: cover;
+    background-size: cover;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6{
+    margin: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.intro {
+    width: 100%;
+    height: 100vh;
+}
+
+.header {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background-color: aliceblue;
+}
+
+.header_inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_logo {
+    font-size: 24px;
+    font-weight: 700;
+    text-decoration: none;
+    color: #000000;
+}
+
+.nava {
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.nav_link {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+
+    margin: 0 10px;
+
+    color: #000000;
+    text-decoration: none;
+
+    transition: color .15s linear;
+}
+
+.nav_link:after {
+    content: "";
+    width: 100%;
+    height: 2px;
+    background-color: #099;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    transition: opacity .15s linear;
+}
+
+.nav_link:hover {
+    color: #099
+}
+
+
+.nav_link:hover:after {
+    opacity: 1;
+}
+
+.viewa {
+    vertical-align: 4px;
+    display: inline-block;
+    position: relative;
+    margin: 0 15px;
+    color: #000000;
+    text-decoration: none;
+    transition: color .15s linear;
+}
+
+.viewa:after {
+    content: "";
+    width: 100%;
+    height: 2px;
+    background-color: #0c9;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    transition: opacity .15s linear;
+}
+
+.viewa:hover {
+    color: #0c9;
+}
+
+.viewa:hover:after {
+    opacity: 1;
+}
+
+.currect {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 10px;
+    color: slateblue;
+    text-decoration: none;
+    width: contain;
+    height: 2px;
+    background-color: slateblue;
+    z-index: 1;
+}
+
+.text {
+    position: relative;
+    top: 70px;
+    color: aliceblue;
+}
+
+.text_under {
+    position: relative;
+    font-family: 'VK Sans';
+    top: 70px;
+    color: #1c1c1c;
+}
+
+.text_feed {
+    position: relative;
+    font-family: 'VK Sans';
+    color: #ff0000;
+}
+
+.content {
+    margin: 80px 0 0;
+    display: block;
+    background: white;
+    padding: 20px;
+    border-radius: 3px;
+}
