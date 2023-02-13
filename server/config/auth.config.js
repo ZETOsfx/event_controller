@@ -1,11 +1,13 @@
+require('dotenv').config();
+
 module.exports = {
     accessToken: {
-        secret: 'alexander_perelight',
+        secret: process.env.SECRET,
         expired: "1min",
         type: "access",
     },
     refreshToken: {
-        secret: 'alexander_perelight',
+        secret: process.env.SECRET,
         expired: "3min",
         type: "refresh",
     },

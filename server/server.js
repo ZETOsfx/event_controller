@@ -1,51 +1,55 @@
-if (process.env.NODE_ENV !== 'production') { require('dotenv').config(); }
+require('dotenv').config();
+
+const PORT = process.env.PORT || 5000;
 
 const express = require('express');
-const favicon = require('serve-favicon');
-const path = require('path');
 const session = require('express-session');
+const favicon = require('serve-favicon');
+
+const path = require('path');
+const createPath = (page) => path.resolve(__dirname, 'src/presentation/views', `${page}.ejs`);
+
 const db = require('./config/db_connect');    // Database connection
 
+    // ROUTERS
 const userRouter  = require( './src/presentation/routes/user.routes');
 const eventRouter = require('./src/presentation/routes/event.routes');
 const adsRouter   = require( './src/presentation/routes/ads.routes' );
 
-// JWT auth
+    // JWT auth
 // const AuthRouter = require('./src/presentation/routes/index');
 
-var cors = require('cors')
+const cors = require('cors');
 const morgan = require('morgan');
+
+// ----- APPLICATION -----
     
-const app = express();         
-app.set('view-engine', 'ejs');  
-const PORT = 3000;             
+const app = express();
 
-    // Пути к файлам страниц (не путю)
-const createPath = (page) => path.resolve(__dirname, 'src/presentation/views', `${page}.ejs`);
+app.set('view-engine', 'ejs');
 
-//----- Прослушивание порта ------
 app.listen(PORT, (error) => {
     error ? console.log(error) : console.log(`listening port ${PORT}`);
 });
-
-//----- Логгирование -------------
+        // --- LOGGING ---
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
-app.use(express.urlencoded({ extended: false }));   // Парсинг запросов
+
+app.use(express.urlencoded({ extended: false }));   // Parsing requests
     
 const corsOptions = {
     origin:'http://localhost:3000', 
     credentials: true,            // access-control-allow-credentials:true
     optionSuccessStatus: 200
 }
+                                                         
 app.use(cors(corsOptions));
 
-//----- JSON для Express --------- 
-
 app.use(express.json());
-    // Удержание сессии
-const oneDay = 1000 * 60 * 60 * 24;
+
+const oneDay = 1000 * 60 * 60 * 24;     // Удержание сессии
+
 app.use(
-    session({ 
+    session({
         secret: 'alexander_perelight',
         saveUninitialized: true,
         cookie: { maxAge: oneDay, theme: "light" },
@@ -53,8 +57,8 @@ app.use(
     })
 );
 
-//----- Аналог STATICFILES -------
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
     // Библиотека VueJS
@@ -68,7 +72,8 @@ app.use('/account', userRouter);
 app.use('/event',  eventRouter);
 app.use('/ads',      adsRouter);
 
-//-------- ОБЩИЕ СТРАНИЦЫ ---------
+// ----- ОБЩИЕ СТРАНИЦЫ ------
+
 app.get('/', (req, res) => {
     res.redirect('index');
 });
@@ -85,7 +90,8 @@ app.get('/guide', (req, res) => {
     res.render(createPath('guide'), { title, session: req.session });
 });
 
-//------- NOT IMPLEMENT ROLES ------
+// ----- NOT IMPLEMENT ROLES -----
+
 app.get('/moder', (req, res) => {
     if (!(req.session.loggedin && (req.session.role === 'admin' || req.session.role === 'moder'))) {
         const title = "Error";
@@ -95,7 +101,8 @@ app.get('/moder', (req, res) => {
     res.render(createPath('moder'), { title, session: req.session });
 });
 
-// 404 
+// 404
+
 app.use((req, res) => {
     const title = "Error";
     res
