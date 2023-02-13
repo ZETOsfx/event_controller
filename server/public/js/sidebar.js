@@ -18,7 +18,11 @@ toggle.addEventListener("click" , () => {
 let getMode = localStorage.getItem("mode");
 if (getMode && getMode === "dark") {
     body.classList.toggle("dark");
+    body.setAttribute("data-bs-theme", "light");
 } 
+else {
+    body.setAttribute("data-bs-theme", "dark");
+}
 
 let getStatus = localStorage.getItem("status");
 if (getStatus && getStatus === "open") {
@@ -31,9 +35,11 @@ modeSwitch.addEventListener("click" , () => {
     if (body.classList.contains("dark")) {
         modeText.innerText = "Светлая тема";
         localStorage.setItem("mode", "dark");
+        body.setAttribute("data-bs-theme", "light");
     } else {
         modeText.innerText = "Темная тема";
         localStorage.setItem("mode", "light");
+        body.setAttribute("data-bs-theme", "dark");
     }
 });
 
@@ -42,6 +48,7 @@ if (window.matchMedia) {
     // Check if the dark-mode Media-Query matches
     if (window.matchMedia('(prefers-color-scheme: light)').matches) {
         body.classList.toggle("dark");
+        body.setAttribute("data-bs-theme", "light");
         modeText.innerText = "Светлая тема";
     } else {
         modeText.innerText = "Темная тема";

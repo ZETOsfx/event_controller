@@ -254,6 +254,51 @@ class EventController {
         res.end();
     }
 
+        // Отправка шаблона на модерацию
+    async sendTemplate(req, res) {
+        const { name, comment, stud_name, break_name, lunch_name, screen, date, isSpec = false } = req?.body;
+
+        if (comment === undefined && comment === true)
+            comment = '';
+
+        if (isSpec) {
+            if (name && stud_name !== '-' && screen && date) {
+                await db('events_req_form').insert({
+                    name: name,                         // Заголовок запроса на модерацию
+                    comment: comment,                   // Комментарий редактора для модератора
+                    date: date,                         // Дата, на которую хочет поставить редактор
+                    isspecial: true,                    // Метка специального расписания
+                    author: req.session.username,       // Автор запроса на установку
+                    lesson: stud_name,                  // Программа трансляции - Время занятий
+                    breaktime: '-',                     // Программа трансляции - Время перерыва между занятиями
+                    lunch: '-',                         // Программа трансляции - Время обеда
+                    screen: screen,                     // Экран, на который необходимо установить трансляцию
+                    isAccepted: false                   // Утвержден ли запрос (утверждает модератор)
+                });
+            } else
+                console.log('Incorrect params of special form request');
+        } else {
+            if (name && stud_name !== '-' && break_name !== '-' && lunch_name !== '-' && screen && date) {
+                await db('events_req_form').insert({
+                    name: name,                         // Заголовок запроса на модерацию
+                    comment: comment,                   // Комментарий редактора для модератора
+                    date: date,                         // Дата, на которую хочет поставить редактор
+                    isspecial: false,                   // Метка специального расписания
+                    author: req.session.username,       // Автор запроса на установку
+                    lesson: stud_name,                  // Программа трансляции - Время занятий
+                    breaktime: break_name,              // Программа трансляции - Время перерыва между занятиями
+                    lunch: lunch_name,                  // Программа трансляции - Время обеда
+                    screen: screen,                     // Экран, на который необходимо установить трансляцию
+                    isAccepted: false                   // Утвержден ли запрос (утверждает модератор)
+                });
+            } else {
+                console.log('Incorrect params of standard form request');
+            }
+        }
+
+        res.status(200).end();
+    }
+
         // Выдача логов на чтение
     async logRead(req, res) {
         if (!(req.session.loggedin && (req.session.role === 'admin'))) {

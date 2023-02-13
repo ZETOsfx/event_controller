@@ -20,7 +20,7 @@ class AdsController {
             author: req.session?.username,   // Автор
             translate: translate            // Необходимость транслировать объявление
         });
-        
+
         const ads = await db('ads').select('*').where('name', name);   
         const user = await db('ec_user').select('*').where('name', req.session?.username);
             // Уведомитель автоматически "читает" сообщения
@@ -29,30 +29,30 @@ class AdsController {
             ads_id: ads[0].id
         });
 
-            // Логгирование 
-        let date_ob = new Date();
-            // current date
-            // adjust 0 before single digit date
-        let dd = ("0" + date_ob.getDate()).slice(-2);
-            // current month
-        let mm = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-            // current year
-        let yyyy = date_ob.getFullYear();
-            // current hours
-        let hour = date_ob.getHours();
-        if (hour < 10) hour = "0" + hour;
-            // current minutes
-        let min = date_ob.getMinutes();
-        if (min < 10) min = "0" + min;
-            // current seconds
-        let sec = date_ob.getSeconds();
-        if (sec < 10) sec = "0" + sec;
-
-            // Date + time (format needed)
-        let dateNow = dd + '-' + mm + '-' + yyyy;
-        let timeNow = hour + ':' + min + ':' + sec;
-        mainLogger.pushAdsLog(1, dateNow, timeNow, req.session?.username,  req.session?.username, name, comment, translate, time);
-        mainLogger.syncLoggerWithDatabase(req.session?.username, 'ads');
+        //     // Логгирование
+        // let date_ob = new Date();
+        //     // current date
+        //     // adjust 0 before single digit date
+        // let dd = ("0" + date_ob.getDate()).slice(-2);
+        //     // current month
+        // let mm = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        //     // current year
+        // let yyyy = date_ob.getFullYear();
+        //     // current hours
+        // let hour = date_ob.getHours();
+        // if (hour < 10) hour = "0" + hour;
+        //     // current minutes
+        // let min = date_ob.getMinutes();
+        // if (min < 10) min = "0" + min;
+        //     // current seconds
+        // let sec = date_ob.getSeconds();
+        // if (sec < 10) sec = "0" + sec;
+        //
+        //     // Date + time (format needed)
+        // let dateNow = dd + '-' + mm + '-' + yyyy;
+        // let timeNow = hour + ':' + min + ':' + sec;
+        // mainLogger.pushAdsLog(1, dateNow, timeNow, req.session?.username,  req.session?.username, name, comment, translate, time);
+        // mainLogger.syncLoggerWithDatabase(req.session?.username, 'ads');
 
         req.session.noread = 0;
         res.redirect('../ads');
@@ -61,31 +61,6 @@ class AdsController {
     async deleteAds(req, res) {
         const { id } = req.body;
         const ad = await db('ads').where('id', id);
-    
-            // Логгирование 
-        let date_ob = new Date();
-            // current date
-            // adjust 0 before single digit date
-        let dd = ("0" + date_ob.getDate()).slice(-2);
-            // current month
-        let mm = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-            // current year
-        let yyyy = date_ob.getFullYear();
-            // current hours
-        let hour = date_ob.getHours();
-        if (hour < 10) hour = "0" + hour;
-            // current minutes
-        let min = date_ob.getMinutes();
-        if (min < 10) min = "0" + min;
-            // current seconds
-        let sec = date_ob.getSeconds();
-        if (sec < 10) sec = "0" + sec;
-        
-            // Date + time (format needed)
-        let dateNow = dd + '-' + mm + '-' + yyyy;
-        let timeNow = hour + ':' + min + ':' + sec;
-        mainLogger.pushAdsLog(0, dateNow, timeNow, req.session.username, ad[0].author, ad[0].name, ad[0].comment, ad[0].translate, ad[0].timeOfLife, false);
-        mainLogger.syncLoggerWithDatabase(req.session.username, 'ads');
 
             // Удаление из числа прочитанных (если было прочитано)
         await db('user_ads').where('ads_id', id).del();

@@ -12,9 +12,10 @@ const createPath = (page) => path.resolve(__dirname, 'src/presentation/views', `
 const db = require('./config/db_connect');    // Database connection
 
     // ROUTERS
-const userRouter  = require( './src/presentation/routes/user.routes');
+const userRouter  = require('./src/presentation/routes/user.routes' );
 const eventRouter = require('./src/presentation/routes/event.routes');
 const adsRouter   = require( './src/presentation/routes/ads.routes' );
+const moderRouter = require('./src/presentation/routes/moder.routes');
 
     // JWT auth
 // const AuthRouter = require('./src/presentation/routes/index');
@@ -69,8 +70,9 @@ app.get('/js/vue.js', (req, res) => {
 
 // AuthRouter.routeInit(app, express);  // JWT auth
 app.use('/account', userRouter);
-app.use('/event',  eventRouter);
-app.use('/ads',      adsRouter);
+app.use('/event', eventRouter);
+app.use('/ads', adsRouter);
+app.use('/moder', moderRouter);
 
 // ----- ОБЩИЕ СТРАНИЦЫ ------
 

@@ -22,6 +22,8 @@ router.patch('/save', EventController.saveTemplate);
 router.put('/addtmp', EventController.createTemplate);
     // Удалить шаблон
 router.delete('/deltmp', EventController.deleteTemplate);
+    // Отправить группу шаблонов на модерацию
+router.put('/send', EventController.sendTemplate);
     
 
     // Чтение логов

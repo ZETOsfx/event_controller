@@ -1,7 +1,7 @@
 const db = require('../../../config/db_connect');    // Database connection
 
 // -------------- LOGGING & PATH ----------------
-const mainLogger = require('../../domain/Model/mainLogger');
+// const mainLogger = require('../../domain/Model/mainLogger');
 
 const path = require('path');
 const createPath = (page) => path.resolve(__dirname, '../views', `${page}.ejs`);

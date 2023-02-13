@@ -39,7 +39,7 @@
                                         <div class="col-auto">
                                             
                                             <select class="form-select" name="role" id="role<%=i%>">
-    
+     
                                                 <%  var options = [ "editor", "moder", "adsender"];
                                                     var roles   = [ "Редактор", "Модератор", "Менеджер"];
                                                     for ( var j = 0; j < options.length; j++ ) {
@@ -55,19 +55,19 @@
                                             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#ModalDeleteProfile<%=i%>"> Удалить </button>
     
                                             <!-- Modal for Delete Profile -->
-                                            <div class="modal fade" id="ModalDeleteProfile<%=i%>" tabindex="-1" style="color:black">
+                                            <div class="modal fade" id="ModalDeleteProfile<%=i%>" tabindex="-1" >
                                                 <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                    <h1 class="modal-title fs-5" id="exampleModalLabel"> Подтверждение удаления профиля </h1>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel"> Подтверждение удаления профиля </h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">  Вы собираетесь удалить профиль <i>@<%= users[i].name %></i> <br> Вы уверены? </div>
+                                                        <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Отмена </button>
+                                                        <button name="id" form="del<%=i%>" type="submit" value="<%= users[i].id%>" class="btn btn-danger">Удалить</button>
+                                                        </div>
                                                     </div>
-                                                    <div class="modal-body">  Вы собираетесь удалить профиль <i>@<%= users[i].name %></i> <br> Вы уверены? </div>
-                                                    <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Отмена </button>
-                                                    <button name="id" form="del<%=i%>" type="submit" value="<%= users[i].id%>" class="btn btn-danger">Удалить</button>
-                                                    </div>
-                                                </div>
                                                 </div>
                                             </div>
                                         </div>
