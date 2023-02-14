@@ -2,10 +2,14 @@
 
 <%- include('./partials/_layout.ejs') %>
 
-<section class="home">
+<section class="home" id="home" data-bs-theme="dark">
     <div id="eventsForm"> </div>
-	<script>const process = {};process.env = {}; process.env.NODE_ENV = "development";
-						process.env.API_URL = "http://www.localhost:3000"</script>
+	<script>
+        const process = {};
+        process.env = {};
+        process.env.NODE_ENV = "development";
+        process.env.API_URL = "http://www.localhost:3000"
+    </script>
     <script type="text/javascript"  src="/js/vue.js"></script>
     <script src="/js/snowfall.jquery.min.js"></script>
     <script>

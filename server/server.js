@@ -47,14 +47,14 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-const oneDay = 1000 * 60 * 60 * 24;     // Удержание сессии
+const liveTime = Number(process.env.COOKIE_LIVE);
 
 app.use(
     session({
-        secret: 'alexander_perelight',
+        secret: process.env.SECRET,
         saveUninitialized: true,
-        cookie: { maxAge: oneDay, theme: "light" },
-        resave: false,
+        cookie: { maxAge: liveTime, theme: "light" },
+        resave: false
     })
 );
 

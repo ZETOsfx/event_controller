@@ -4,8 +4,8 @@ const body = document.querySelector('body'),
       searchBtn = body.querySelector(".search-box"),
       modeSwitch = body.querySelector(".toggle-switch"),
       modeText = body.querySelector(".mode-text");
-
     
+
 toggle.addEventListener("click" , () => {
     sidebar.classList.toggle("close");
     if (sidebar.classList.contains("close")) {
@@ -16,43 +16,56 @@ toggle.addEventListener("click" , () => {
 });
 
 let getMode = localStorage.getItem("mode");
-if (getMode && getMode === "dark") {
-    body.classList.toggle("dark");
-    body.setAttribute("data-bs-theme", "light");
-} 
-else {
-    body.setAttribute("data-bs-theme", "dark");
-}
+    if (getMode && getMode === "dark") {
+        body.classList.toggle("dark"); 
+    } 
 
 let getStatus = localStorage.getItem("status");
 if (getStatus && getStatus === "open") {
     sidebar.classList.toggle("close");
 } 
 
-modeSwitch.addEventListener("click" , () => {
-    body.classList.toggle("dark");
-    
-    if (body.classList.contains("dark")) {
-        modeText.innerText = "Светлая тема";
-        localStorage.setItem("mode", "dark");
-        body.setAttribute("data-bs-theme", "light");
+window.addEventListener('load', function() {
+    // Check to see if Media-Queries are supported
+    if (window.matchMedia) {
+        // Check if the dark-mode Media-Query matches
+        if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+            body.classList.toggle("dark");
+            var home = document.getElementById("home");
+            home.setAttribute("data-bs-theme", "light");
+            modeText.innerText = "Светлая тема";
+        } else {
+            modeText.innerText = "Темная тема";
+            var home = document.getElementById("home");
+            home.setAttribute("data-bs-theme", "dark");
+        }
     } else {
-        modeText.innerText = "Темная тема";
-        localStorage.setItem("mode", "light");
-        body.setAttribute("data-bs-theme", "dark");
+        // Default (when Media-Queries are not supported)
     }
-});
 
-// Check to see if Media-Queries are supported
-if (window.matchMedia) {
-    // Check if the dark-mode Media-Query matches
-    if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-        body.classList.toggle("dark");
-        body.setAttribute("data-bs-theme", "light");
-        modeText.innerText = "Светлая тема";
-    } else {
-        modeText.innerText = "Темная тема";
+    let getMode = localStorage.getItem("mode");
+    if (getMode && getMode === "dark") {
+        var home = document.getElementById("home");
+        home.setAttribute("data-bs-theme", "light");
+    } 
+    else {
+        var home = document.getElementById("home");
+        home.setAttribute("data-bs-theme", "dark");
     }
-} else {
-    // Default (when Media-Queries are not supported)
-}
+
+    modeSwitch.addEventListener("click" , () => {
+        body.classList.toggle("dark");
+        
+        if (body.classList.contains("dark")) {
+            modeText.innerText = "Светлая тема";
+            localStorage.setItem("mode", "dark");
+            var home = document.getElementById("home");
+            home.setAttribute("data-bs-theme", "light");
+        } else {
+            modeText.innerText = "Темная тема";
+            localStorage.setItem("mode", "light");
+            var home = document.getElementById("home");
+            home.setAttribute("data-bs-theme", "dark");
+        }
+    });
+});

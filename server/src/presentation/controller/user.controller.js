@@ -81,6 +81,15 @@ class UserController {
     // Delete user
     async deleteUser(req, res) {
         const { id } = req.body;
+        const name = await db('ec_user').select('name').where('id', id);
+
+        let indexOfTemplateToDelete = [];
+        const tmp = await db('tmp').select('id').where('author', name[0].name);
+
+        for (let i in tmp)
+            await db('events_tmp').select('*').where('tmpid', tmp[i].id).del();
+
+        await db('tmp').select('*').where('author', name[0].name).del();
         await db('ec_user').where('id', id).del();
         await db('user_ads').where('user_id', id).del();
         res.redirect('../account/register');

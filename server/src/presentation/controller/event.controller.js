@@ -51,7 +51,8 @@ class EventController {
                     name: name, 
                     author: req.session.username,
                     isprivate: true,    // default
-                    canview: false      // default
+                    canview: false,     // default
+                    last_modify: req.session.username
                 });
                     // В зависимости от типа нового шаблона создаем 
                 const tmp = await db('tmp').select("*").where({ name });
