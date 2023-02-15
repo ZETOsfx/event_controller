@@ -1,119 +1,65 @@
 <template>
-  <link href="/css/editor_style.css" rel="stylesheet" />
   <link href="/css/fa.min.css" rel="stylesheet" />
   <div class="intro">
-    <div class="container"  data-bs-theme="dark">
+    <div class="container">
       <h6 class="text p-0 mt-4"> Работа с трансляцией </h6>
 
-      <!-- Error Modal -->
-      <div class="modal fade" id="modalError" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog">
-          <!-- Переполнение в имени события при добавлении (огрн: 50 сим) -->
-          <div v-if="errorFlag === 0" class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5">Ошибка добавления</h1>
-              <button @click="triggerStupid()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Полученно слишком длинное наименование события. <br> Проверьте, пожалуйста, правильность введённых данных <br> Разрешено символов: 50. Получено: {{ this.addForm.name.length }}
-            </div>
-            <div class="modal-footer">
-              <button @click="triggerStupid()" type="button" class="btn btn-danger" data-bs-dismiss="modal">Понятненько</button>
-            </div>
+      <!-- Предлагаю 2 варианта --> 
+      <!-- 1ый - добавляем атрибут data-bs-autohide="false" и тогда toast не будет скрываться автоматически -->
+      <!-- 2ой - добавляем атрибут data-bs-delay="time" и задаём время, через которое он сам скроется (в мс) -->
+
+      <!-- Группировка toasts --> 
+      <div class="toast-container bottom-0 end-0 p-3">
+        <!-- Успешно --> 
+        <div class="toast fade text-bg-success" role="alert" id="ToastSuccess" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+          <div class="toast-header">
+            <rect width="100%" height="100%" fill="#007aff"></rect>
+            <strong class="me-auto">Успешно!</strong>
+            <small class="text-muted"> {{ this.currentTime }} </small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
           </div>
-          <!-- Отридцательное время или НЕ ЦИФРЫ в поле для времени -->
-          <div v-if="errorFlag === 1" class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5">Ошибка добавления</h1>
-              <button @click="triggerStupid()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Полчено некорректное значение времени при добавлении события. <br> Проверьте, пожалуйста, правильность введённых данных
-            </div>
-            <div class="modal-footer">
-              <button @click="triggerStupid()" type="button" class="btn btn-danger" data-bs-dismiss="modal">Виноват, исправлюсь</button>
-            </div>
+          <div class="toast-body">
+            {{ this.successMessage }}
           </div>
-          <!-- Отсутствует имя шаблона в момент создания -->
-          <div v-if="errorFlag === 2" class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5">Ошибка создания шаблона</h1>
-              <button @click="triggerStupid()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Пожалуйста, укажите название шаблона, который хотите создать
-            </div>
-            <div class="modal-footer">
-              <button @click="triggerStupid()" type="button" class="btn btn-danger" data-bs-dismiss="modal">Ой, точно</button>
-            </div>
+        </div>
+        
+        <!-- Ошибка --> 
+        <div class="toast fade text-bg-danger" role="alert" id="ToastError" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+          <div class="toast-header">
+            <rect width="100%" height="100%" fill="#007aff"></rect>
+            <strong class="me-auto">Произошла ошибка!</strong>
+            <small class="text-muted"> {{ this.currentTime }} </small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
           </div>
-          <!-- Не выбран шаблон для открытия -->
-          <div v-if="errorFlag === 3" class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5">Ошибка открытия шаблона</h1>
-              <button @click="triggerStupid()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Пожалуйста, выберите шаблон, который хотите открыть
-            </div>
-            <div class="modal-footer">
-              <button @click="triggerStupid()" type="button" class="btn btn-danger" data-bs-dismiss="modal">А, ой</button>
-            </div>
+          <div class="toast-body">
+            {{ this.errorMessage }}
           </div>
-          <!-- Попытка открыть удаленный шаблон -->
-          <div v-if="errorFlag === 4" class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5">Ошибка открытия шаблона</h1>
-              <button @click="triggerStupid()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Данный шаблон был удален его автором. <br> Свяжитесь с автором шаблона для уточнения информации
-            </div>
-            <div class="modal-footer">
-              <button @click="triggerStupid()" type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="location.reload(); return;">Окееей</button>
-            </div>
+        </div>
+
+        <!-- Инфо --> 
+        <div class="toast fade text-bg-info" role="alert" id="ToastInfo" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+          <div class="toast-header">
+            <rect width="100%" height="100%" fill="#007aff"></rect>
+            <strong class="me-auto">Уведомление</strong>
+            <small class="text-muted">20:07</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
           </div>
-          <!-- Нулевые поля для нового события -->
-          <div v-if="errorFlag === 5" class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5">Ошибка добавления</h1>
-              <button @click="triggerStupid()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Пожалуйста, заполните все поля перед добавлением
-            </div>
-            <div class="modal-footer">
-              <button @click="triggerStupid()" type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="location.reload(); return;">Так точно!</button>
-            </div>
-          </div>
-          <!-- Не выбран шаблон, который нужно удалить -->
-          <div v-if="errorFlag === 6" class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5">Ошибка удаления шаблона</h1>
-              <button @click="triggerStupid()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Выберите шаблон, который хотите удалить.
-            </div>
-            <div class="modal-footer">
-              <button @click="triggerStupid()" type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="location.reload(); return;">Будет исполнено!</button>
-            </div>
-          </div>
-          <!-- Имя шаблона не должно превышать 30 символов -->
-          <div v-if="errorFlag === 7" class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5">Ошибка создания шаблона</h1>
-              <button @click="triggerStupid()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Полученно слишком длинное наименование шаблона. <br> Проверьте, пожалуйста, правильность введённых данных <br> Разрешено символов: 30. Получено: {{ this.name.length }}
-            </div>
-            <div class="modal-footer">
-              <button @click="triggerStupid()" type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="location.reload(); return;">Хорошо, сократим</button>
-            </div>
+          <div class="toast-body">
+            Шаблон <i>"название"</i> одобрен модератором <i>Имя Модератора</i>
           </div>
         </div>
       </div>
+      
+      <!-- <script>
+        var SuccessToast = new bootstrap.Toast(document.getElementById("ToastSuccess"));
+        SuccessToast.show();
+
+        var ErrorToast = new bootstrap.Toast(document.getElementById("ToastError"));
+        ErrorToast.show();
+
+        var InfoToast = new bootstrap.Toast(document.getElementById("ToastInfo"));
+        InfoToast.show();
+      </script> -->
 
       <div class="content">
           <div style="margin-right: 0">
@@ -200,11 +146,11 @@
       </div>
       
       <!-- Modal for Send -->
-      <div class="modal fade" id="SendModerModal" tabindex="-1"  >
+      <div class="modal fade" id="SendModerModal" tabindex="-1" data-bs-backdrop="static">
           <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
-                      <h1 class="modal-title fs-5" id="exampleModalLabel"> Отправить форму на модерацию </h1>
+                      <h1 class="modal-title fs-5"> Отправить форму на модерацию </h1>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
@@ -220,40 +166,35 @@
                   </form>
                   </div>
                   <div class="modal-footer">
-                      <div v-if="!specProg"> 
-                        <div class="d-flex w-100 justify-content-between align-items-center gap-1">
-                            Пары: 
-                            <select v-model="studProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
-                                <option value="-" selected>- Нет изменений -</option>
-                                <option v-for="tmp in tmpList" v-bind:value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                            </select>
-                        </div>
-                        <div class="d-flex w-100 justify-content-between align-items-center gap-1">
-                            Перерыв: 
-                            <select v-model="breakProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
-                                <option value="-" selected>- Нет изменений -</option>
-                                <option v-for="tmp in tmpList" v-bind:value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                            </select>
-                        </div>
-                        <div class="d-flex w-100 justify-content-between align-items-center gap-1">
+                       
+                      <div v-if="!specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
+                          Пары: 
+                          <select v-model="studProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
+                              <option value="-" selected>- Нет изменений -</option>
+                              <option v-for="tmp in tmpList" v-bind:value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+                          </select>
+                      </div>
+                      <div v-if="!specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
+                          Перерыв: 
+                          <select v-model="breakProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
+                              <option value="-" selected>- Нет изменений -</option>
+                              <option v-for="tmp in tmpList" v-bind:value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+                          </select>
+                      </div>
+                        <div v-if="!specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
                             Обед: 
                             <select v-model="lunchProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
                                 <option value="-" selected>- Нет изменений -</option>
                                 <option v-for="tmp in tmpList" v-bind:value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
                             </select>
                         </div>
-                      </div>
-
-                      <div v-if="specProg"> 
-                        <div class="d-flex w-100 justify-content-between align-items-center gap-1">
+                        <div v-if="specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
                             Особый: 
                             <select v-model="studProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
                                 <option value="-" selected>- Нет изменений -</option>
                                 <option v-for="tmp in tmpList" v-bind:value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
                             </select>
                         </div>
-                      </div>
-
                       <div class="d-flex w-100 justify-content-between gap-1">
                           <select v-model="screenProg" class="form-select" aria-label="Default select example">
                               <option selected value="1">Кафедра К3 - основной</option>
@@ -380,12 +321,12 @@ export default {
       lastModify: "",       // Последний профиль, вносивший изменения в шаблон
       name: "",             // Поле "Имя нового шаблона"
       tmpName: "-",         // Селектор имен шаблонов для открытия 
+
         // --- ПАРАМЕТРЫ ДОСТУПА ---
       isAuthor: false,      // Является ли пользователь автором шаблона
       canView: false,       // Видимость шаблона для др. профилей
       canEdit: false,       // Возможность редактировать шаблон другими пользователями
       isGet: false,         // Состояние страницы - открыт ли шаблон
-      errorFlag: -1,        //
 
         // --- SEND TO MODER ---
       nameProg: '',       // Заголовок шаблона
@@ -403,20 +344,39 @@ export default {
       editForm: [],         // Форма редактирования события  
                             // Форма добавления нового события с полями 
       addForm: { name: "", src: "", type: 0, time: 15, isActive: true },
-      MODAL: []
+
+      succCallback: [],     // Колбек - успешно
+      errCallback: [],      // Колбек - ошибка 
+      sendCallback: [],     // Модалка формы отправки
+
+      successMessage: null, // Текст успешной операции
+      errorMessage: null,   // Текст ошибки
+
+      currentTime: null
       // ${process.env.API_URL}
     }
   },
   methods: {
-    bootError() {
-      return new bootstrap.Modal(document.getElementById('modalError'));
-    },
-    bootSend() {
-      return this.MODAL;
+    async getTime() {
+        // Дата - время коллбека
+      let date_ob = new Date();
+      let hour = date_ob.getHours();
+      if (hour < 10) hour = "0" + hour;
+      let min = date_ob.getMinutes();
+      if (min < 10) min = "0" + min;
+      let sec = date_ob.getSeconds();
+      if (sec < 10) sec = "0" + sec;
+      let time = hour + ':' + min + ':' + sec;
+      this.currentTime = time;
     },
     async allTmp() { 
       var sendModal = new bootstrap.Modal(document.getElementById('SendModerModal'));
-      this.MODAL = sendModal;
+      var errorToast = new bootstrap.Toast(document.getElementById("ToastError"));
+      var SuccessToast = new bootstrap.Toast(document.getElementById("ToastSuccess"));
+
+      this.succCallback = SuccessToast;
+      this.sendCallback = sendModal;
+      this.errCallback = errorToast;
 
       let response = await fetch(`/event/alltmp`, {
         method: 'GET',
@@ -442,14 +402,15 @@ export default {
       this.dateProg = minDate;
     },
     async getTmp(name) {
+      this.getTime();
       if (name !== "-") {
         let response = await fetch(`/event/all`, this.options('PATCH', { name: name }));
         this.events = (await response.json());
       
         if (this.events[0].name === "none" && this.events[0].src === "none"){
           this.events = [];
-          this.errorFlag = 4;
-          this.bootError().show();
+          this.errorMessage = 'Данный шаблон был удален его автором. \nСвяжитесь с автором шаблона для уточнения информации.';
+          this.errCallback.show();
         } else {
           this.canView = this.events[0].canview;
           this.canEdit = !this.events[0].isprivate;
@@ -467,27 +428,49 @@ export default {
           }
         }
       } else {
-        this.errorFlag = 3;
-        this.bootError().show();
+        this.errorMessage = 'Пожалуйста, выберите шаблон, который хотите открыть.';
+        this.errCallback.show();
       }
     },
     async addTmp(name, tmp_type, events) {
+      this.getTime();
       if (this.name.length > 30) {
-        this.errorFlag = 7;
-        this.bootError().show();
+        this.errorMessage = 'Полученно слишком длинное наименование шаблона. \nПроверьте, пожалуйста, правильность введённых данных \nРазрешено символов: 30. Получено:' + this.name.length ;
+        this.errCallback.show();
       } else if (name !== "") {
-        await fetch(`/event/addtmp`, this.options('PUT', { name: name, tmp_type: tmp_type, events: events }));
-        let responseAdd = await fetch(`/event/alltmp`, {});
-        this.tmpList = (await responseAdd.json());
-        this.tmpName = name;
-        this.name = "";
-        await this.getTmp(name);
+        if (tmp_type === 'empty' || tmp_type === 'default' || tmp_type === 'copy') {
+          let callback = await fetch(`/event/addtmp`, this.options('PUT', { name: name, tmp_type: tmp_type, events: events }));
+          let responseAdd = await fetch(`/event/alltmp`, {});
+          this.tmpList = (await responseAdd.json());
+          this.tmpName = name;
+          this.name = "";
+          this.successMessage = '';
+          if ((await callback.json()).typecall === 'success') {
+            switch (tmp_type) {
+              case 'copy':
+                this.successMessage = 'Шаблон был успешно скопирован под именем: \"' + name + '\".'; 
+                break;
+              case 'default':
+                this.successMessage = 'Шаблон \"' + name + '\" был успешно создан.';
+                break;
+              case 'empty':
+                this.successMessage = 'Шаблон \"' + name + '\" был успешно создан.';
+                break;
+            }
+            this.succCallback.show();
+          } else {
+            this.errorMessage = 'Шаблон c именем: \"' + name + '\" уже существует. Придумайте другое.';
+            this.errCallback.show();
+          }
+          await this.getTmp(name);
+        }
       } else {
-        this.errorFlag = 2;
-        this.bootError().show();
+        this.errorMessage = 'Заполните имя нового шаблона!';
+        this.errCallback.show();
       }
     },
     async delTmp(name) {
+      this.getTime();
       if (name !== "-") {
         await fetch(`/event/deltmp`, this.options('DELETE', { name: name }));
         this.openedTmp = "";
@@ -497,33 +480,24 @@ export default {
         this.canView = false;
         this.isAuthor = false;
         this.name = "";
+        this.successMessage = 'Шаблон "' + this.tmpName + '" был успешно удален.';
+        this.succCallback.show();
         this.tmpName = "-";
       } else {
-        this.errorFlag = 6;
-        this.bootError().show();
-      }
-    },
-    async copyTmp(name) {
-      if (this.isGet) {
-        let response = await fetch(`/event/all`, this.options('GET', { name: name }));
-        this.events = (await response.json());
-        for (var i in this.events) {
-          if (!this.editForm[i]) this.editForm[i] = {}
-          this.editForm[i].isDisabled = true;
-        }
-      } else {
-          // ТЫ ДЕБИЛ ОТКРОЙ ШАБЛОН КОТОРЫЙ НАДО СКОПИРОВАТЬ
+        this.errorMessage = 'Выберите шаблон, который хотите удалить.';
+        this.errCallback.show();
       }
     },
     async addEvent() {
+      this.getTime();
       if (this.addForm.name !== "" &&  this.addForm.src !== "") {
         if (this.addForm.name.length > 50) {
             // Слишком длинное имя
-          this.errorFlag = 0;
-          this.bootError().show();
+          this.errorMessage = 'Полученно слишком длинное наименование события. \nПроверьте, пожалуйста, правильность введённых данных. \nРазрешено символов: 50. Получено: ' + this.addForm.name.length;
+          this.errCallback.show();
         } else if (!Number.isFinite(this.addForm.time) || this.addForm.time < 0) {
-          this.errorFlag = 1;
-          this.bootError().show();
+          this.errorMessage = 'Полчено некорректное значение времени при добавлении события. \n Проверьте, пожалуйста, правильность введённых данных.';
+          this.errCallback.show();
         } else {
             // correct
           this.editForm.push({ isDisabled: true });
@@ -532,8 +506,8 @@ export default {
         }
       } else {
           // Нулевые поля для события 
-        this.errorFlag = 5;
-        this.bootError().show();
+        this.errorMessage = 'Пожалуйста, заполните все поля перед добавлением.';
+        this.errCallback.show();
       }
     },
     async editEvent(index) {
@@ -563,16 +537,16 @@ export default {
       console.log(response);
     },
     async sendForm() {
-      this.bootSend().show();
+      this.sendCallback.show();
     },
     async sendTemplate() {
-      this.bootSend().hide();
-      if (this.nameProg !== '' || this.dateProg || this.studProg || this.breakProg || this.lunchProg) {
-        if (this.specProg) {
-          this.breakProg = '-';
-          this.lunchProg = '-';
-        }
-        await fetch(`/event/send`, this.options('PUT', { 
+      this.getTime();
+      if (this.specProg) {
+        this.breakProg = '-';
+        this.lunchProg = '-';
+      }
+
+      let responce = await fetch(`/event/send`, this.options('PUT', {
           name: this.nameProg, 
           comment: this.commProg, 
           stud_name: this.studProg, 
@@ -581,12 +555,28 @@ export default {
           screen: this.screenProg, 
           date: this.dateProg, 
           isSpec: this.specProg
-        }));
-           // Окошко "отправлено успешно"
+        }
+      ));
+      
+      this.errorMessage = (await responce.json()).message;
+        // Ошибка при некорректных полях
+      if (this.errorMessage !== '-') {
+        this.errCallback.show();
       } else {
-          // Обработка ошибки
-        this.errorFlag = 3;
-        this.bootError().show();
+          // Окошко "отправлено успешно"
+        this.successMessage = 'Успешно отправлено на модерацию.';
+        this.succCallback.show();
+          // Скрыть модалку отправки
+        this.sendCallback.hide();
+          // Зануление для не дублиования при нескольких запросах подряд 
+        this.nameProg = ''       // Заголовок шаблона
+        this.commProg = ''       // Комментарий редактора
+        this.studProg = '-'      // Программа на пары
+        this.breakProg = '-'     // Программа на перерыв
+        this.lunchProg = '-'     // Программа на обед
+        this.screenProg = '1'    // Моник
+        this.dateProg = ''       // Дата чето там
+        this.specProg = false    // Ты СПЕЦИАЛЬНО?
       }
     },
     async moveEvent(move, index) {
@@ -615,9 +605,6 @@ export default {
         body: JSON.stringify(body),
       }
     },
-    triggerStupid() {
-      this.errorFlag = -1;
-    }
   },
   mounted() {
     this.allTmp();

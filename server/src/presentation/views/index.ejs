@@ -2,7 +2,7 @@
 
 <%- include('./partials/_layout.ejs') %>
 
-<section class="home" id="home" data-bs-theme="dark">
+<section class="home" id="home">
     <div class="intro">
         <div class="p-3 m-3">
             <h6 class="text p-0 mt-4"> События К3 МФ МГТУ </h6>
@@ -26,16 +26,6 @@
         </div>
     </div>
 </section>
-    
-<script src="/js/snowfall.jquery.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $(document).snowfall({
-            collection: ".collectonme",
-            flakeCount: 75 // Количество снежинок
-        });
-    });
-</script>
 
 <style>
     .myminiframe {

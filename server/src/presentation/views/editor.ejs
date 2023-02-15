@@ -2,7 +2,7 @@
 
 <%- include('./partials/_layout.ejs') %>
 
-<section class="home" id="home" data-bs-theme="dark">
+<section class="home" id="home">
     <div id="eventsForm"> </div>
 	<script>
         const process = {};
@@ -11,13 +11,4 @@
         process.env.API_URL = "http://www.localhost:3000"
     </script>
     <script type="text/javascript"  src="/js/vue.js"></script>
-    <script src="/js/snowfall.jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $(document).snowfall({
-                collection: ".collectonme",
-                flakeCount: 75 // Количество снежинок
-            });
-        });
-    </script> 
 </section>

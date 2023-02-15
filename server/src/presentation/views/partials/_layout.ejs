@@ -3,9 +3,10 @@
 <head>
     <meta charset="utf-8">
 
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    
     <!----======== CSS ======== -->
     <link rel="stylesheet" href="/css/style_new.css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/tabcolor.css" rel="stylesheet"/>
     <!-- СНЕЖООООООЧЕК -->
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
@@ -62,7 +63,7 @@
                     </a>
                 </li>
 
-                <% if (session.loggedin && ((session.role === 'admin') || (session.role === 'editor'))) { %>
+                <% if (session.loggedin && ((session.role === 'admin') || (session.role === 'editor') || (session.role === 'moder'))) { %>
                     <li class="nav-linka">
                         <a href="/event/editor">
                             <i class='bx bx-edit-alt icon'></i>

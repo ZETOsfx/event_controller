@@ -24,6 +24,13 @@ router.get('/', (req, res) => {
 
     // Получение списка запросов на утверждение
 router.get('/requests', ModerController.getRequests);
+    // Активня программа трансляции (возможна к редактированию в таблице 'events')
+router.get('/active', ModerController.getActive);
+    // Список всех шаблонов, которые может задействовать модератор для редактирования запросов
+router.get('/alltmp', ModerController.getTemplates);
+    // Переключить процесс
+router.patch('/switchprocess', ModerController.switchProcess);
+
 
 // + templates
 

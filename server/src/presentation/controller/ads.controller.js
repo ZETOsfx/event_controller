@@ -76,7 +76,7 @@ class AdsController {
             // В зависимости от факта авторизации выводим объявления разного уровня доступа 
         if (req.session.loggedin) {
                 // Чем меньше значение ID, тем ранее добалено объявление 
-            ads = await db('ads').select('*').orderBy('id');    // [ json ]
+            ads = await db('ads').select('*').orderBy('id', 'desc');    
                 // + Помещаем все события в список
             const user = await db('ec_user').select('*').where('name', req.session.username);
             const userAds = await db('user_ads').select('*').where('user_id', user[0].id);
@@ -97,7 +97,7 @@ class AdsController {
             }
             req.session.noread = 0;
         } else
-            ads = await db('ads').select('*').where('translate', 'true').orderBy('id');
+            ads = await db('ads').select('*').where('translate', 'true').orderBy('id', 'desc');
     
         res.render(createPath('adsender'), { title, session: req.session, ads});
         res.end();

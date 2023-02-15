@@ -2,7 +2,7 @@
 
 <%- include('./partials/_layout.ejs') %>
 
-<section class="home" id="home" data-bs-theme="dark">
+<section class="home" id="home">
     <div class="intro">
         <div class="container">
             <h6 class="text p-0 mt-4"> Последние изменения </h6>
@@ -176,13 +176,4 @@
             </div>
         </div>
     </div>
-    <script src="/js/snowfall.jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $(document).snowfall({
-                collection: ".collectonme",
-                flakeCount: 75 // Количество снежинок
-            });
-        });
-    </script> 
 </section>

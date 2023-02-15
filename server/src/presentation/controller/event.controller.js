@@ -58,7 +58,8 @@ class EventController {
                 const tmp = await db('tmp').select("*").where({ name });
                 switch(tmp_type) {
                     case 'empty':       // Пустой шаблон
-                        
+                        // let mess = 'Шаблон \"' + name + '\" был успешно создан';
+                        res.json({ typecall: 'success' });
                         break;
                     case 'copy':        // Копия шаблона
                         const { events } = req?.body;   
@@ -85,7 +86,7 @@ class EventController {
                                 }
                             }
                         }
-
+                        res.json({ typecall: 'success' });
                         break;
                     case 'default':     // Шаблон по умолчанию
                         await db('events_tmp').insert({
@@ -144,19 +145,13 @@ class EventController {
                         });
                         break;
                     default:
-
+                        res.json({ typecall: 'success' });
                         break;
                 }
 
-                // const templates = await db('events_tmp').select("*").where('tmpid', tmp[0].id).orderBy('order');
-                // for (let i in templates) {
-                //     templates[i].isauthor  = true;
-                //     templates[i].isprivate = tmp[0].isprivate;
-                //     templates[i].canview = tmp[0].canview;
-                // }
-                
-                res.end();
-            } 
+            } else {
+                res.json({ typecall: 'error' });
+            }
         }
 
         res.end();
@@ -175,7 +170,6 @@ class EventController {
 
         res.end();
     }
-
         // Открыть шаблон - получение списка событий
     async getTemplate(req, res) {
         const { name } = req?.body;
@@ -254,7 +248,6 @@ class EventController {
 
         res.end();
     }
-
         // Отправка шаблона на модерацию
     async sendTemplate(req, res) {
         const { name, comment, stud_name, break_name, lunch_name, screen, date, isSpec = false } = req?.body;
@@ -262,43 +255,92 @@ class EventController {
         if (comment === undefined && comment === true)
             comment = '';
 
-        if (isSpec) {
-            if (name && stud_name !== '-' && screen && date) {
-                await db('events_req_form').insert({
-                    name: name,                         // Заголовок запроса на модерацию
-                    comment: comment,                   // Комментарий редактора для модератора
-                    date: date,                         // Дата, на которую хочет поставить редактор
-                    isspecial: true,                    // Метка специального расписания
-                    author: req.session.username,       // Автор запроса на установку
-                    lesson: stud_name,                  // Программа трансляции - Время занятий
-                    breaktime: '-',                     // Программа трансляции - Время перерыва между занятиями
-                    lunch: '-',                         // Программа трансляции - Время обеда
-                    screen: screen,                     // Экран, на который необходимо установить трансляцию
-                    isAccepted: false                   // Утвержден ли запрос (утверждает модератор)
-                });
-            } else
-                console.log('Incorrect params of special form request');
+        const req_here = await db('events_req_form').select('id').where({ name });
+        
+        if (req_here[0] !== undefined) {
+            res.json({ message: 'Запрос с таким заголовком уже был успешно отправлен. Возможно, вы спамите. Сообщаем администратору...'});
         } else {
-            if (name && stud_name !== '-' && break_name !== '-' && lunch_name !== '-' && screen && date) {
-                await db('events_req_form').insert({
-                    name: name,                         // Заголовок запроса на модерацию
-                    comment: comment,                   // Комментарий редактора для модератора
-                    date: date,                         // Дата, на которую хочет поставить редактор
-                    isspecial: false,                   // Метка специального расписания
-                    author: req.session.username,       // Автор запроса на установку
-                    lesson: stud_name,                  // Программа трансляции - Время занятий
-                    breaktime: break_name,              // Программа трансляции - Время перерыва между занятиями
-                    lunch: lunch_name,                  // Программа трансляции - Время обеда
-                    screen: screen,                     // Экран, на который необходимо установить трансляцию
-                    isAccepted: false                   // Утвержден ли запрос (утверждает модератор)
-                });
+            if (isSpec) {
+                if (name && stud_name !== '-' && screen && date) {
+                    await db('events_req_form').insert({
+                        name: name,                         // Заголовок запроса на модерацию
+                        comment: comment,                   // Комментарий редактора для модератора
+                        date: date,                         // Дата, на которую хочет поставить редактор
+                        isspecial: true,                    // Метка специального расписания
+                        author: req.session.username,       // Автор запроса на установку
+                        lesson: stud_name,                  // Программа трансляции - Время занятий
+                        breaktime: '-',                     // Программа трансляции - Время перерыва между занятиями
+                        lunch: '-',                         // Программа трансляции - Время обеда
+                        screen: screen,                     // Экран, на который необходимо установить трансляцию
+                        isAccepted: false                   // Утвержден ли запрос (утверждает модератор)
+                    });
+
+                    const specTemp = await db('tmp').select('*').where('name', stud_name);
+                    const eventsTemp = await db('events_tmp').select('*').where('tmpid', specTemp[0].id);
+
+                    delete specTemp[0].id;
+                    const newTmp = await db('tmp_acc').insert(specTemp[0]).returning('*');
+                    for (let i in eventsTemp) {
+                        delete eventsTemp[i].id;
+                        eventsTemp[i].tmpid = newTmp[0].id;
+                        await db('events_tmp_acc').insert(eventsTemp[i]);
+                    }
+                    res.json({ message : '-'});
+                } else
+                    res.json({ message: 'Некорректные параметры отправки шаблона специального типа. Проверьте правильность заполения полей в форме отправки.'});
             } else {
-                console.log('Incorrect params of standard form request');
+                if (name && (stud_name !== '-' || break_name !== '-' || lunch_name !== '-') && screen && date) {
+                    await db('events_req_form').insert({
+                        name: name,                         // Заголовок запроса на модерацию
+                        comment: comment,                   // Комментарий редактора для модератора
+                        date: date,                         // Дата, на которую хочет поставить редактор
+                        isspecial: false,                   // Метка специального расписания
+                        author: req.session.username,       // Автор запроса на установку
+                        lesson: stud_name,                  // Программа трансляции - Время занятий
+                        breaktime: break_name,              // Программа трансляции - Время перерыва между занятиями
+                        lunch: lunch_name,                  // Программа трансляции - Время обеда
+                        screen: screen,                     // Экран, на который необходимо установить трансляцию
+                        isAccepted: false                   // Утвержден ли запрос (утверждает модератор)
+                    });
+
+                    let originTemp = [];
+
+                    if (stud_name !== '-') {
+                        const stud_tmp = await db('tmp').select('*').where('name', stud_name);
+                        originTemp.push(stud_tmp[0]);
+                    }
+
+                    if (break_name !== '-') {
+                        const break_tmp = await db('tmp').select('*').where('name', break_name);
+                        originTemp.push(break_tmp[0]);
+                    }
+
+                    if (lunch_name !== '-') { 
+                        const lunch_tmp = await db('tmp').select('*').where('name', lunch_name);
+                        originTemp.push(lunch_tmp[0]);
+                    }
+
+                    for (let j in originTemp) {
+                            // Все события указанных при отправке шаблонов
+                        const eventsTemp = await db('events_tmp').select('*').where('tmpid', originTemp[j].id);
+                        delete originTemp[j].id;
+                        const newTmp = await db('tmp_acc').insert(originTemp[j]).returning("*");  
+                        for (let i in eventsTemp) {
+                            delete eventsTemp[i].id;
+                            eventsTemp[i].tmpid = newTmp[0].id;
+                            await db('events_tmp_acc').insert(eventsTemp[i]);
+                        }
+                    }
+                    res.json({ message : '-'});
+                } else {
+                    res.json({ message: 'Некорректные параметры отправки шаблона стандартного типа. Проверьте правильность заполения полей в форме отправки.'});
+                }
             }
         }
 
-        res.status(200).end();
+        res.end();
     }
+
 
         // Выдача логов на чтение
     async logRead(req, res) {

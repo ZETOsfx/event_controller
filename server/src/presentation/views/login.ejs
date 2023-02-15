@@ -1,7 +1,7 @@
 <%- include('./partials/_layout.ejs') %>
 
 <section class="home" id="home">
-    <link href="/css/main.css" rel="stylesheet" data-bs-theme="dark" />
+    <link href="/css/main.css" rel="stylesheet" />
     <div class="intro">
         <div class="row">
             <div class="col-md-4">
@@ -17,8 +17,8 @@
                     <div class="form-floating">
 
                         <div class="form-floating is-invalid">
-                          <input type="text" class="form-control" name="name" id="floatingInputGroup2" placeholder="Логин" required>
-                          <label for="floatingInputGroup2">Логин</label>
+                          <input type="text" class="form-control" name="name" id="floatingInputGroup" placeholder="Логин" required>
+                          <label for="floatingInputGroup">Логин</label>
                         </div>     
                     </div>
                     <div class="form-floating is-invalid">
@@ -41,13 +41,4 @@
             </div>
         </div>
     </div>
-    <script src="/js/snowfall.jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $(document).snowfall({
-                collection: ".collectonme",
-                flakeCount: 75 // Количество снежинок
-            });
-        });
-    </script> 
 </section>

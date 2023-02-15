@@ -25,19 +25,19 @@ if (getStatus && getStatus === "open") {
     sidebar.classList.toggle("close");
 } 
 
-window.addEventListener('load', function() {
+document.addEventListener("DOMContentLoaded", () => {
     // Check to see if Media-Queries are supported
-    if (window.matchMedia) {
+    if (window.matchMedia && !getStatus) {
         // Check if the dark-mode Media-Query matches
         if (window.matchMedia('(prefers-color-scheme: light)').matches) {
             body.classList.toggle("dark");
-            var home = document.getElementById("home");
-            home.setAttribute("data-bs-theme", "light");
+            // var home = document.getElementById("home");
+            body.setAttribute("data-bs-theme", "light");
             modeText.innerText = "Светлая тема";
         } else {
             modeText.innerText = "Темная тема";
-            var home = document.getElementById("home");
-            home.setAttribute("data-bs-theme", "dark");
+            // var home = document.getElementById("home");
+            body.setAttribute("data-bs-theme", "dark");
         }
     } else {
         // Default (when Media-Queries are not supported)
@@ -45,12 +45,12 @@ window.addEventListener('load', function() {
 
     let getMode = localStorage.getItem("mode");
     if (getMode && getMode === "dark") {
-        var home = document.getElementById("home");
-        home.setAttribute("data-bs-theme", "light");
+        // var home = document.getElementById("home");
+        body.setAttribute("data-bs-theme", "light");
     } 
     else {
-        var home = document.getElementById("home");
-        home.setAttribute("data-bs-theme", "dark");
+        // var home = document.getElementById("home");
+        body.setAttribute("data-bs-theme", "dark");
     }
 
     modeSwitch.addEventListener("click" , () => {
@@ -59,13 +59,13 @@ window.addEventListener('load', function() {
         if (body.classList.contains("dark")) {
             modeText.innerText = "Светлая тема";
             localStorage.setItem("mode", "dark");
-            var home = document.getElementById("home");
-            home.setAttribute("data-bs-theme", "light");
+            // var home = document.getElementById("home");
+            body.setAttribute("data-bs-theme", "light");
         } else {
             modeText.innerText = "Темная тема";
             localStorage.setItem("mode", "light");
-            var home = document.getElementById("home");
-            home.setAttribute("data-bs-theme", "dark");
+            // var home = document.getElementById("home");
+            body.setAttribute("data-bs-theme", "dark");
         }
     });
 });
