@@ -62,10 +62,16 @@ class ModerController {
     async switchProcess(req, res) {
         const { name } = req.body;
 
+        // Запрос
+        // ЕСТЬ "КТО ОБРАБОТАЛ" + В ОБРАБОТКЕ (true) - процесс все еще в обработке
+        // ЕСТЬ "КТО ОБРАБОТАЛ" + В ОБРАБОТКЕ (false) - процесс уже обработан и стоит в очереди
+
         const request = await db('events_req_form').where({ name }).select('inProcessing');
         await db('events_req_form').where({ name }).update({ 
-            inProcessing: !request[0].inProcessing
+            inProcessing: !request[0].inProcessing,
+            whoAccept: req.session.username
         });
+
         
         res.end();
     }

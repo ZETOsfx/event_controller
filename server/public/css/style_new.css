@@ -296,6 +296,7 @@ body.dark .switch::before{
     left: 270px;
     width: calc(100% - 270px);
     height: 100vh;
+    /* height: 100%; */
     background-color: var(--body-color);
     background-size: 100%;
     transition: var(--tran-05);
@@ -316,8 +317,9 @@ body.dark .switch::before{
 
 .sidebar.close ~ .home{
     left: 78px;
-    height: 100vh;
+    /*height: 100%;*/
     width: calc(100% - 78px);
+    height: 100vh;
 }
 
 body.dark .home .text{
@@ -328,12 +330,13 @@ body.dark .home .text{
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    padding-bottom: 40px;
 }
 
 .intro {
     color: var(--text-color);
     width: 100%;
-    height: 100vh;
+    background-color: var(--body-color);
 }
 
 .content {

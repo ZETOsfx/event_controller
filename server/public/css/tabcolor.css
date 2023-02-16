@@ -7,3 +7,7 @@
 .nav-pills .show > .nav-link {
     background-color: #198754;
 }
+
+.toast-container {
+    position: fixed;
+}

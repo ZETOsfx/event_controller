@@ -4,6 +4,8 @@ import App from './App.vue'
 import Events from './components/Events.vue'
 import Moders from './components/Moder.vue'
 
+// import WebSock from "./WebSock";
+
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
 

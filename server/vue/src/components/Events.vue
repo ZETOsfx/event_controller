@@ -1,66 +1,61 @@
 <template>
   <link href="/css/fa.min.css" rel="stylesheet" />
   <div class="intro">
-    <div class="container">
-      <h6 class="text p-0 mt-4"> Работа с трансляцией </h6>
-
-      <!-- Предлагаю 2 варианта --> 
-      <!-- 1ый - добавляем атрибут data-bs-autohide="false" и тогда toast не будет скрываться автоматически -->
-      <!-- 2ой - добавляем атрибут data-bs-delay="time" и задаём время, через которое он сам скроется (в мс) -->
-
-      <!-- Группировка toasts --> 
-      <div class="toast-container bottom-0 end-0 p-3">
-        <!-- Успешно --> 
-        <div class="toast fade text-bg-success" role="alert" id="ToastSuccess" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
-          <div class="toast-header">
-            <rect width="100%" height="100%" fill="#007aff"></rect>
-            <strong class="me-auto">Успешно!</strong>
-            <small class="text-muted"> {{ this.currentTime }} </small>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
-          <div class="toast-body">
-            {{ this.successMessage }}
-          </div>
+    <!-- Группировка toasts --> 
+    <div class="toast-container bottom-0 end-0 p-3">
+      <!-- Успешно --> 
+      <div class="toast fade text-bg-success" role="alert" id="ToastSuccess" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+        <div class="toast-header">
+          <rect width="100%" height="100%" fill="#007aff"></rect>
+          <strong class="me-auto">Успешно!</strong>
+          <small class="text-muted"> {{ this.currentTime }} </small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        
-        <!-- Ошибка --> 
-        <div class="toast fade text-bg-danger" role="alert" id="ToastError" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
-          <div class="toast-header">
-            <rect width="100%" height="100%" fill="#007aff"></rect>
-            <strong class="me-auto">Произошла ошибка!</strong>
-            <small class="text-muted"> {{ this.currentTime }} </small>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
-          <div class="toast-body">
-            {{ this.errorMessage }}
-          </div>
-        </div>
-
-        <!-- Инфо --> 
-        <div class="toast fade text-bg-info" role="alert" id="ToastInfo" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
-          <div class="toast-header">
-            <rect width="100%" height="100%" fill="#007aff"></rect>
-            <strong class="me-auto">Уведомление</strong>
-            <small class="text-muted">20:07</small>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
-          <div class="toast-body">
-            Шаблон <i>"название"</i> одобрен модератором <i>Имя Модератора</i>
-          </div>
+        <div class="toast-body">
+          {{ this.successMessage }}
         </div>
       </div>
       
-      <!-- <script>
-        var SuccessToast = new bootstrap.Toast(document.getElementById("ToastSuccess"));
-        SuccessToast.show();
+      <!-- Ошибка --> 
+      <div class="toast fade text-bg-danger" role="alert" id="ToastError" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+        <div class="toast-header">
+          <rect width="100%" height="100%" fill="#007aff"></rect>
+          <strong class="me-auto">Произошла ошибка!</strong>
+          <small class="text-muted"> {{ this.currentTime }} </small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          {{ this.errorMessage }}
+        </div>
+      </div>
 
-        var ErrorToast = new bootstrap.Toast(document.getElementById("ToastError"));
-        ErrorToast.show();
+      <!-- Инфо --> 
+      <div class="toast fade text-bg-info" role="alert" id="ToastInfo" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+        <div class="toast-header">
+          <rect width="100%" height="100%" fill="#007aff"></rect>
+          <strong class="me-auto">Уведомление</strong>
+          <small class="text-muted">20:07</small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          Шаблон <i>"название"</i> одобрен модератором <i>Имя Модератора</i>
+        </div>
+      </div>
+    </div>
 
-        var InfoToast = new bootstrap.Toast(document.getElementById("ToastInfo"));
-        InfoToast.show();
-      </script> -->
+    <!-- <script>
+      var SuccessToast = new bootstrap.Toast(document.getElementById("ToastSuccess"));
+      SuccessToast.show();
 
+      var ErrorToast = new bootstrap.Toast(document.getElementById("ToastError"));
+      ErrorToast.show();
+
+      var InfoToast = new bootstrap.Toast(document.getElementById("ToastInfo"));
+      InfoToast.show();
+    </script> -->
+
+    <div class="container">
+      <h6 class="text p-0 mt-4"> Работа с трансляцией </h6>
       <div class="content">
           <div style="margin-right: 0">
             <div class="d-flex justify-content-between">
@@ -104,8 +99,8 @@
                             Вы собираетесь сохранить изменения в шаблоне "{{ tmpName }}". <br> Вы уверены?
                         </div>
                         <div class="modal-footer">
-                            <button type=" " class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                            <button type=" " class="btn btn-success" href="#" @click="saveChanges" onclick="location.reload(); return;">Сохранить</button>
+                            <button class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            <button class="btn btn-success" href="#" @click="saveChanges" onclick="location.reload(); return;">Сохранить</button>
                         </div>
                     </div>
                 </div>
@@ -123,8 +118,8 @@
                             Вы собираетесь удалить шаблон "{{ tmpName }}". <br> Вы уверены?
                         </div>
                         <div class="modal-footer">
-                            <button type="" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                            <button type="" @click="delTmp(tmpName)" onclick="location.reload(); return;" class="btn btn-danger">Удалить</button>
+                            <button class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            <button @click="delTmp(tmpName)" onclick="location.reload(); return;" class="btn btn-danger">Удалить</button>
                         </div>
                     </div>
                 </div>
@@ -366,17 +361,12 @@ export default {
       if (min < 10) min = "0" + min;
       let sec = date_ob.getSeconds();
       if (sec < 10) sec = "0" + sec;
-      let time = hour + ':' + min + ':' + sec;
-      this.currentTime = time;
+      this.currentTime = hour + ':' + min + ':' + sec;
     },
-    async allTmp() { 
-      var sendModal = new bootstrap.Modal(document.getElementById('SendModerModal'));
-      var errorToast = new bootstrap.Toast(document.getElementById("ToastError"));
-      var SuccessToast = new bootstrap.Toast(document.getElementById("ToastSuccess"));
-
-      this.succCallback = SuccessToast;
-      this.sendCallback = sendModal;
-      this.errCallback = errorToast;
+    async allTmp() {
+      this.succCallback = new bootstrap.Toast(document.getElementById("ToastSuccess"));
+      this.sendCallback = new bootstrap.Modal(document.getElementById('SendModerModal'));
+      this.errCallback = new bootstrap.Toast(document.getElementById("ToastError"));
 
       let response = await fetch(`/event/alltmp`, {
         method: 'GET',
@@ -402,7 +392,7 @@ export default {
       this.dateProg = minDate;
     },
     async getTmp(name) {
-      this.getTime();
+      await this.getTime();
       if (name !== "-") {
         let response = await fetch(`/event/all`, this.options('PATCH', { name: name }));
         this.events = (await response.json());
@@ -422,7 +412,7 @@ export default {
           this.openedTmp = name;
           this.isGet = true;
             
-          for (var i in this.events) {
+          for (let i in this.events) {
             if (!this.editForm[i]) this.editForm[i] = {}
             this.editForm[i].isDisabled = true;
           }
@@ -433,7 +423,7 @@ export default {
       }
     },
     async addTmp(name, tmp_type, events) {
-      this.getTime();
+      await this.getTime();
       if (this.name.length > 30) {
         this.errorMessage = 'Полученно слишком длинное наименование шаблона. \nПроверьте, пожалуйста, правильность введённых данных \nРазрешено символов: 30. Получено:' + this.name.length ;
         this.errCallback.show();
@@ -470,7 +460,7 @@ export default {
       }
     },
     async delTmp(name) {
-      this.getTime();
+      await this.getTime();
       if (name !== "-") {
         await fetch(`/event/deltmp`, this.options('DELETE', { name: name }));
         this.openedTmp = "";
@@ -489,7 +479,7 @@ export default {
       }
     },
     async addEvent() {
-      this.getTime();
+      await this.getTime();
       if (this.addForm.name !== "" &&  this.addForm.src !== "") {
         if (this.addForm.name.length > 50) {
             // Слишком длинное имя
@@ -540,7 +530,7 @@ export default {
       this.sendCallback.show();
     },
     async sendTemplate() {
-      this.getTime();
+      await this.getTime();
       if (this.specProg) {
         this.breakProg = '-';
         this.lunchProg = '-';
@@ -569,21 +559,20 @@ export default {
           // Скрыть модалку отправки
         this.sendCallback.hide();
           // Зануление для не дублиования при нескольких запросах подряд 
-        this.nameProg = ''       // Заголовок шаблона
-        this.commProg = ''       // Комментарий редактора
-        this.studProg = '-'      // Программа на пары
-        this.breakProg = '-'     // Программа на перерыв
-        this.lunchProg = '-'     // Программа на обед
-        this.screenProg = '1'    // Моник
-        this.dateProg = ''       // Дата чето там
-        this.specProg = false    // Ты СПЕЦИАЛЬНО?
+        this.nameProg = ''
+        this.commProg = ''
+        this.studProg = '-'
+        this.breakProg = '-'
+        this.lunchProg = '-'
+        this.screenProg = '1'
+        this.specProg = false
       }
     },
     async moveEvent(move, index) {
       let id1 = index;
       let id2 = null;
       if (move === "down" && id1 !== this.events.length-1)  id2 = id1++;
-      if (move === "up" && id1 !==0)  id2 = id1--;
+      if (move === "up" && id1 !== 0)  id2 = id1--;
       if (id2 !== null) {
         this.correctArr(this.events, [id1, id2])
       }
