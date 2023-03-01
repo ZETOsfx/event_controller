@@ -3,9 +3,9 @@ const knex = require('knex') ({
     connection: {
       host : 'localhost',
       port : 5432,
-      user : 'admin',
-      password : 'root',
-      database : 'db_user'
+      user : 'alexander_perelight',
+      password : 'ass_my_pass',
+      database : 'ecdb'
     }
   });
 module.exports = knex;

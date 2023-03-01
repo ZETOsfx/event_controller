@@ -11,8 +11,19 @@ const createPath = (page) => path.resolve(__dirname, '../views', `${page}.ejs`);
 class AdsController {
         // Добавление объявления (функционал оповестителя)
     async addAds(req, res) {
-        const { name, comment, time, translate } = req?.body;
-    
+        const { name, comment, translate, unlimited } = req?.body;
+        let { time } = req?.body;
+
+        if (!(req.session.loggedin && (req.session.role === 'admin' || req.session.role === 'moder' || req.session.role === 'adsender'))) {
+            const title = "Error";
+            res.status(404).render(createPath('error'), { title });
+            res.end();
+        }
+
+        if (unlimited) {
+            time = "9999-01-01";
+        }
+
         await db('ads').insert({
             name: name,                     // Заголовок
             comment: comment,               // Содержание 
@@ -29,31 +40,6 @@ class AdsController {
             ads_id: ads[0].id
         });
 
-        //     // Логгирование
-        // let date_ob = new Date();
-        //     // current date
-        //     // adjust 0 before single digit date
-        // let dd = ("0" + date_ob.getDate()).slice(-2);
-        //     // current month
-        // let mm = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-        //     // current year
-        // let yyyy = date_ob.getFullYear();
-        //     // current hours
-        // let hour = date_ob.getHours();
-        // if (hour < 10) hour = "0" + hour;
-        //     // current minutes
-        // let min = date_ob.getMinutes();
-        // if (min < 10) min = "0" + min;
-        //     // current seconds
-        // let sec = date_ob.getSeconds();
-        // if (sec < 10) sec = "0" + sec;
-        //
-        //     // Date + time (format needed)
-        // let dateNow = dd + '-' + mm + '-' + yyyy;
-        // let timeNow = hour + ':' + min + ':' + sec;
-        // mainLogger.pushAdsLog(1, dateNow, timeNow, req.session?.username,  req.session?.username, name, comment, translate, time);
-        // mainLogger.syncLoggerWithDatabase(req.session?.username, 'ads');
-
         req.session.noread = 0;
         res.redirect('../ads');
     }
@@ -61,6 +47,12 @@ class AdsController {
     async deleteAds(req, res) {
         const { id } = req.body;
         const ad = await db('ads').where('id', id);
+
+        if (!(req.session.loggedin && (req.session.role === 'admin' || req.session.role === 'moder' || req.session.role === 'adsender'))) {
+            const title = "Error";
+            res.status(404).render(createPath('error'), { title });
+            res.end();
+        }
 
             // Удаление из числа прочитанных (если было прочитано)
         await db('user_ads').where('ads_id', id).del();
@@ -72,19 +64,23 @@ class AdsController {
     }
         // Получение списка объявлений для внутреннего окна
     async getAds(req, res) {
-        var ads, title = 'Ads';
+        let ads, title = 'Ads';
             // В зависимости от факта авторизации выводим объявления разного уровня доступа 
         if (req.session.loggedin) {
-                // Чем меньше значение ID, тем ранее добалено объявление 
-            ads = await db('ads').select('*').orderBy('id', 'desc');    
-                // + Помещаем все события в список
+                // Profile data
             const user = await db('ec_user').select('*').where('name', req.session.username);
+                // Get ads
+            ads = await db('ads').select('*').orderBy('id', 'desc').where(function() {
+                this.where('personal', null).orWhere('personal', user[0].name)
+            });
+                // + Ads to List
             const userAds = await db('user_ads').select('*').where('user_id', user[0].id);
+
                 // Если записи о данном объявлении нет, то добавляем в таблицу
-            var isHere;     // flag
-            for (var i in ads) {
+            let isHere;
+            for (let i in ads) {
                 isHere = false;
-                for (var j in userAds) {
+                for (let j in userAds) {
                     if (ads[i].id === userAds[j].ads_id)
                         isHere = true;
                 }

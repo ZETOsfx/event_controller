@@ -14,8 +14,9 @@ const db = require('./config/db_connect');    // Database connection
     // ROUTERS
 const userRouter  = require('./src/presentation/routes/user.routes' );
 const eventRouter = require('./src/presentation/routes/event.routes');
-const adsRouter   = require( './src/presentation/routes/ads.routes' );
 const moderRouter = require('./src/presentation/routes/moder.routes');
+const adsRouter   = require('./src/presentation/routes/ads.routes'  );
+// const apiRouter   = require('./src/presentation/routes/api.routes'  );
 
     // JWT auth
 // const AuthRouter = require('./src/presentation/routes/index');
@@ -70,9 +71,11 @@ app.get('/js/vue.js', (req, res) => {
 
 // AuthRouter.routeInit(app, express);  // JWT auth
 app.use('/account', userRouter);
+// app.use('/api', apiRouter);          // ?
 app.use('/event', eventRouter);
-app.use('/ads', adsRouter);
 app.use('/moder', moderRouter);
+app.use('/ads', adsRouter);
+
 
 // ----- ОБЩИЕ СТРАНИЦЫ ------
 
@@ -82,9 +85,14 @@ app.get('/', (req, res) => {
 
 app.get('/index', async (req, res) => {
     const title = "Home";
-    ads = await db('ads').select('*').where('translate', 'true').orderBy('id');
-
+    let ads = await db('ads').select('*').where('translate', 'true').orderBy('id');
     res.render(createPath('index'), { title, session: req.session, ads});
+});
+
+app.get('/adscast', async (req, res) => {
+    const title = "Cast ads";
+    let ads = await db('ads').select('*').where('translate', 'true').orderBy('id', 'desc');
+    res.render(createPath('ads_cast_uber_mega_feature'), { title, session: req.session, ads});
 });
 
 app.get('/guide', (req, res) => {
@@ -92,19 +100,11 @@ app.get('/guide', (req, res) => {
     res.render(createPath('guide'), { title, session: req.session });
 });
 
-// ----- NOT IMPLEMENT ROLES -----
-
-app.get('/moder', (req, res) => {
-    if (!(req.session.loggedin && (req.session.role === 'admin' || req.session.role === 'moder'))) {
-        const title = "Error";
-        res.status(404).render(createPath('error'), { title });
-    }
-    const title = "ModerPanel";
-    res.render(createPath('moder'), { title, session: req.session });
-});
+// app.get('/cast', (req, res) => {
+//     res.render(createPath('mainview'), {});
+// });
 
 // 404
-
 app.use((req, res) => {
     const title = "Error";
     res

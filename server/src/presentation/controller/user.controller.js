@@ -26,7 +26,7 @@ class UserController {
     // Sign in (async method)
     async signInAsync(req, res, next) {
         const title = "Login";
-        var message = 0;
+        let message = 0;
         const { name, password } = req.body;
         const user = await db.select('*').from('ec_user').where('name', name);
         if (!user[0]) {
@@ -41,16 +41,30 @@ class UserController {
                     if (err) {
                         return next(err);
                     }
-                        // Актуальные события 
-                    const _ads = await db('ads').select('*').orderBy('id');     // Len
+
+                        // Profile data
                     const user = await db('ec_user').select('*').where('name', name);
-                    const userAds = await db('user_ads').select('*').where('user_id', user[0].id);  // isHere ?
 
-                    req.session.noread = _ads.length - userAds.length;
+                        // Актуальные события (общие)
+                    const _ads = await db('ads').select('*').where('personal', null);
 
-                    req.session.loggedin = true;        // Сразу генерим профиль (чтобы каждый раз не входить снова)
-                    req.session.username = name;        // ХЗ зачем
-                    req.session.role = user[0].role;    // Для проверки доступа
+                        // Персональные уведомления (только для данного профиля)
+                    const personal_ads = await db('ads').select('*').where('personal', user[0].name)
+
+                        // Список сообщений, которые данный пользователь уже просмотрел
+                    const userAds = await db('user_ads').select('*').where('user_id', user[0].id);
+
+                    req.session.noread = _ads.length + personal_ads.length - userAds.length;
+
+                    req.session.loggedin = true;
+                    req.session.username = name;
+                    req.session.role = user[0].role;
+
+                    if (user[0].role === 'admin' || user[0].role === 'moder') {
+                        const req_moder = await db('events_req_form').select('*').where('isAccepted', false);
+                        req.session.moder_req = req_moder.length;
+                    }
+
                     res.status(200).redirect('/index');
                 });
             }

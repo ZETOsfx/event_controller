@@ -1,13 +1,19 @@
 <html lang="en">
 
-<%- include('./partials/_layout.ejs') %>
+<head>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
 
-<section class="home" id="home">
+    <link href="/css/fa.min.css" rel="stylesheet" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+</head>
+
+<body class="home" id="home">
     <div class="intro">
-        <div class="p-3 m-3">
-            <h6 class="text p-0 mt-4"> События К3 МФ МГТУ </h6>
+        <div class="p-3 m-3 mt-0 pt-0">
+            <h3 class="text p-0 mt-4"> Важные объявления: </h3>
             <!-- <div id="miniframe"> -->
-                <!-- <iframe src="http://www.localhost:5173" class="myminiframe collectonme"> </div>" scrolling="no" id="myminiframe"> </iframe> -->
+            <!-- <iframe src="http://www.localhost:5173" class="myminiframe collectonme"> </div>" scrolling="no" id="myminiframe"> </iframe> -->
             <!-- </div>      -->
             <div class="row row-cols-1 row-cols-md-3 g-3">
                 <% if (ads) { for (var i in ads) { %>
@@ -31,4 +37,10 @@
             </div>
         </div>
     </div>
-</section>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script>
+        setInterval(function() {
+            window.location.reload();
+        }, 60000);
+    </script>
+</body>

@@ -6,10 +6,12 @@
     
     <!----======== CSS ======== -->
     <link rel="stylesheet" href="/css/style_new.css">
+
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="/css/fa.min.css" rel="stylesheet" />
+
     <link href="/css/tabcolor.css" rel="stylesheet"/>
-    <!-- СНЕЖООООООЧЕК -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -76,7 +78,7 @@
                 <li class="nav-linka">
                     <a href="/ads/">
                         <i class='bx bx-bell icon'></i>
-                        <% if (session.loggedin && session.noread > 0) { %>
+                        <% if (session.noread > 0) { %>
                             <span class="position-absolute top-40 start-30 translate-middle badge rounded-pill bg-danger" style="margin-left:40px"> <%= session.noread %> </span>
                         <% } %>
                         <span class="text nav-text">Уведомления</span>
@@ -124,7 +126,7 @@
 
             <div class="bottom-content">
                 <li class="nav-linka">
-                    <a href="http://www.localhost:5173">
+                    <a href="http://localhost:5173/">
                         <i class='bx bx-cast icon'></i>
                         <span class="text nav-text">Просмотр</span>
                     </a>

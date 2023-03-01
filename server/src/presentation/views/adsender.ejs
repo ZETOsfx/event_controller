@@ -15,25 +15,32 @@
                 
                 <ul class="list-group">
                   <% if (ads) { for (var i in ads) { %>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <% if (ads[i].personal === null || ads[i].personal === session.username) { %>
+                        <li class="list-group-item <%= ads[i].personal === session.username ? 'list-group-item-info' : '' %> d-flex justify-content-between align-items-center">
 
-                      <div class="ms-2 me-auto">
-                        <div class="fw">
-                          <% if (ads[i].translate) { %> ★ <% } %>
-                          <strong> <%= ads[i].name %> </strong> <small>(до <%= ads[i].timeOfLife %>) <i> <%= ads[i].author %> </i></small> 
-                        </div>
-                        <%= ads[i].comment %> 
-                      </div>
+                          <div class="ms-2 me-auto">
+                            <div class="fw">
+                              <% if (ads[i].translate) { %> ★ <% } %>
+                              <strong> <%= ads[i].name %> </strong> <small>(
+                                      <% if (ads[i].timeOfLife === '9999-01-01') { %>
+                                          Актуально: бессрочно
+                                      <% } else { %>
+                                          Актуально до: <%= ads[i].timeOfLife %>
+                                      <% } %>
+                                      ) <i> <%= ads[i].author %> </i></small>
+                            </div>
+                            <%= ads[i].comment %>
+                          </div>
 
-                      <% if (session.loggedin && ((session.role === 'admin') || (session.role === 'moder') || (session.role === 'adsender'))) { %>
-                        <form action="/ads/del" method="post">
-                          <span class="badge">
-                            <button name="id" type="submit" value="<%= ads[i].id%>" class="btn btn-outline-danger btn-sm">Удалить</button>
-                          </span>
-                        </form>
-                      <% } %>
-                    </li>
-                  <% } } %>
+                          <% if ((session.loggedin && ((session.role === 'admin') || (session.role === 'moder') || (session.role === 'adsender'))) || ads[i].personal === session.username) { %>
+                            <form action="/ads/del" method="post">
+                              <span class="badge">
+                                <button name="id" type="submit" value="<%= ads[i].id%>" class="btn btn-outline-danger btn-sm">Удалить</button>
+                              </span>
+                            </form>
+                          <% } %>
+                        </li>
+                  <% } } } %>
                 </ul>
 
                 <% if (session.loggedin && ((session.role === 'admin') || (session.role === 'moder') || (session.role === 'adsender'))) { %>

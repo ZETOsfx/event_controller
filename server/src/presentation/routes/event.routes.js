@@ -1,14 +1,12 @@
-const Router = require('express')
-const router = new Router()
-const EventController = require('../controller/event.controller')
+const Router = require('express');
+const router = new Router();
+const EventController = require('../controller/event.controller');
 
-const path = require('path');
 const express = require("express");
 
     // Разрешение к использованию директории для хранения общих файлов + парсинг страницы
 router.use(express.json());
-router.use(express.urlencoded({ extended: true })); 
-router.use(express.static(path.join(__dirname, '../public')));
+router.use(express.urlencoded({ extended: true }));
 
     // Загрузка страницы (на которую будет подставлен интерфейс)
 router.get('/editor', EventController.getEvents);      
@@ -24,12 +22,12 @@ router.put('/addtmp', EventController.createTemplate);
 router.delete('/deltmp', EventController.deleteTemplate);
     // Отправить группу шаблонов на модерацию
 router.put('/send', EventController.sendTemplate);
-    
 
+
+// Выдача списка событий на трансляцию
+router.get('/json', EventController.getEventsFormatJSON);
     // Чтение логов
 router.get('/logview', EventController.logRead);
-    // Выдача списка событий на трансляцию
-router.get('/json', EventController.getEventsFormatJSON);
 
 
-module.exports = router
+module.exports = router;

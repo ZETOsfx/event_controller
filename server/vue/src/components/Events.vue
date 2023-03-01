@@ -1,5 +1,4 @@
 <template>
-  <link href="/css/fa.min.css" rel="stylesheet" />
   <div class="intro">
     <!-- Группировка toasts --> 
     <div class="toast-container bottom-0 end-0 p-3">
@@ -54,164 +53,172 @@
       InfoToast.show();
     </script> -->
 
+    <!--Группировка модалки-->
+    <!-- Modal for Save -->
+    <div class="modal fade" id="ModalSave" tabindex="-1" aria-hidden="true"  >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">Подтверждение сохранения</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Вы собираетесь сохранить изменения в шаблоне "{{ tmpName }}". <br> Вы уверены?
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button class="btn btn-success" href="#" @click="saveChanges" onclick="location.reload(); return;">Сохранить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Delete -->
+    <div class="modal fade" id="ModalDelete" tabindex="-1" aria-hidden="true"  >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">Подтверждение удаления</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Вы собираетесь удалить шаблон "{{ tmpName }}". <br> Вы уверены?
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button @click="delTmp(tmpName)" onclick="location.reload(); return;" class="btn btn-danger">Удалить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Send -->
+    <div class="modal fade" id="SendModerModal" tabindex="-1" data-bs-backdrop="static">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5"> Отправить форму на модерацию </h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="recipient-name" class="col-form-label">Название:</label>
+                <input v-model="nameProg" type="text" class="form-control" id="recipient-name" placeholder="Заголовок трансляции"/>
+              </div>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label">Комментарий:</label>
+                <textarea v-model="commProg" class="form-control" id="message-text" placeholder="Не обязательно"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+
+            <div v-if="!specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
+              Пары:
+              <select v-model="studProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
+                <option value="-" selected>- Нет изменений -</option>
+                <option v-for="tmp in tmpList" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+              </select>
+            </div>
+            <div v-if="!specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
+              Перерыв:
+              <select v-model="breakProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
+                <option value="-" selected>- Нет изменений -</option>
+                <option v-for="tmp in tmpList" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+              </select>
+            </div>
+            <div v-if="!specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
+              Обед:
+              <select v-model="lunchProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
+                <option value="-" selected>- Нет изменений -</option>
+                <option v-for="tmp in tmpList" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+              </select>
+            </div>
+            <div v-if="specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
+              Особый:
+              <select v-model="studProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
+                <option value="-" selected>- Нет изменений -</option>
+                <option v-for="tmp in tmpList" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+              </select>
+            </div>
+            <div class="d-flex w-100 justify-content-between gap-1">
+              <select v-model="screenProg" class="form-select" aria-label="Default select example">
+                <option selected value="1">Кафедра К3 - основной</option>
+              </select>
+              <input v-model="dateProg" id="startDate" class="form-control" type="date" />
+            </div>
+            <div class="d-flex w-100 justify-content-between align-items-center">
+              <div class="form-check form-switch">
+                <input v-model="specProg" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Особое расписание</label>
+              </div>
+              <div>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"> Отмена </button>
+                <button @click="sendTemplate()" type="button" class="btn btn-success ms-2"> Отправить </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
     <div class="container">
       <h6 class="text p-0 mt-4"> Работа с трансляцией </h6>
+
       <div class="content">
-          <div style="margin-right: 0">
-            <div class="d-flex justify-content-between">
-                <div class="input-group">
-                  <!-- v-for="tmp in this.tmpList" -->
-                    <select v-model="tmpName" class="form-select" id="inputGroupSelect04">
-                        <option value="-" selected>- Выберите -</option>
-                        <option v-for="tmp in tmpList" v-bind:value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                    </select>
-                    <button @click="getTmp(tmpName)" class="btn btn-outline-secondary" type="button">Открыть</button>
-                </div>
+        <div style="margin-right: 0">
 
-                <div class="d-flex justify-content-end ms-2">
-                    <div v-if="canEdit || isAuthor" class="btn-group w-auto" role="group">
-                        <!-- Button trigger Save modal -->
-                        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#ModalSave" >Сохранить</button>
-                        <!-- Button trigger Delete modal -->
-                        <button v-if="isAuthor" type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#ModalDelete" >Удалить</button>
-                    </div>
-                    <!-- Button trigger Send modal -->
-                    <button type="button" class="btn btn-success ms-2 w-auto" @click="sendForm()"> Отправить </button>
-                </div>
-            </div>
-            
-            <div class="input-group mt-2">
-                <input v-model="name" id="name" name="name" type="text" class="form-control" placeholder="Имя нового шаблона">
-                <button @click="addTmp(name, 'empty', [])" class="btn btn-outline-secondary" type="button">Создать пустой</button>
-                <button @click="addTmp(name, 'default', [])" class="btn btn-outline-secondary" type="button">Создать по умолчанию</button>
-                <button @click="addTmp(name, 'copy', this.events)" class="btn btn-outline-secondary" type="button">Создать копию</button>
-            </div>
+          <div class="d-flex justify-content-between">
+              <div class="input-group">
+                <!-- v-for="tmp in this.tmpList" -->
+                  <select v-model="tmpName" class="form-select" id="inputGroupSelect04">
+                      <option value="-" selected>- Выберите -</option>
+                      <option v-for="tmp in tmpList" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+                  </select>
+                  <button @click="getTmp(tmpName)" class="btn btn-outline-secondary" type="button">Открыть</button>
+              </div>
 
-            <!-- Modal for Save -->
-            <div class="modal fade" id="ModalSave" tabindex="-1" aria-hidden="true"  >
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5">Подтверждение сохранения</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            Вы собираетесь сохранить изменения в шаблоне "{{ tmpName }}". <br> Вы уверены?
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                            <button class="btn btn-success" href="#" @click="saveChanges" onclick="location.reload(); return;">Сохранить</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+              <div class="d-flex justify-content-end ms-2">
+                  <div v-if="canEdit || isAuthor" class="btn-group w-auto" role="group">
+                      <!-- Button trigger Save modal -->
+                      <button type="button" class="btn btn-outline-success"  @click="checkIssues">Сохранить</button>
+                      <!-- Button trigger Delete modal -->
+                      <button v-if="isAuthor" type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#ModalDelete" >Удалить</button>
+                  </div>
+                  <!-- Button trigger Send modal -->
+                  <button type="button" class="btn btn-success ms-2 w-auto" @click="sendForm()"> Отправить </button>
+              </div>
+          </div>
 
-            <!-- Modal for Delete -->
-            <div class="modal fade" id="ModalDelete" tabindex="-1" aria-hidden="true"  >
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5">Подтверждение удаления</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            Вы собираетесь удалить шаблон "{{ tmpName }}". <br> Вы уверены?
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                            <button @click="delTmp(tmpName)" onclick="location.reload(); return;" class="btn btn-danger">Удалить</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-          
-          <!-- SWITCHS -->
+          <div class="input-group mt-2">
+              <input v-model="name" id="name" name="name" type="text" class="form-control" placeholder="Имя нового шаблона">
+              <button @click="addTmp(name, 'empty', [])" class="btn btn-outline-secondary" type="button">Создать пустой</button>
+              <button @click="addTmp(name, 'default', [])" class="btn btn-outline-secondary" type="button">Создать по умолчанию</button>
+              <button @click="addTmp(name, 'copy', this.events)" class="btn btn-outline-secondary" type="button">Создать копию</button>
+          </div>
+
+          <!-- SWITCHES -->
           <div v-if="isGet" class="d-flex w-100 justify-content-start align-items-center gap-3 mt-1">
-              <!-- SWITCH - Видимость -->
-              <div v-if="isAuthor" class="form-check form-switch mt-1">
-                  <input class="form-check-input" type="checkbox" role="switch" v-model="canView" v-bind:checked="canView">
-                  <label class="form-check-label" for="flexSwitchCheckDefault">Разрешить просматривать другим</label>
-              </div>
-              <!-- SWITCH - Реактирование -->
-              <div v-if="canView && isAuthor" class="form-check form-switch mt-1">
-                  <input class="form-check-input" type="checkbox" role="switch" v-model="canEdit" v-bind:checked="canEdit">
-                  <label class="form-check-label" for="flexSwitchCheckDefault">Разрешить редактировать другим</label>
-              </div>
-          </div>
+            <!-- SWITCH - Видимость -->
+            <div v-if="isAuthor" class="form-check form-switch mt-1">
+                <input class="form-check-input" type="checkbox" role="switch" v-model="canView" :checked="canView">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Разрешить просматривать другим</label>
+            </div>
+            <!-- SWITCH - Реактирование -->
+            <div v-if="canView && isAuthor" class="form-check form-switch mt-1">
+                <input class="form-check-input" type="checkbox" role="switch" v-model="canEdit" :checked="canEdit">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Разрешить редактировать другим</label>
+            </div>
+        </div>
+        </div>
+
       </div>
-      
-      <!-- Modal for Send -->
-      <div class="modal fade" id="SendModerModal" tabindex="-1" data-bs-backdrop="static">
-          <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                      <h1 class="modal-title fs-5"> Отправить форму на модерацию </h1>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                  <form>
-                      <div class="mb-3">
-                          <label for="recipient-name" class="col-form-label">Название:</label>
-                          <input v-model="nameProg" type="text" class="form-control" id="recipient-name" placeholder="Заголовок трансляции"/>
-                      </div>
-                      <div class="mb-3">
-                          <label for="message-text" class="col-form-label">Комментарий:</label>
-                          <textarea v-model="commProg" class="form-control" id="message-text" placeholder="Не обязательно"></textarea>
-                      </div>
-                  </form>
-                  </div>
-                  <div class="modal-footer">
-                       
-                      <div v-if="!specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
-                          Пары: 
-                          <select v-model="studProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
-                              <option value="-" selected>- Нет изменений -</option>
-                              <option v-for="tmp in tmpList" v-bind:value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                          </select>
-                      </div>
-                      <div v-if="!specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
-                          Перерыв: 
-                          <select v-model="breakProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
-                              <option value="-" selected>- Нет изменений -</option>
-                              <option v-for="tmp in tmpList" v-bind:value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                          </select>
-                      </div>
-                        <div v-if="!specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
-                            Обед: 
-                            <select v-model="lunchProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
-                                <option value="-" selected>- Нет изменений -</option>
-                                <option v-for="tmp in tmpList" v-bind:value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                            </select>
-                        </div>
-                        <div v-if="specProg" class="d-flex w-100 justify-content-between align-items-center gap-1">
-                            Особый: 
-                            <select v-model="studProg" class="form-select form-select-sm w-75" aria-label=".form-select-sm example">
-                                <option value="-" selected>- Нет изменений -</option>
-                                <option v-for="tmp in tmpList" v-bind:value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                            </select>
-                        </div>
-                      <div class="d-flex w-100 justify-content-between gap-1">
-                          <select v-model="screenProg" class="form-select" aria-label="Default select example">
-                              <option selected value="1">Кафедра К3 - основной</option>
-                          </select>
-                          <input v-model="dateProg" id="startDate" class="form-control" type="date" />
-                      </div>
-                      <div class="d-flex w-100 justify-content-between align-items-center">
-                          <div class="form-check form-switch">
-                              <input v-model="specProg" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                              <label class="form-check-label" for="flexSwitchCheckDefault">Особое расписание</label>
-                          </div>
-                          <div>       
-                              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"> Отмена </button>
-                              <button @click="sendTemplate()" type="button" class="btn btn-success ms-2"> Отправить </button>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-      </div>
+
       <div v-if="isGet" class="content">
+
         <div class="row gx-3 gy-2 align-items-center">
           <div class="col-sm-3">
             <p class="text_mini">Наименование события</p>
@@ -230,7 +237,7 @@
           </div>
         </div>
 
-          <div v-for="(event, index) in events" class="row gx-3 gy-2 align-items-center p-1">
+        <div v-for="(event, index) in events" class="row gx-3 gy-2 align-items-center p-1">
             <div v-if="!editForm[index].isDeleted" class="col-sm-3">
               <label class="visually-hidden" for="specificSizeInputName1">Name</label>
               <input v-model="event.name" type="text" class="form-control" id="specificSizeInputName1" placeholder="Имя"
@@ -271,38 +278,46 @@
             </div>
           </div>
 
-          <div v-if="canEdit || isAuthor" class="row gx-3 gy-2 align-items-center p-1">
-            <div class="col-sm-3">
-              <label class="visually-hidden" for="specificSizeInputName">Name</label>
-              <input v-model="addForm.name" type="text" class="form-control" id="specificSizeInputName" placeholder="Имя" required>
-            </div>
-
-            <div class="col-sm-2">
-              <label class="visually-hidden" for="specificSizeInputGroupUsername3">Username</label>
-              <input v-model="addForm.src" type="text" class="form-control" id="specificSizeInputGroupUsername3" placeholder="Ссылка" required>
-            </div>
-
-            <div class="col-sm-2">
-              <label class="visually-hidden" for="specificSizeSelect">Preference</label>
-              <select v-model="addForm.type" class="form-select" id="specificSizeSelect">
-                <option value="0">Изображение</option>
-                <option value="1">WEB-форма</option>
-                <option value="2">Видео</option>
-              </select>
-            </div>
-
-            <div class="col-sm-1">
-              <label class="visually-hidden" for="specificSizeInputGroupUsername">Username</label>
-              <input v-model="addForm.time" type="number" class="form-control" id="specificSizeInputGroupUsername" placeholder="Время в сек" required>
-            </div>
-
-            <div class="col-auto">
-              <button @click="addEvent" type="submit" class="btn btn-success">Добавить</button>
-            </div>
-
+        <!--ФОРМА ДОБАВЛЕНИЯ!!!!!!!!!-->
+        <div v-if="canEdit || isAuthor" class="row gx-3 gy-2 align-items-center p-1">
+          <div class="col-sm-3">
+            <label class="visually-hidden" for="specificSizeInputName">Name</label>
+            <input v-model="addForm.name" type="text" class="form-control" id="specificSizeInputName" placeholder="Имя" required>
           </div>
-          <br>
+
+<!--            &lt;!&ndash;@change="onFileChange"&ndash;&gt;-->
+<!--          <div v-if="Number(addForm.type) === 0 || Number(addForm.type) === 2" class="col-sm-2">-->
+<!--            <input class="form-control" type="file" id="fileName" ref="file">-->
+<!--          </div>-->
+
+<!--          v-if="Number(addForm.type) === 1"-->
+          <div class="col-sm-2">
+            <label class="visually-hidden" for="specificSizeInputGroupUsername3">Username</label>
+            <input v-model="addForm.src" type="text" class="form-control" id="specificSizeInputGroupUsername3" placeholder="Ссылка" required>
+          </div>
+
+          <div class="col-sm-2">
+            <label class="visually-hidden" for="specificSizeSelect">Preference</label>
+            <select v-model="addForm.type" class="form-select" id="specificSizeSelect">
+              <option value="0" selected>Изображение</option>
+              <option value="1">WEB-форма</option>
+              <option value="2">Видео</option>
+            </select>
+          </div>
+
+          <div class="col-sm-1">
+            <label class="visually-hidden" for="specificSizeInputGroupUsername">Username</label>
+            <input v-model="addForm.time" type="number" class="form-control" id="specificSizeInputGroupUsername" placeholder="Время в сек" required>
+          </div>
+
+          <div class="col-auto">
+            <button @click="addEvent()" type="submit" class="btn btn-success">Добавить</button>
+          </div>
+
+        </div>
+        <br>
       </div>
+
     </div>
   </div>
 </template>
@@ -347,8 +362,9 @@ export default {
       successMessage: null, // Текст успешной операции
       errorMessage: null,   // Текст ошибки
 
-      currentTime: null
+      currentTime: null,
       // ${process.env.API_URL}
+      format: /[`!@#$%^&*()+=\[\]{};':"\\|,.<>\/?~]/
     }
   },
   methods: {
@@ -424,6 +440,14 @@ export default {
     },
     async addTmp(name, tmp_type, events) {
       await this.getTime();
+
+      if (this.format.test(name)) {
+        this.errorMessage = 'Имя шаблона не должно содержать специальных символов: \n' + this.format;
+        this.errCallback.show();
+        return;
+      }
+
+
       if (this.name.length > 30) {
         this.errorMessage = 'Полученно слишком длинное наименование шаблона. \nПроверьте, пожалуйста, правильность введённых данных \nРазрешено символов: 30. Получено:' + this.name.length ;
         this.errCallback.show();
@@ -478,9 +502,10 @@ export default {
         this.errCallback.show();
       }
     },
-    async addEvent() {
+    async addEvent(file) {
       await this.getTime();
-      if (this.addForm.name !== "" &&  this.addForm.src !== "") {
+
+      if (this.addForm.name !== "" && (this.addForm.src !== "")) {
         if (this.addForm.name.length > 50) {
             // Слишком длинное имя
           this.errorMessage = 'Полученно слишком длинное наименование события. \nПроверьте, пожалуйста, правильность введённых данных. \nРазрешено символов: 50. Получено: ' + this.addForm.name.length;
@@ -488,11 +513,25 @@ export default {
         } else if (!Number.isFinite(this.addForm.time) || this.addForm.time < 0) {
           this.errorMessage = 'Полчено некорректное значение времени при добавлении события. \n Проверьте, пожалуйста, правильность введённых данных.';
           this.errCallback.show();
+        } else if (this.format.test(this.addForm.name)) {
+          this.errorMessage = 'Имя события не должно содержать специальных символов: \n' + this.format;
+          this.errCallback.show();
+        } else if (this.addForm.name.trim() === '') {
+          this.errorMessage = 'Имя события не должно состоять только из пробелов.';
+          this.errCallback.show();
         } else {
-            // correct
-          this.editForm.push({ isDisabled: true });
-          this.events.push(this.addForm);
-          this.addForm = { name: "", src: "", type: 0, time: 15, isActive: true }
+          // ----- CORRECT PROCESSING ----
+
+            // if (Number(this.addForm.type) === 1) {
+            //     // Обработка файла загрузки
+            //
+            // }
+
+            // Обработка URL-адреса
+            this.editForm.push({isDisabled: true});
+            this.events.push(this.addForm);
+            this.addForm = {name: "", src: "", type: 0, time: 15, isActive: true}
+
         }
       } else {
           // Нулевые поля для события 
@@ -504,7 +543,34 @@ export default {
       this.editForm[index].isDisabled = false;
     },
     async saveEvent(index) {
-      this.editForm[index].isDisabled = true;
+      await this.getTime();
+      if (this.events[index].src === '') {
+        this.errorMessage = 'Не определен ресурс события. ';
+        this.errCallback.show();
+      } else if (this.format.test(this.events[index].name)) {
+        this.errorMessage = 'Имя события не должно содержать специальных символов: \n' + this.format;
+        this.errCallback.show();
+      } else if (this.events[index].name === '') {
+        this.errorMessage = 'Не определено имя события.';
+        this.errCallback.show();
+      } else if (this.events[index].name.trim() === '') {
+        this.errorMessage = 'Имя события не должно состоять только из пробелов.';
+        this.errCallback.show();
+      } else if (this.events[index].time === '') {
+        this.errorMessage = 'Не определено время.';
+        this.errCallback.show();
+      } else if (Number(this.events[index].time) <= 0) {
+        this.errorMessage = 'Время не может быть отрицательным.';
+        this.errCallback.show();
+      } else if (Number(this.events[index].type) !== 0 && Number(this.events[index].type) !== 1 && Number(this.events[index].type) !== 2) {
+        this.errorMessage = 'System: обнаружена попытка сломать форму. Уведомление о ваших действиях направлено администратору.';
+        this.errCallback.show();
+      } else if (this.events[index].name.length <= 50) {
+        this.editForm[index].isDisabled = true;
+      }  else {
+        this.errorMessage = 'Полученно слишком длинное наименование события. \nРазрешено символов: 50. Получено: ' + this.events[index].name.length;
+        this.errCallback.show();
+      }
     },
     async delEvent(index) {
       this.editForm[index].isDisabled = true;
@@ -512,7 +578,20 @@ export default {
       this.events.splice(index, 1);
       this.editForm.splice(index, 1);
     },
+    async checkIssues() {
+      await this.getTime();
+      for (let form in this.editForm) {
+        if (!this.editForm[form].isDisabled) {
+          this.errorMessage = 'Невозможно сохранить изменения, пока идет редактирование.';
+          this.errCallback.show();
+          return;
+        }
+      }
+      let saveCallback = new bootstrap.Modal(document.getElementById('ModalSave'));
+      saveCallback.show();
+    },
     async saveChanges() {
+      await this.getTime();
       if (this.events[0] === undefined) {
         this.events[0] = {
           name: "empty", src: "empty", type: 0, time: 1, isActive: true
@@ -565,7 +644,6 @@ export default {
         this.breakProg = '-'
         this.lunchProg = '-'
         this.screenProg = '1'
-        this.specProg = false
       }
     },
     async moveEvent(move, index) {
@@ -585,6 +663,31 @@ export default {
       */
       _arr[_param[1]] = _arr.splice(_param[0],1, _arr[_param[1]])[0]
     },
+
+    // ---- FILE UPLOAD METHODS ----
+    onFileChange(e) {
+      let files = e.target.files || e.dataTransfer.files;
+      if (!files.length)
+        return;
+      this.createImage(files[0]);
+    },
+    createImage(file) {
+      let image = new Image();
+      let reader = new FileReader();
+      let vm = this;
+
+      reader.onload = (e) => {
+        vm.image = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      console.log(reader.result);
+      this.addForm.src = reader
+    },
+    removeImage: function (e) {
+      this.addForm.src = '';
+    },
+    // ------ END FILE UPLOAD ------
+
     options(method, body) {
       return {
         method: method,
