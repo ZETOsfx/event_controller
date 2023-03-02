@@ -6,8 +6,6 @@ const db = require('../../../config/db_connect');    // Database connection
 const path = require('path');
 const createPath = (page) => path.resolve(__dirname, '../views', `${page}.ejs`);
 
-const event_type = ['image', 'form', 'video'];
-
 class ModerController {
 
         // Рендеринг страницы
@@ -27,18 +25,6 @@ class ModerController {
         if (req.session.role === 'admin' || req.session.role === 'moder') {
             const data = await db('events_req_form').select('*').orderBy('date', 'asc').orderBy('id', 'desc');
             res.status(200).json(data);
-        } else {
-            const title = "Error";
-            res.status(404).render(createPath('error'), { title });
-            res.end();
-        }
-    }    
-        // Активный шаблон из программы на трансляции
-    async getActive(req, res) {
-        if (req.session.role === 'admin' || req.session.role === 'moder') {
-            const data = await db('events_req_form').select('*').where('isActive', true);
-            res.status(200).json(data); 
-
         } else {
             const title = "Error";
             res.status(404).render(createPath('error'), { title });
@@ -260,42 +246,55 @@ class ModerController {
 
             } else {
                     // ЗАПРОС ПО СТАНДАРТНОМУ ШАБЛОНУ
-                let copy_tmp_lunch, copy_tmp_lesson, copy_tmp_breaktime,
+                let copy_tmp_lunch,
+                    copy_tmp_lesson,
+                    copy_tmp_breaktime,
                     events_lesson = '-',
                     events_breaktime = '-',
                     events_lunch = '-';
 
-                console.log(obj);
-                console.log(_req[0]);
+                    // Находится ли шаблон, который хочет просмотреть модератор, в резервной копии?
+                const example = [_req[0].lesson, _req[0].breaktime, _req[0].lunch];
+                let less_reserve = false, break_reserve = false, lunch_reserve = false;
+
+                for (let i in example) {
+                    if (example[i] === obj.lesson) {
+                        less_reserve = true;
+                    } else if (example[i] === obj.breaktime) {
+                        break_reserve = true;
+                    } else if (example[i] === obj.lunch) {
+                        lunch_reserve = true;
+                    }
+                }
 
                 if (obj.lesson !== '-') {
-                    if (obj.lesson === _req[0].lesson) {
-                        // Отправленный редактором
-                        copy_tmp_lesson = await db('tmp_acc').where('from', _req[0].id).where('name', _req[0].lesson).select('*');
-                        events_lesson = await db('events_tmp_acc').where('tmpid', copy_tmp_lesson[0].id).select('*');
+                    if (less_reserve) {
+                            // Отправленный редактором
+                        copy_tmp_lesson = await db('tmp_acc').where('from', _req[0].id).where('name', obj.lesson).select('*');
+                        events_lesson = await db('events_tmp_acc').where('tmpid', copy_tmp_lesson[0].id).select('*').orderBy('order');
                     } else {
-                        // Выбранный модератором
+                            // Выбранный модератором
                         copy_tmp_lesson = await db('tmp').where('name', obj.lesson).select('*');
-                        events_lesson = await db('events_tmp').where('tmpid', copy_tmp_lesson[0].id).select('*');
+                        events_lesson = await db('events_tmp').where('tmpid', copy_tmp_lesson[0].id).select('*').orderBy('order');
                     }
                 }
 
                 if (obj.breaktime !== '-') {
-                    if (obj.breaktime === _req[0].breaktime) {
-                        // Отправленный редактором
-                        copy_tmp_breaktime = await db('tmp_acc').where('from', _req[0].id).where('name', _req[0].breaktime).select('*');
-                        events_lesson = await db('events_tmp_acc').where('tmpid', copy_tmp_breaktime[0].id).select('*');
+                    if (break_reserve) {
+                            // Отправленный редактором
+                        copy_tmp_breaktime = await db('tmp_acc').where('from', _req[0].id).where('name', obj.breaktime).select('*');
+                        events_breaktime = await db('events_tmp_acc').where('tmpid', copy_tmp_breaktime[0].id).select('*');
                     } else {
                         // Выбранный модератором
                         copy_tmp_breaktime = await db('tmp').where('name', obj.breaktime).select('*');
-                        events_lesson = await db('events_tmp').where('tmpid', copy_tmp_breaktime[0].id).select('*');
+                        events_breaktime = await db('events_tmp').where('tmpid', copy_tmp_breaktime[0].id).select('*');
                     }
                 }
 
                 if (obj.lunch !== '-') {
-                    if (obj.lunch === _req[0].lunch) {
-                        // Отправленный редактором
-                        copy_tmp_lunch = await db('tmp_acc').where('from', _req[0].id).where('name', _req[0].lunch).select('*');
+                    if (lunch_reserve) {
+                            // Отправленный редактором
+                        copy_tmp_lunch = await db('tmp_acc').where('from', _req[0].id).where('name', obj.lunch).select('*');
                         events_lunch = await db('events_tmp_acc').where('tmpid', copy_tmp_lunch[0].id).select('*');
                     } else {
                         // Выбранный модератором
@@ -304,14 +303,6 @@ class ModerController {
                     }
                 }
 
-                console.log({
-                    data: {
-                        lesson:     events_lesson,
-                        breaktime:  events_breaktime,
-                        lunch:      events_lunch
-                    }
-                });
-                
                 res.json({
                     type: obj.isspecial,
                     data: {

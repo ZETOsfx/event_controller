@@ -11,8 +11,6 @@ router.use(express.urlencoded({ extended: true }));
 router.get('/', ModerController.onLoad);
     // Получение списка запросов на утверждение
 router.get('/requests', ModerController.getRequests);
-    // Активня программа трансляции (возможна к редактированию в таблице 'events')
-router.get('/active', ModerController.getActive);
     // Список всех шаблонов, которые может задействовать модератор для редактирования запросов
 router.patch('/alltmp', ModerController.getTemplates);
     // Переключить процесс

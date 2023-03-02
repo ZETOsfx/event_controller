@@ -14,9 +14,29 @@
     src: local('ru'), url('../fonts/MusticaPro-SemiBold.otf') format('otf'); /* Chrome 26+, Opera 23+, Firefox 39+ */
 }
 
+/* Это ТЁМНАЯ тема */
 :root {
     /* ===== Colors ===== */
-    --body-color: #18191a;
+    
+    --body-color:
+    /* Внизу */
+    linear-gradient(180deg, rgba(58, 59, 60, 0.01), 
+    rgb(24, 25, 26) 85%),
+    /* СЛЕВА вверху */
+    radial-gradient(ellipse at top left, 
+    rgba(25, 135, 84, 0.5), transparent 60%),
+    /* СПРАВА вверху */
+    radial-gradient(ellipse at top right, 
+    rgba(34, 139, 34, 0.5), transparent 60%),
+    /* СПРАВА центр */
+    radial-gradient(ellipse at center right, 
+    rgba(93, 161, 48, 0.5), transparent 50%), 
+    /* СЛЕВА центр */
+    radial-gradient(ellipse at center left, 
+    rgba(0, 128, 0, 0.5), transparent 50%);
+
+
+    /* --body-color: #18191a; */
     --sidebar-color: #242526;
     --primary-color: #3a3b3c;
     --primary-color-light: #3a3b3c;
@@ -31,7 +51,7 @@
 
 body{
     min-height: 100vh;
-    background-color: var(--body-color);
+    background: var(--body-color);
     transition: var(--tran-05);
 }
 
@@ -40,8 +60,24 @@ body{
     color: #fff;
 }
 
-body.dark{
-    --body-color: #E4E9F7;
+/* Это СВЕТЛАЯ тема */
+body.dark{ 
+    --body-color:
+    /* Внизу */
+    linear-gradient(180deg, rgba(241, 240, 240, 0.01), 
+    rgb(241, 240, 240) 85%),
+    /* СЛЕВА вверху */
+    radial-gradient(ellipse at top left, 
+    rgba(118, 255, 122, 0.5), transparent 50%),
+    /* СПРАВА вверху */
+    radial-gradient(ellipse at top right, 
+    rgba(0, 240, 154, 0.5), transparent 50%),
+    /* СПРАВА центр */
+    radial-gradient(ellipse at center right, 
+    rgba(11, 218, 81, 0.5), transparent 50%), 
+    /* СЛЕВА центр */
+    radial-gradient(ellipse at center left, 
+    rgba(76, 183, 154, 0.5), transparent 50%);
     --sidebar-color: #FFF;
     --primary-color: #198754;
     --primary-color-light: #F6F5FF;
@@ -297,7 +333,7 @@ body.dark .switch::before{
     width: calc(100% - 270px);
     height: 100vh;
     /* height: 100%; */
-    background-color: var(--body-color);
+    /* background-color: var(--body-color); */
     background-size: 100%;
     transition: var(--tran-05);
 }
@@ -336,7 +372,6 @@ body.dark .home .text{
 .intro {
     color: var(--text-color);
     width: 100%;
-    background-color: var(--body-color);
 }
 
 .content {

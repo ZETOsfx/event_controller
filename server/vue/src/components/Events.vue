@@ -502,7 +502,7 @@ export default {
         this.errCallback.show();
       }
     },
-    async addEvent(file) {
+    async addEvent() {
       await this.getTime();
 
       if (this.addForm.name !== "" && (this.addForm.src !== "")) {
@@ -615,7 +615,7 @@ export default {
         this.lunchProg = '-';
       }
 
-      let responce = await fetch(`/event/send`, this.options('PUT', {
+      let response = await fetch(`/event/send`, this.options('PUT', {
           name: this.nameProg, 
           comment: this.commProg, 
           stud_name: this.studProg, 
@@ -627,7 +627,7 @@ export default {
         }
       ));
       
-      this.errorMessage = (await responce.json()).message;
+      this.errorMessage = (await response.json()).message;
         // Ошибка при некорректных полях
       if (this.errorMessage !== '-') {
         this.errCallback.show();
@@ -635,9 +635,9 @@ export default {
           // Окошко "отправлено успешно"
         this.successMessage = 'Успешно отправлено на модерацию.';
         this.succCallback.show();
-          // Скрыть модалку отправки
+          // Скрыть мочалку отправки
         this.sendCallback.hide();
-          // Зануление для не дублиования при нескольких запросах подряд 
+          // Обнуление для не дублирования при нескольких запросах подряд
         this.nameProg = ''
         this.commProg = ''
         this.studProg = '-'
@@ -665,27 +665,27 @@ export default {
     },
 
     // ---- FILE UPLOAD METHODS ----
-    onFileChange(e) {
-      let files = e.target.files || e.dataTransfer.files;
-      if (!files.length)
-        return;
-      this.createImage(files[0]);
-    },
-    createImage(file) {
-      let image = new Image();
-      let reader = new FileReader();
-      let vm = this;
-
-      reader.onload = (e) => {
-        vm.image = e.target.result;
-      };
-      reader.readAsDataURL(file);
-      console.log(reader.result);
-      this.addForm.src = reader
-    },
-    removeImage: function (e) {
-      this.addForm.src = '';
-    },
+    // onFileChange(e) {
+    //   let files = e.target.files || e.dataTransfer.files;
+    //   if (!files.length)
+    //     return;
+    //   this.createImage(files[0]);
+    // },
+    // createImage(file) {
+    //   let image = new Image();
+    //   let reader = new FileReader();
+    //   let vm = this;
+    //
+    //   reader.onload = (e) => {
+    //     vm.image = e.target.result;
+    //   };
+    //   reader.readAsDataURL(file);
+    //   console.log(reader.result);
+    //   this.addForm.src = reader
+    // },
+    // removeImage: function (e) {
+    //   this.addForm.src = '';
+    // },
     // ------ END FILE UPLOAD ------
 
     options(method, body) {

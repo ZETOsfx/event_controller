@@ -297,8 +297,8 @@ class EventController {
     
     async sendTemplate(req, res) {
         if (req.session.loggedin && (req.session.role === 'admin' || req.session.role === 'editor' || req.session.role === 'moder')) {
-            const { name, stud_name, break_name, lunch_name, screen, date, isSpec = false } = req?.body;
-            let { comment } = req?.body;
+            const { name, screen, date, isSpec = false } = req?.body;
+            let { comment, stud_name, break_name, lunch_name } = req?.body;
 
             if (comment === undefined)
                 comment = '';
@@ -317,8 +317,8 @@ class EventController {
                             isspecial: true,                    // Метка специального расписания
                             author: req.session.username,       // Автор запроса на установку
                             lesson: stud_name,                  // Программа трансляции - Время занятий
-                            breaktime: '-',                     // Программа трансляции - Время перерыва между занятиями
-                            lunch: '-',                         // Программа трансляции - Время обеда
+                            breaktime: stud_name,                     // Программа трансляции - Время перерыва между занятиями
+                            lunch: stud_name,                         // Программа трансляции - Время обеда
                             screen: screen,                     // Экран, на который необходимо установить трансляцию
                             isAccepted: false                   // Утвержден ли запрос (утверждает модератор)
                         }).returning('*');
@@ -339,6 +339,77 @@ class EventController {
                         res.json({ message: 'Некорректные параметры отправки шаблона специального типа. Проверьте правильность заполения полей в форме отправки.'});
                 } else {
                     if (name && (stud_name !== '-' || break_name !== '-' || lunch_name !== '-') && screen && date) {
+                        let originTemp = [];
+                        let active;
+
+                        if (stud_name !== '-') {
+                            const stud_tmp = await db('tmp').select('*').where('name', stud_name);
+                            originTemp.push(stud_tmp[0]);
+                        } else {
+                                // если оставлять без изменений, подстановка будет происходить из активной трансляции
+                            active = await db('events_req_form').select('*').where('isActive', true);
+                            if (!active[0]) {
+                                res.json({ message: 'Нет активных шаблонов. Поля не могут быть пустыми.' });
+                                res.end();
+                                return;
+                            }
+
+                            if (active[0].lesson !== '-') {
+                                const stud_tmp = await db('tmp').select('*').where('name', active[0].lesson);
+                                stud_name = active[0].lesson;
+                                originTemp.push(stud_tmp[0]);
+                            } else {
+                                res.json({ message: 'В активном шаблоне отсутствует программа на ПАРЫ.\nПожалуйста, заполните данное поле.' });
+                                res.end();
+                                return;
+                            }
+                        }
+
+                        if (break_name !== '-') {
+                            const break_tmp = await db('tmp').select('*').where('name', break_name);
+                            originTemp.push(break_tmp[0]);
+                        } else {
+                            active = await db('events_req_form').select('*').where('isActive', true);
+                            if (!active[0]) {
+                                res.json({ message: 'Нет активных шаблонов. Поля не могут быть пустыми.' });
+                                res.end();
+                                return;
+                            }
+
+                            if (active[0].breaktime !== '-') {
+                                let break_tmp = await db('tmp').select('*').where('name', active[0].breaktime);
+                                break_name = active[0].breaktime;
+                                originTemp.push(break_tmp[0]);
+                            } else {
+                                res.json({ message: 'В активном шаблоне отсутствует программа на ПЕРЕРЫВ.\nПожалуйста, заполните данное поле.' });
+                                res.end();
+                                return;
+                            }
+                        }
+
+                        if (lunch_name !== '-') {
+                            const lunch_tmp = await db('tmp').select('*').where('name', lunch_name);
+                            originTemp.push(lunch_tmp[0]);
+                        } else {
+                            active = await db('events_req_form').select('*').where('isActive', true);
+                            if (!active[0]) {
+                                res.json({ message: 'Нет активных шаблонов. Поля не могут быть пустыми.' });
+                                res.end();
+                                return;
+                            }
+
+                            if (active[0].lunch !== '-') {
+                                let lunch_tmp = await db('tmp').select('*').where('name', active[0].lunch);
+                                lunch_name = active[0].lunch;
+                                originTemp.push(lunch_tmp[0]);
+                            } else {
+                                res.status(400).json({ message: 'В активном шаблоне отсутствует программа на ОБЕД.\nПожалуйста, заполните данное поле.' });
+                                res.end();
+                                return;
+                            }
+                        }
+
+                        // Если все окей, заполняем поле запроса
                         const reeq = await db('events_req_form').insert({
                             name: name,                         // Заголовок запроса на модерацию
                             comment: comment,                   // Комментарий редактора для модератора
@@ -351,29 +422,6 @@ class EventController {
                             screen: screen,                     // Экран, на который необходимо установить трансляцию
                             isAccepted: false                   // Утвержден ли запрос (утверждает модератор)
                         }).returning('*');
-
-                        let originTemp = [];
-
-                        if (stud_name !== '-') {
-                            const stud_tmp = await db('tmp').select('*').where('name', stud_name);
-                            originTemp.push(stud_tmp[0]);
-                        } else {
-                            // Резервная копия + подстановка Я ТУТ!!!
-                        }
-
-                        if (break_name !== '-') {
-                            const break_tmp = await db('tmp').select('*').where('name', break_name);
-                            originTemp.push(break_tmp[0]);
-                        } else {
-
-                        }
-
-                        if (lunch_name !== '-') {
-                            const lunch_tmp = await db('tmp').select('*').where('name', lunch_name);
-                            originTemp.push(lunch_tmp[0]);
-                        } else {
-
-                        }
 
                         for (let j in originTemp) {
                                 // Все события указанных при отправке шаблонов
@@ -389,7 +437,7 @@ class EventController {
                         }
                         res.json({ message : '-'});
                     } else {
-                        res.json({ message: 'Некорректные параметры отправки шаблона стандартного типа. Проверьте правильность заполения полей в форме отправки.'});
+                        res.json({ message: 'Некорректные параметры отправки шаблона стандартного типа. Проверьте правильность заполнения полей в форме отправки.'});
                     }
                 }
             }

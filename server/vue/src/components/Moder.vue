@@ -558,7 +558,7 @@
                     <div v-if="req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === this.username.name)" class="btn-group">
                       <button @click="endProcess(req)" type="button" class="btn btn-outline-secondary"> Завершить обработку </button>
                       <!-- Button trigger Details modal -->
-                      <button @click="buttonOpen(index, this.reqList)"  type="button" class="btn btn-outline-info">Просмотр</button>
+                      <button @click="buttonOpen(req)"  type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger Deny modal -->
                       <button @click="triggerModal('deny', req, index)" type="button" class="btn btn-outline-danger"> Отклонить</button>
                       <!-- Button trigger Confirm modal -->
@@ -608,7 +608,7 @@
                     <div v-if="req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === username)" class="btn-group">
                       <button @click="endProcess(req)" type="button" class="btn btn-outline-secondary"> Завершить обработку </button>
                       <!-- Button trigger Details modal -->
-                      <button @click="buttonOpen(index, this.reqList)" type="button" class="btn btn-outline-info">Просмотр</button>
+                      <button @click="buttonOpen(req)" type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger Deny modal -->
                       <button @click="triggerModal('deny', req, index)" type="button" class="btn btn-outline-danger"> Отклонить</button>
                       <!-- Button trigger Confirm modal -->
@@ -629,114 +629,113 @@
           <!-- АКТИВНОЕ ОТОБРАЖЕНИЕ (ЧТО ИГРАЕТ СЕГОДНЯ) -->
           <div class="tab-pane fade" id="pills-display" role="tabpanel" aria-labelledby="pills-display-tab" tabindex="0">
 
-            <div class="row row-cols-1 row-cols-lg-2 g-3">
-              <!-- ЦИКЛ ДЛЯ ВЫВОДА ЭКРАНОВ ТУТ -->
-              <!-- ПЛАШКА ДЛЯ 3х ШАБЛОНОВ -->
-              <div class="col-sm-6 mb-3">
-                <div class="card h-100">
-                  <div class="card-header">
-                    <h5 class="card-title m-0"> Кафедра К3 - основной</h5>
-                  </div>
-                  <div class="card-body">
-                    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                      <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" id="progress_workdays"> </div>
+            <div v-for="(screen) in this.activeTmp" class="row row-cols-1 row-cols-lg-2 g-3">
+                <!-- ПЛАШКА ДЛЯ 3х ШАБЛОНОВ -->
+                <div v-if="!screen.isspecial" class="col-sm-6 mb-3">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <h5 class="card-title m-0">Кафедра К3 - основной</h5>
                     </div>
-                    <div class="d-flex w-100 justify-content-between align-items-center"> 
-                        <div id="time_workdays"></div>
-                        <div id="nameInfo_workdays"></div>
+                    <div class="card-body">
+                      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" id="progress_workdays"> </div>
+                      </div>
+                      <div class="d-flex w-100 justify-content-between align-items-center">
+                          <div id="time_workdays"></div>
+                          <div id="nameInfo_workdays"></div>
+                      </div>
+                      <ul class="list-group display mt-1">
+                      <!-- Шаблон для будних дней -->
+                      <li class="list-group-item">
+                          <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                              Пары:
+                              <select class="form-select form-select-sm w-75" disabled>
+                                  <option selected>{{ screen.lesson }}</option>
+                                  <option value="1">По умолчанию (web-forms)</option>
+                                  <option value="2">По умолчанию (новости)</option>
+                              </select>
+                          </div>
+                          <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                              Перерыв:
+                              <select class="form-select form-select-sm w-75" disabled>
+                                  <option selected>{{ screen.breaktime }}</option>
+                                  <option value="1">По умолчанию (web-forms)</option>
+                                  <option value="2">По умолчанию (новости)</option>
+                              </select>
+                          </div>
+                          <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                              Обед:
+                              <select class="form-select form-select-sm w-75" disabled>
+                                  <option selected>{{ screen.lunch }}</option>
+                                  <option value="1">По умолчанию (web-forms)</option>
+                                  <option value="2">По умолчанию (новости)</option>
+                              </select>
+                          </div>
+                          <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
+                              <div class="form-check form-switch">
+                                  <input :value="screen.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault1" disabled/>
+                                  <label class="form-check-label" for="flexSwitchCheckDefault1"> Особое расписание </label>
+                              </div>
+                          </div>
+                      <!-- КОНЕЦ: Шаблон для будних дней -->
+                      </li>
+                    </ul>
                     </div>
-                    <ul class="list-group display mt-1">
-                    <!-- Шаблон для будних дней -->
-                    <li class="list-group-item">
-                        <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                            Пары:
-                            <select class="form-select form-select-sm w-75" disabled>
-                                <option selected>Пары (@admin)</option>
-                                <option value="1">По умолчанию (web-forms)</option>
-                                <option value="2">По умолчанию (новости)</option>
-                            </select>
-                        </div>
-                        <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                            Перерыв:
-                            <select class="form-select form-select-sm w-75" disabled>
-                                <option selected>Перерыв_1 (@brigade5)</option>
-                                <option value="1">По умолчанию (web-forms)</option>
-                                <option value="2">По умолчанию (новости)</option>
-                            </select>
-                        </div>
-                        <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                            Обед:
-                            <select class="form-select form-select-sm w-75" disabled>
-                                <option selected>Обед_2 (@brigade5)</option>
-                                <option value="1">По умолчанию (web-forms)</option>
-                                <option value="2">По умолчанию (новости)</option>
-                            </select>
-                        </div>
-                        <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault1" disabled/>
-                                <label class="form-check-label" for="flexSwitchCheckDefault1"> Особое расписание </label>
-                            </div>
-                        </div>
-                    <!-- КОНЕЦ: Шаблон для будних дней -->
-                    </li>
-                  </ul>
-                  </div>
-                  <div class="card-footer text-end">
-                    <div class="d-flex w-100 justify-content-between align-items-center">
-                      <!-- Button trigger Delete follow modal -->
-                      <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button>
-                      <button type="button" class="btn btn-outline-success">Редактировать</button>
+                    <div class="card-footer text-end">
+                      <div class="d-flex w-100 justify-content-between align-items-center">
+                        <!-- Button trigger Delete follow modal -->
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button>
+                        <button type="button" class="btn btn-outline-success">Редактировать</button>
+                      </div>
                     </div>
                   </div>
+                <!-- КОНЕЦ: ПЛАШКА ДЛЯ 3х ШАБЛОНОВ -->
                 </div>
-              <!-- КОНЕЦ: ПЛАШКА ДЛЯ 3х ШАБЛОНОВ -->
-              </div>
-              <!-- ПЛАШКА ДЛЯ ОСОБОГО ДНЯ -->
-              <div class="col-sm-6 mb-3">
-                <div class="card h-100">
-                  <div class="card-header">
-                    <h5 class="card-title m-0"> МФ TV HALL</h5>
-                  </div>
-                  <div class="card-body">
-                    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                      <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" id="progress_special"> </div>
+                <!-- ПЛАШКА ДЛЯ ОСОБОГО ДНЯ -->
+                <div v-if="screen.isspecial" class="col-sm-6 mb-3">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <h5 class="card-title m-0">Кафедра К3 - основной</h5>
                     </div>
-                    <div class="d-flex w-100 justify-content-between align-items-center"> 
-                        <div id="time_special"></div>
-                        <div id="nameInfo_special"></div>
+                    <div class="card-body">
+                      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" id="progress_special"> </div>
+                      </div>
+                      <div class="d-flex w-100 justify-content-between align-items-center">
+                          <div id="time_special"></div>
+                          <div id="nameInfo_special"></div>
+                      </div>
+                      <ul class="list-group display mt-1">
+                      <!-- Шаблон для дня по особому расписанию -->
+                      <li class="list-group-item">
+                          <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                              Шаблон:
+                              <select class="form-select form-select-sm w-75" disabled>
+                                  <option selected>{{ screen.lesson }}</option>
+                                  <option value="1">По умолчанию (web-forms)</option>
+                                  <option value="2">По умолчанию (новости)</option>
+                              </select>
+                          </div>
+                          <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
+                              <div class="form-check form-switch">
+                                  <input :value="screen.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault2" disabled checked/>
+                                  <label class="form-check-label" for="flexSwitchCheckDefault2"> Особое расписание </label>
+                              </div>
+                          </div>
+                      <!-- КОНЕЦ: Шаблон для дня по особому расписанию -->
+                      </li>
+                    </ul>
                     </div>
-                    <ul class="list-group display mt-1">
-                    <!-- Шаблон для дня по особому расписанию -->
-                    <li class="list-group-item">
-                        <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                            Шаблон:
-                            <select class="form-select form-select-sm w-75" disabled>
-                                <option selected>Пары (@admin)</option>
-                                <option value="1">По умолчанию (web-forms)</option>
-                                <option value="2">По умолчанию (новости)</option>
-                            </select>
-                        </div>
-                        <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault2" disabled checked/>
-                                <label class="form-check-label" for="flexSwitchCheckDefault2"> Особое расписание </label>
-                            </div>
-                        </div>
-                    <!-- КОНЕЦ: Шаблон для дня по особому расписанию -->
-                    </li>
-                  </ul>
-                  </div>
-                  <div class="card-footer text-end">
-                    <div class="d-flex w-100 justify-content-between align-items-center">
-                      <!-- Button trigger Delete follow modal -->
-                      <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button>
-                      <button type="button" class="btn btn-outline-success">Редактировать</button>
+                    <div class="card-footer text-end">
+                      <div class="d-flex w-100 justify-content-between align-items-center">
+                        <!-- Button trigger Delete follow modal -->
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button>
+                        <button type="button" class="btn btn-outline-success">Редактировать</button>
+                      </div>
                     </div>
                   </div>
+                <!-- КОНЕЦ: ПЛАШКА ДЛЯ ОСОБОГО ДНЯ -->
                 </div>
-              <!-- КОНЕЦ: ПЛАШКА ДЛЯ ОСОБОГО ДНЯ -->
-              </div>
               <!-- КОНЕЦ ЦИКЛА ЭКРАНОВ -->
             </div>
 
@@ -807,7 +806,7 @@
                     <div v-if="acc.isStartedProcess && (this.userProcess === acc.name || acc?.whoAccept === this.username.name)" class="btn-group">
                       <button @click="endProcess(acc)" type="button" class="btn btn-outline-secondary"> Завершить обработку </button>
                       <!-- Button trigger Details modal -->
-                      <button @click="buttonOpen(index, this.acceptedList)" type="button" class="btn btn-outline-info">Просмотр</button>
+                      <button @click="buttonOpen(acc)" type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger Deny modal -->
                       <button @click="triggerModal('delete', acc, index)" type="button" class="btn btn-outline-danger"> Удалить </button>
                       <!-- Button trigger Confirm modal -->
@@ -856,7 +855,7 @@
                     <div v-if="acc.isStartedProcess && (this.userProcess === acc.name || acc?.whoAccept === username)" class="btn-group">
                       <button @click="endProcess(acc)" type="button" class="btn btn-outline-secondary"> Завершить обработку </button>
                       <!-- Button trigger Details modal -->
-                      <button @click="buttonOpen(index, this.acceptedList)" type="button" class="btn btn-outline-info">Просмотр</button>
+                      <button @click="buttonOpen(acc)" type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger Deny modal -->
                       <button @click="triggerModal('delete', acc, index)" type="button" class="btn btn-outline-danger"> Удалить </button>
                       <!-- Button trigger Confirm modal -->
@@ -932,7 +931,7 @@ export default {
     }
   },
   methods: {
-    async ProgressBar() {
+    async ProgressBar(active) {
       let Lessons = [
         [30000, 31200, 'Перерыв'],                                    // Перерыв, с 8:20
         [31200, 36900, '1-ая пара'],                                  // 1ая пара, с 8:40
@@ -949,7 +948,7 @@ export default {
         [28800, 64800, 'Особое расписание'],                          // с 8:00 до 18:00
       ];
 
-      function getPercent(curSec, bSpecial) {
+      async function getPercent(curSec, bSpecial) {
         let percent;
         if (!bSpecial) {                                              // Если БУДНИ
           for (let i in Lessons) {                                    // Бежим по заданным промежуткам
@@ -987,28 +986,31 @@ export default {
         return  (today.getHours() * 60 + today.getMinutes()) * 60 + today.getSeconds();
       }
 
-      function checkTime(i) {                                         // Преобразовать время к презентабельному виду
+      async function checkTime(i) {                                         // Преобразовать время к презентабельному виду
         if (i < 10) { i = '0' + i; }                                  // Если < 10 то добавить перед цифрой "0" для красоты
         return i;
       }
 
-      function startTime() {
+      async function startTime(active) {
         let today = new Date();
-        let actualTime = checkTime(today.getHours()) + ':' + checkTime(today.getMinutes()) + ':' + checkTime(today.getSeconds());
+        let actualTime = await checkTime(today.getHours()) + ':' + await checkTime(today.getMinutes()) + ':' + await checkTime(today.getSeconds());
 
-        // Будни
-        document.getElementById('time_workdays').innerHTML = actualTime;
-        document.getElementById('progress_workdays').style['width'] = getPercent(WhatTime(), false) + '%';
-
-        // Специальное расписание
-        document.getElementById('time_special').innerHTML = actualTime;
-        document.getElementById('progress_special').style['width'] = getPercent(WhatTime(), true) + '%';
-
-        setTimeout(function () { startTime();}, 1000);
+        for (let i in active) {
+          if (!active[i].isspecial) {
+            // Будни
+            document.getElementById('time_workdays').innerHTML = actualTime;
+            document.getElementById('progress_workdays').style['width'] = await getPercent(WhatTime(), false) + '%';
+          } else {
+            // Специальное расписание
+            document.getElementById('time_special').innerHTML = actualTime;
+            document.getElementById('progress_special').style['width'] = await getPercent(WhatTime(), true) + '%';
+          }
+        }
+        setTimeout(async function () { await startTime(active); }, 1000);
       }
-      startTime();
+      await startTime(this.activeTmp);
 
-      function refreshAt(hours, minutes, seconds) {
+      async function refreshAt(hours, minutes, seconds, active) {
         let now = new Date();
         let then = new Date();
 
@@ -1019,22 +1021,34 @@ export default {
           then.setDate(now.getDate() + 1);
         }
         then.setHours(hours); then.setMinutes(minutes); then.setSeconds(seconds);
-        // Установка тайм-аута до следующего вызова
+          // Установка тайм-аута до следующего вызова
         let timeout = then.getTime() - now.getTime();
-        setTimeout(function () {
-          // Подстановка надписи в элемент при обновления надписи
-          document.getElementById('nameInfo_workdays').innerHTML = getName(WhatTime(),false);
-          document.getElementById('nameInfo_special').innerHTML = getName(WhatTime(),true);
+        setTimeout(async function () {
+            // Подстановка надписи в элемент при обновлении надписи
+          for (let i in active) {
+            if (!active[i].isspecial) {
+              document.getElementById('nameInfo_workdays').innerHTML = await getName(WhatTime(),false);
+            } else {
+              document.getElementById('nameInfo_special').innerHTML = await getName(WhatTime(),true);
+            }
+          }
         }, timeout);
       }
-      // Проверка времени для обновления надписи
-      refreshAt(8, 20, 3); refreshAt(8, 40, 3); refreshAt(10, 15, 3); refreshAt(10, 25, 3);
-      refreshAt(12, 0, 3); refreshAt(12, 50, 3); refreshAt(14, 25, 3); refreshAt(14, 35, 3);
-      refreshAt(16, 10, 3); refreshAt(16, 20, 3); refreshAt(17, 55, 3);
+        // Проверка времени для обновления надписи
+      await refreshAt(8, 20, 3, this.activeTmp); await refreshAt(8, 40, 3, this.activeTmp); await refreshAt(10, 15, 3, this.activeTmp); await refreshAt(10, 25, 3, this.activeTmp);
+      await refreshAt(12, 0, 3, this.activeTmp); await refreshAt(12, 50, 3, this.activeTmp); await refreshAt(14, 25, 3, this.activeTmp); await refreshAt(14, 35, 3, this.activeTmp);
+      await refreshAt(16, 10, 3, this.activeTmp); await refreshAt(16, 20, 3, this.activeTmp); await refreshAt(17, 55, 3, this.activeTmp);
 
-      // Подстановка надписи в элемент при загрузке страницы
-      document.getElementById('nameInfo_workdays').innerHTML = getName(WhatTime(),false);
-      document.getElementById('nameInfo_special').innerHTML = getName(WhatTime(),true);
+        // Подстановка надписи в элемент при загрузке страницы
+      setTimeout(async function () {
+        for (let i in active) {
+          if (!active[i].isspecial) {
+            document.getElementById('nameInfo_workdays').innerHTML = await getName(WhatTime(), false);
+          } else {
+            document.getElementById('nameInfo_special').innerHTML = await getName(WhatTime(), true);
+          }
+        }
+      }, 1000);
     },
 
       // Получить время
@@ -1057,7 +1071,6 @@ export default {
       this.confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
       // save
       // delete
-      await this.getActive();
 
       this.succCallback = new bootstrap.Toast(document.getElementById("ToastSuccess"));
       this.errCallback = new bootstrap.Toast(document.getElementById("ToastError"));
@@ -1077,6 +1090,10 @@ export default {
       this.allFormList = (await response.json());     // [ { ... , isAccess: true }, { ... , isAccess: false }, ... ]
 
       for (let i in this.allFormList) {
+        if (this.allFormList[i].isActive) {
+          this.activeTmp.push(this.allFormList[i]);
+          continue;
+        }
         if (this.allFormList[i].isAccepted === true) {
           this.acceptedList.push(this.allFormList[i]);
         } else {
@@ -1092,11 +1109,6 @@ export default {
           }
         }
       }
-    },
-      // Активная программа трансляции
-    async getActive() {
-      let response = await fetch(`/moder/active`, {});
-      this.activeTmp = (await response.json());
     },
 
       // Переключение процесса обработки собитя <NAME> на противоположный (ALL)
@@ -1179,7 +1191,6 @@ export default {
         this.errCallback.show();
       }
     },
-
       // Отклонение расписания
     async buttonDeny(struct) {
       await this.getTime();
@@ -1196,7 +1207,7 @@ export default {
         this.errCallback.show();
       }
     },
-        // Отклонение расписания
+      // Отклонение расписания
     async buttonDelete(struct) {
       await this.getTime();
       if (this.userProcess !== '') {
@@ -1212,7 +1223,7 @@ export default {
         this.errCallback.show();
       }
     },
-        // Отклонение расписания
+      // Отклонение расписания
     async buttonSave(struct) {
       await this.getTime();
       if (this.userProcess !== '') {
@@ -1230,9 +1241,9 @@ export default {
     },
 
       // Details
-    async buttonOpen(index, list) {
-      console.log(list[index].breaktime);
-      let response = await fetch(`/moder/details`, this.options('PATCH', { obj: list[index] }));
+    async buttonOpen(obj) {
+      console.log(obj);
+      let response = await fetch(`/moder/details`, this.options('PATCH', { obj: obj }));
       this.eventList = (await response.json());
 
       if (this.eventList.data.lesson !== '-')
@@ -1260,7 +1271,6 @@ export default {
       else {
         console.log('Форма сломана. Я уже сообщил администратору.');
       }
-
     },
 
       // Save template corrections
@@ -1364,11 +1374,12 @@ export default {
       }
     },
   },
+
       // Действие при загрузке страницы
   mounted() {
     this.getRequests(); // Получение списка всех запросов для последующей отрисовки
     this.username = window.user;
-    this.ProgressBar(); // Запускаем бесконечную залупу
+    this.ProgressBar(this.activeTmp); // Запускаем бесконечную залупу
 
     window.addEventListener('beforeunload', async function (event) {
       await fetch(`/moder/endprocess`, {
