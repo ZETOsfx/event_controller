@@ -67,7 +67,7 @@
 
                 <% if (session.loggedin && ((session.role === 'admin') || (session.role === 'editor') || (session.role === 'moder'))) { %>
                     <li class="nav-linka">
-                        <a href="/event/editor">
+                        <a href="/event/">
                             <i class='bx bx-edit-alt icon'></i>
                             <span class="text nav-text">Редактор</span>
                         </a>
@@ -113,7 +113,7 @@
                     </li>
                 <% } %>
 
-                <% if (session.loggedin && session.role === 'editor12') { %>
+                <% if (session.loggedin) { %>
                     <li class="nav-linka">
                         <a href="/guide">
                             <i class='bx bx-info-circle icon'></i>

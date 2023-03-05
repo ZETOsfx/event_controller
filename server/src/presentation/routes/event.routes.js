@@ -9,7 +9,7 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
     // Загрузка страницы (на которую будет подставлен интерфейс)
-router.get('/editor', EventController.getEvents);      
+router.get('/', EventController.getEvents);
     // Получение списка шаблонов
 router.get('/alltmp', EventController.allTemplates); 
     // Открытие шаблона

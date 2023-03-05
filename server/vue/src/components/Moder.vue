@@ -195,14 +195,14 @@
                       </button>
                       <template v-if="!editFormB[index].isDisabled">
                         <button @click="saveEvent(index, this.editFormB)" class="btn btn-secondary"> Сохранить </button>
-                        <button @click="delEvent(index, this.editFormB, this.eventList.data.lesson)" class="btn btn-outline-danger ms-1"> Удалить </button>
+                        <button @click="delEvent(index, this.editFormB, this.eventList.data.breaktime)" class="btn btn-outline-danger ms-1"> Удалить </button>
                       </template>
                     </div>
                     <div v-if="!editFormB[index].isDeleted && editFormB[index].isDisabled" class="col-auto">
-                      <button @click="moveEvent('up', index, this.eventList.data.lesson)" class="btn btn-outline-warning"><i class="fa-solid fa-up"></i></button>
+                      <button @click="moveEvent('up', index, this.eventList.data.breaktime)" class="btn btn-outline-warning"><i class="fa-solid fa-up"></i></button>
                     </div>
                     <div v-if="!editFormB[index].isDeleted && editFormB[index].isDisabled" class="col-auto">
-                      <button @click="moveEvent('down', index, this.eventList.data.lesson)" class="btn btn-outline-warning"><i class="fa-solid fa-down"></i></button>
+                      <button @click="moveEvent('down', index, this.eventList.data.breaktime)" class="btn btn-outline-warning"><i class="fa-solid fa-down"></i></button>
                     </div>
                   </div>
                   <!--ФОРМА ДОБАВЛЕНИЯ!!!!!!!!!-->
@@ -280,14 +280,14 @@
                       </button>
                       <template v-if="!editFormL[index].isDisabled">
                         <button @click="saveEvent(index, this.editFormL)" class="btn btn-secondary"> Сохранить </button>
-                        <button @click="delEvent(index, this.editFormL, this.eventList.data.lesson)" class="btn btn-outline-danger ms-1"> Удалить </button>
+                        <button @click="delEvent(index, this.editFormL, this.eventList.data.lunch)" class="btn btn-outline-danger ms-1"> Удалить </button>
                       </template>
                     </div>
                     <div v-if="!editFormL[index].isDeleted && editFormL[index].isDisabled" class="col-auto">
-                      <button @click="moveEvent('up', index, this.eventList.data.lesson)" class="btn btn-outline-warning"><i class="fa-solid fa-up"></i></button>
+                      <button @click="moveEvent('up', index, this.eventList.data.lunch)" class="btn btn-outline-warning"><i class="fa-solid fa-up"></i></button>
                     </div>
                     <div v-if="!editFormL[index].isDeleted && editFormL[index].isDisabled" class="col-auto">
-                      <button @click="moveEvent('down', index, this.eventList.data.lesson)" class="btn btn-outline-warning"><i class="fa-solid fa-down"></i></button>
+                      <button @click="moveEvent('down', index, this.eventList.data.lunch)" class="btn btn-outline-warning"><i class="fa-solid fa-down"></i></button>
                     </div>
                   </div>
                   <!--ФОРМА ДОБАВЛЕНИЯ!!!!!!!!!-->
@@ -480,6 +480,43 @@
       </div>
     </div>
 
+    <!-- Modal for Delete -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabela">Подтверждение</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Вы собираетесь удалить шаблон "{{ this.forModal.name }}" из очереди. Вы уверены?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button @click="buttonDelete(this.forModal)" type="button" class="btn btn-danger">Удалить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Save -->
+    <div class="modal fade" id="saveModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabela">Подтверждение</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Вы собираетесь сохранить изменения в шаблоне "{{ this.forModal.name }}" из очереди. Вы уверены?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button @click="buttonSave(this.forModal)" type="button" class="btn btn-danger">Сохранить</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="container">
       <h6 class="text p-0 mt-4"> Управление отображением </h6>
@@ -556,7 +593,7 @@
                         Обработать
                     </button>
                     <div v-if="req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === this.username.name)" class="btn-group">
-                      <button @click="endProcess(req)" type="button" class="btn btn-outline-secondary"> Завершить обработку </button>
+                      <button @click="endProcess(req)" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
                       <!-- Button trigger Details modal -->
                       <button @click="buttonOpen(req)"  type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger Deny modal -->
@@ -606,7 +643,7 @@
                         Обработать
                     </button>
                     <div v-if="req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === username)" class="btn-group">
-                      <button @click="endProcess(req)" type="button" class="btn btn-outline-secondary"> Завершить обработку </button>
+                      <button @click="endProcess(req)" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
                       <!-- Button trigger Details modal -->
                       <button @click="buttonOpen(req)" type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger Deny modal -->
@@ -804,7 +841,7 @@
                         Обработать
                     </button>
                     <div v-if="acc.isStartedProcess && (this.userProcess === acc.name || acc?.whoAccept === this.username.name)" class="btn-group">
-                      <button @click="endProcess(acc)" type="button" class="btn btn-outline-secondary"> Завершить обработку </button>
+                      <button @click="endProcess(acc)" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
                       <!-- Button trigger Details modal -->
                       <button @click="buttonOpen(acc)" type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger Deny modal -->
@@ -853,7 +890,7 @@
                         Обработать
                     </button>
                     <div v-if="acc.isStartedProcess && (this.userProcess === acc.name || acc?.whoAccept === username)" class="btn-group">
-                      <button @click="endProcess(acc)" type="button" class="btn btn-outline-secondary"> Завершить обработку </button>
+                      <button @click="endProcess(acc)" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
                       <!-- Button trigger Details modal -->
                       <button @click="buttonOpen(acc)" type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger Deny modal -->
@@ -911,6 +948,10 @@ export default {
       errorMessage: null,     // Текст ошибки
 
       forModal: {
+        withChanges: false,
+        upd_less: [],
+        upd_break: [],
+        upd_lunch: [],
         name: '',     // NOT NULL
         obj: {},      // NOT NULL
         index: '',
@@ -1050,10 +1091,9 @@ export default {
         }
       }, 1000);
     },
-
       // Получить время
     async getTime() {
-      // Дата - время коллбека
+      // Дата - время callback
       let date_ob = new Date();
       let hour = date_ob.getHours();
       if (hour < 10) hour = "0" + hour;
@@ -1069,8 +1109,8 @@ export default {
       this.sendDetailSpecial = new bootstrap.Modal(document.getElementById('detailsSpecialModal'));
       this.denyModal = new bootstrap.Modal(document.getElementById('denyModal'));
       this.confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-      // save
-      // delete
+      this.saveModal = new bootstrap.Modal(document.getElementById('saveModal'));
+      this.deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
 
       this.succCallback = new bootstrap.Toast(document.getElementById("ToastSuccess"));
       this.errCallback = new bootstrap.Toast(document.getElementById("ToastError"));
@@ -1110,13 +1150,12 @@ export default {
         }
       }
     },
-
-      // Переключение процесса обработки собитя <NAME> на противоположный (ALL)
+      // Переключение процесса обработки события <NAME> на противоположный (ALL)
     async switchProcess(name) {
       await fetch(`/moder/switchprocess`, this.options('PATCH', { name: name }));
       // this.reqList[name].whoAccept = (await response.json()).whoAccept;
     },
-      // Начать процесс обработки (REQLIST)
+      // Начать процесс обработки
     async startProcess(obj) {
       await this.getTime();
       if (this.userProcess === '' && !obj.isStartedProcess) {
@@ -1136,14 +1175,14 @@ export default {
         this.errCallback.show();
       }
     },
-      // Завершить процесс обработки (REQLIST)
+      // Завершить процесс обработки
     async endProcess(obj) {
       obj.isStartedProcess = false;
       let name = obj.name;
       await this.switchProcess(name);
       this.userProcess = '';
     },
-
+      // Заагрить модалку
     async triggerModal(type, obj, index) {
       this.forModal.name = obj.name;
       this.forModal.obj = obj;
@@ -1167,12 +1206,20 @@ export default {
           // Угрозы
       }
     },
-
-      //  Утверждение расписания (REQLIST)
+      //  Утверждение расписания
     async buttonAccess(struct) {
       await this.getTime();
       if (this.userProcess !== '') {
-        let response = await fetch(`/moder/access`, this.options('PATCH', { obj_req: struct.obj, comment: struct.comment }));
+        if (struct.obj.isspecial) {
+          struct.obj.breaktime = struct.obj.lesson;
+          struct.obj.lunch = struct.obj.lesson;
+        }
+        let response;
+        if (struct.withChanges) {
+          response = await fetch(`/moder/access`, this.options('PATCH', { has_changes: struct.withChanges, obj_req: struct.obj, comment: struct.comment, upd_less: struct.upd_less, upd_lunch: struct.upd_lunch, upd_break: struct.upd_break }));
+        } else {
+          response = await fetch(`/moder/access`, this.options('PATCH', { obj_req: struct.obj, comment: struct.comment }));
+        }
         let message = (await response.json());
         if (message.message !== 'errdate') {
           this.reqList[struct.index].isStartedProcess = false;
@@ -1207,62 +1254,81 @@ export default {
         this.errCallback.show();
       }
     },
-      // Отклонение расписания
+      // Удаление шаблона трансляции из очереди
     async buttonDelete(struct) {
       await this.getTime();
       if (this.userProcess !== '') {
         // let response =
         await fetch(`/moder/deny`, this.options('PUT', { name: struct.name, comment: struct.comment }));
-        this.reqList.splice(struct.index, 1);
-        this.successMessage = 'Запрос "' + struct.name + '" был успешно отклонен.';
+        this.acceptedList.splice(struct.index, 1);
+        this.successMessage = 'Запрос "' + struct.name + '" был успешно удален.';
         this.succCallback.show();
-        this.denyModal.hide();
+        this.deleteModal.hide();
         this.userProcess = '';
       } else {
         this.errorMessage = 'Некорректный параметр. Начните обработку корректно.';
         this.errCallback.show();
       }
     },
-      // Отклонение расписания
+      // Сохранение изменений в шаблоне на очереди
     async buttonSave(struct) {
       await this.getTime();
       if (this.userProcess !== '') {
-        // let response =
-        await fetch(`/moder/deny`, this.options('PUT', { name: struct.name, comment: struct.comment }));
-        this.reqList.splice(struct.index, 1);
-        this.successMessage = 'Запрос "' + struct.name + '" был успешно отклонен.';
-        this.succCallback.show();
-        this.denyModal.hide();
-        this.userProcess = '';
+        if (struct.obj.isspecial) {
+          struct.obj.breaktime = struct.obj.lesson;
+          struct.obj.lunch = struct.obj.lesson;
+        }
+        if (struct.withChanges) {
+          response = await fetch(`/moder/access`, this.options('PATCH', { has_changes: struct.withChanges, obj_req: struct.obj, comment: struct.comment, upd_less: struct.upd_less, upd_lunch: struct.upd_lunch, upd_break: struct.upd_break }));
+        } else {
+          response = await fetch(`/moder/access`, this.options('PATCH', { obj_req: struct.obj, comment: struct.comment }));
+        }
+        let message = (await response.json());
+        if (message.message !== 'errdate') {
+          this.reqList[struct.index].isStartedProcess = false;
+          this.acceptedList.push(this.reqList[struct.index]);
+          this.reqList.splice(struct.index, 1);
+          this.successMessage = 'Запрос "' + struct.name + '" был успешно утвержден.';
+          this.succCallback.show();
+          this.confirmModal.hide();
+          this.userProcess = '';
+        } else {
+          this.errorMessage = 'Уже существует утвержденное событие на этот день.';
+          this.errCallback.show();
+        }
       } else {
         this.errorMessage = 'Некорректный параметр. Начните обработку корректно.';
         this.errCallback.show();
       }
     },
-
       // Details
     async buttonOpen(obj) {
-      console.log(obj);
-      let response = await fetch(`/moder/details`, this.options('PATCH', { obj: obj }));
-      this.eventList = (await response.json());
+      if (!this.forModal.withChanges) {
+        let response = await fetch(`/moder/details`, this.options('PATCH', { obj: obj }));
+        this.eventList = (await response.json());
 
-      if (this.eventList.data.lesson !== '-')
-        for (let i in this.eventList.data.lesson) {
-          if (!this.editFormS[i]) this.editFormS[i] = {}
-          this.editFormS[i].isDisabled = true;
-        }
+        this.editFormS = [];
+        this.editFormB = [];
+        this.editFormL = [];
 
-      if (this.eventList.data.breaktime !== '-')
-        for (let i in this.eventList.data.breaktime) {
-          if (!this.editFormB[i]) this.editFormB[i] = {}
-          this.editFormB[i].isDisabled = true;
-        }
+        if (this.eventList.data.lesson !== '-')
+          for (let i in this.eventList.data.lesson) {
+            if (!this.editFormS[i]) this.editFormS[i] = {}
+            this.editFormS[i].isDisabled = true;
+          }
 
-      if (this.eventList.data.lunch !== '-')
-        for (let i in this.eventList.data.lunch) {
-          if (!this.editFormL[i]) this.editFormL[i] = {}
-          this.editFormL[i].isDisabled = true;
-        }
+        if (this.eventList.data.breaktime !== '-')
+          for (let i in this.eventList.data.breaktime) {
+            if (!this.editFormB[i]) this.editFormB[i] = {}
+            this.editFormB[i].isDisabled = true;
+          }
+
+        if (this.eventList.data.lunch !== '-')
+          for (let i in this.eventList.data.lunch) {
+            if (!this.editFormL[i]) this.editFormL[i] = {}
+            this.editFormL[i].isDisabled = true;
+          }
+      }
 
       if (this.eventList.type === true)
         this.sendDetailSpecial.show();
@@ -1272,7 +1338,6 @@ export default {
         console.log('Форма сломана. Я уже сообщил администратору.');
       }
     },
-
       // Save template corrections
     async templateSave(index, list) {
 
@@ -1280,25 +1345,12 @@ export default {
         // 2. При внесении изменений в шаблон любого типа хотя бы в одной из форм должны быть события
         //    (невозможно сохранить, удалив все события из всех шаблонов, поскольку такой запрос нет смысла утверждать)
 
-      if (this.eventList.data && (this.editFormS[0] || this.editFormB[0] || this.editFormL[0])) {
-
-        // let response =
-            await fetch(`/moder/save`, this.options('PUT', {spec: [], obj: this.userProcess}));
-        // if ( special ... ; not special ... )
-
-        if (this.eventList.type === true)
-          this.sendDetailSpecial.hide();
-        else if (this.eventList.type === false)
-          this.sendDetailWorkdays.hide();
-        else {
-          console.log('Форма сломана. Я уже сообщил администратору.');
-        }
-
-        this.eventList = [];
-      } else {
-        // TOAST: нельзя сохранять пустой запрос (нарушение в логике работы)
+      if (this.eventList.data) {
+        this.forModal.withChanges = true;
+        this.forModal.upd_less = this.eventList.data.lesson;
+        this.forModal.upd_break = this.eventList.data.breaktime;
+        this.forModal.upd_lunch = this.eventList.data.lunch;
       }
-
     },
 
       // Работа со списками событий внутри шаблонов
@@ -1337,9 +1389,8 @@ export default {
     },
     async delEvent(index, form, data) {
       form[index].isDisabled = true;
-      form[index].isDeleted = true;
-      data.splice(index, 1);
       form.splice(index, 1);
+      data.splice(index, 1);
     },
     async editEvent(index, form) {
       form[index].isDisabled = false;

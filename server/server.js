@@ -96,8 +96,14 @@ app.get('/adscast', async (req, res) => {
 });
 
 app.get('/guide', (req, res) => {
-    const title = "Guide";
-    res.render(createPath('guide'), { title, session: req.session });
+    // if (req.session.loggedin) {
+        const title = "Guide";
+        res.render(createPath('guide'), { title, session: req.session });
+    // } else {
+    //     const title = "Error";
+    //     res.status(404).render(createPath('error'), { title });
+    // }
+    // res.end();
 });
 
 // app.get('/cast', (req, res) => {

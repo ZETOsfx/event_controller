@@ -52,6 +52,8 @@
 body{
     min-height: 100vh;
     background: var(--body-color);
+    background-repeat: no-repeat;
+    background-color: #18191a !important;
     transition: var(--tran-05);
 }
 
@@ -78,6 +80,8 @@ body.dark{
     /* СЛЕВА центр */
     radial-gradient(ellipse at center left, 
     rgba(76, 183, 154, 0.5), transparent 50%);
+    background-repeat: no-repeat;
+    background-color: #f1f0f0 !important;
     --sidebar-color: #FFF;
     --primary-color: #198754;
     --primary-color-light: #F6F5FF;

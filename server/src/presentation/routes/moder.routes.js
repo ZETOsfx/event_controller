@@ -21,8 +21,6 @@ router.patch('/access', ModerController.Access);
 router.put('/deny', ModerController.Deny);
     // Открыть выбранный в поле шаблон
 router.patch('/details', ModerController.Details);
-    // Сохранить изменения в шаблоне
-router.put('/save', ModerController.SaveTemp);
 
 router.put('/endprocess', ModerController.EndProcess);
 

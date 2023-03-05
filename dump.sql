@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 14.7 (Debian 14.7-1.pgdg110+1)
--- Dumped by pg_dump version 14.7 (Debian 14.7-1.pgdg110+1)
+-- Dumped by pg_dump version 14.7 (Homebrew)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -181,7 +181,7 @@ CREATE TABLE public.events_req_form (
     id integer NOT NULL,
     name character varying(30) NOT NULL,
     comment text,
-    date character varying(10) NOT NULL,
+    date character varying(10),
     isspecial boolean NOT NULL,
     author character varying(20) NOT NULL,
     lesson character varying(30) NOT NULL,
@@ -609,8 +609,8 @@ ALTER TABLE ONLY public.tokens ALTER COLUMN id SET DEFAULT nextval('public.token
 --
 
 COPY cron.job (jobid, schedule, command, nodename, nodeport, database, username, active, jobname) FROM stdin;
-6	01 00 * * *	DO $$ BEGIN\nUPDATE public.events_req_form\nSET "isActive" = false\nWHERE\n    "isActive" = true\n    AND "isAccepted" = true;\n\nUPDATE public.events_req_form\nSET "isActive" = true\nWHERE "date" = (\n        SELECT MAX("date")\n        FROM\n            public.events_req_form\n        WHERE (\n                to_date("date", 'YYYY-MM-DD') <= current_date\n            )\n    )\n    AND "isAccepted" = true;\n\nDELETE FROM\n    public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    to_date("date", 'YYYY-MM-DD') < to_date( (\n                            SELECT\n                                "date"\n                            FROM\n                                public.events_req_form\n                            WHERE\n                                "isActive" = true\n                        ),\n                        'YYYY-MM-DD'\n                    )\n                    AND "isAccepted" = true\n            )\n    );\n\nDELETE FROM public.tmp_acc\nWHERE "from" = (\n        SELECT "id"\n        FROM\n            public.events_req_form\n        WHERE\n            to_date("date", 'YYYY-MM-DD') < to_date( (\n                    SELECT\n                        "date"\n                    FROM\n                        public.events_req_form\n                    WHERE\n                        "isActive" = true\n                ),\n                'YYYY-MM-DD'\n            )\n            AND "isAccepted" = true\n    );\n\nDELETE FROM\n    public.events_req_form\nWHERE\n    to_date("date", 'YYYY-MM-DD') < to_date( (\n            SELECT "date"\n            FROM\n                public.events_req_form\n            WHERE\n                "isActive" = true\n        ),\n        'YYYY-MM-DD'\n    )\n    AND "isAccepted" = true;\n\nTRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lunch\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	localhost	5432	ecdb	alexander_perelight	t	Новый день
 12	50 12 * * *	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lesson\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	localhost	5432	ecdb	alexander_perelight	t	Пара 3
+6	01 00 * * *	DO $$ BEGIN\nUPDATE public.events_req_form\nSET "isActive" = false\nWHERE\n    "isActive" = true\n    AND "isAccepted" = true;\n\nUPDATE public.events_req_form\nSET "isActive" = true\nWHERE "date" = (\n        SELECT MAX("date")\n        FROM\n            public.events_req_form\n        WHERE (\n                to_date("date", 'YYYY-MM-DD') <= current_date\n            )\n    )\n    AND "isAccepted" = true;\n\nDELETE FROM\n    public.events_tmp_acc\nWHERE "tmpid" IN (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "from" IN (\n                SELECT outdated."id"\n                FROM\n                    public.events_req_form outdated\n                WHERE\n                    outdated."isAccepted" = true\n                    AND EXISTS (\n                        SELECT 1\n                        FROM\n                            public.events_req_form active\n                        WHERE\n                            active."isActive" = true\n                            AND to_date(active."date", 'YYYY-MM-DD') > to_date(outdated."date", 'YYYY.MM.DD')\n                    )\n            )\n    );\n\nDELETE FROM public.tmp_acc\nWHERE "from" = (\n        SELECT "id"\n        FROM\n            public.events_req_form\n        WHERE\n            to_date("date", 'YYYY-MM-DD') < to_date( (\n                    SELECT\n                        "date"\n                    FROM\n                        public.events_req_form\n                    WHERE\n                        "isActive" = true\n                ),\n                'YYYY-MM-DD'\n            )\n            AND "isAccepted" = true\n    );\n\nDELETE FROM\n    public.events_req_form\nWHERE\n    to_date("date", 'YYYY-MM-DD') < to_date( (\n            SELECT "date"\n            FROM\n                public.events_req_form\n            WHERE\n                "isActive" = true\n        ),\n        'YYYY-MM-DD'\n    )\n    AND "isAccepted" = true;\n\nTRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lunch\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	localhost	5432	ecdb	alexander_perelight	t	Новый день
 7	20 8 * * *	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	localhost	5432	ecdb	alexander_perelight	t	Перерыв перед парами
 8	40 8 * * *	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lesson\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	localhost	5432	ecdb	alexander_perelight	t	Пара 1
 9	10 16 * * *	  DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	localhost	5432	ecdb	alexander_perelight	t	Перерыв
@@ -636,7 +636,14 @@ COPY cron.job_run_details (jobid, runid, job_pid, database, username, command, s
 9	39	274	ecdb	alexander_perelight	  DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-02-28 16:40:20.061878+03	2023-02-28 16:40:20.076039+03
 26	38	273	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-02-28 16:40:20.067295+03	2023-02-28 16:40:20.086136+03
 17	41	277	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lunch\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-02-28 18:01:26.033123+03	2023-02-28 18:01:26.042239+03
+9	46	608	ecdb	alexander_perelight	  DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-01 16:10:00.011821+03	2023-03-01 16:10:00.021886+03
 16	40	275	ecdb	alexander_perelight	  DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lesson\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-02-28 16:40:20.068726+03	2023-02-28 16:40:20.100028+03
+14	44	395	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lesson\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-01 14:35:00.01253+03	2023-03-01 14:35:00.019595+03
+24	43	373	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-01 14:25:00.017753+03	2023-03-01 14:25:00.024473+03
+16	47	632	ecdb	alexander_perelight	  DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lesson\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-01 16:20:00.00912+03	2023-03-01 16:20:00.020402+03
+24	49	198	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-02 14:25:00.016619+03	2023-03-02 14:25:00.026524+03
+26	45	607	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-01 16:10:00.010705+03	2023-03-01 16:10:00.017987+03
+17	48	846	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lunch\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-01 17:55:00.009278+03	2023-03-01 17:55:00.015346+03
 9	33	488	ecdb	alexander_perelight	  DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-02-27 16:10:00.024606+03	2023-02-27 16:10:00.049837+03
 6	30	155	ecdb	alexander_perelight	DO $$\nBEGIN\nUPDATE public.events_req_form SET 'isActive' = false WHERE 'isActive' = true ;\nUPDATE public.events_req_form SET 'isActive' = false WHERE 'isActive' = true ;\nUPDATE public.events_req_form SET 'isActive' = true WHERE MAX('date' <= CAST(GETDATE() as DATE));\nDELETE FROM public.events_req_form WHERE 'date' < (SELECT 'date' FROM public.events_req_form WHERE 'isActive' = true ); \nINSERT INTO public.events SELECT 'id', 'name', 'src', 'isActive', 'type', 'time', 'order' FROM public.events_tmp_acc WHERE 'tmpid' = ( \n        SELECT 'id' FROM public.tmp_acc WHERE 'name' = (\n                SELECT 'lunch' FROM public.events_req_form WHERE 'isActive' = true) AND 'from' = (\n                           SELECT 'id' FROM public.events_req_form WHERE 'isActive' = true ) ) AND 'isActive' = 'true' ;\nEND $$\n	failed	ERROR:  syntax error at or near "'isActive'"\nLINE 3: UPDATE public.events_req_form SET 'isActive' = false WHERE '...\n                                          ^\n	2023-02-25 00:55:00.038427+03	2023-02-25 00:55:00.045604+03
 6	29	358	ecdb	alexander_perelight	DO $$\nBEGIN\nUPDATE public.events_req_form SET 'isActive' = false WHERE 'isActive' = true ;\nUPDATE public.events_req_form SET 'isActive' = false WHERE 'isActive' = true ;\nUPDATE public.events_req_form SET 'isActive' = true WHERE MAX('date' <= CAST(GETDATE() as DATE));\nDELETE FROM public.events_req_form WHERE 'date' < (SELECT 'date' FROM public.events_req_form WHERE 'isActive' = true ); \nINSERT INTO public.events SELECT 'id', 'name', 'src', 'isActive', 'type', 'time', 'order' FROM public.events_tmp_acc WHERE 'tmpid' = ( \n        SELECT 'id' FROM public.tmp_acc WHERE 'name' = (\n                SELECT 'lunch' FROM public.events_req_form WHERE 'isActive' = true) AND 'from' = (\n                           SELECT 'id' FROM public.events_req_form WHERE 'isActive' = true ) ) AND 'isActive' = 'true' ;\nEND $$\n	failed	ERROR:  syntax error at or near "'isActive'"\nLINE 3: UPDATE public.events_req_form SET 'isActive' = false WHERE '...\n                                          ^\n	2023-02-24 00:55:00.009923+03	2023-02-24 00:55:00.011504+03
@@ -645,6 +652,14 @@ COPY cron.job_run_details (jobid, runid, job_pid, database, username, command, s
 14	31	276	ecdb	alexander_perelight	  	succeeded	0 rows	2023-02-27 14:35:00.019729+03	2023-02-27 14:35:00.020092+03
 17	35	755	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lunch\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-02-27 17:55:00.016572+03	2023-02-27 17:55:00.023814+03
 24	36	41	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-02-28 14:25:00.019539+03	2023-02-28 14:25:00.030597+03
+12	42	147	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lesson\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-01 12:50:00.014073+03	2023-03-01 12:50:00.020409+03
+17	54	628	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lunch\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-02 17:55:00.010865+03	2023-03-02 17:55:00.020032+03
+16	53	432	ecdb	alexander_perelight	  DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lesson\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-02 16:20:00.007267+03	2023-03-02 16:20:00.013533+03
+14	50	219	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lesson\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-02 14:35:00.008734+03	2023-03-02 14:35:00.013887+03
+26	51	410	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-02 16:10:00.011976+03	2023-03-02 16:10:00.017494+03
+9	52	411	ecdb	alexander_perelight	  DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT\n                    breaktime\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-02 16:10:00.012395+03	2023-03-02 16:10:00.02099+03
+17	55	103	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lunch\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-03 17:55:00.022786+03	2023-03-03 17:55:00.03207+03
+17	56	47	ecdb	alexander_perelight	DO $$ BEGIN TRUNCATE public.events;\n\nINSERT INTO public.events\nSELECT\n    "name",\n    "src",\n    "isActive",\n    "type",\n    "time",\n    "order"\nFROM public.events_tmp_acc\nWHERE "tmpid" = (\n        SELECT "id"\n        FROM public.tmp_acc\n        WHERE "name" = (\n                SELECT lunch\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n            AND "from" = (\n                SELECT "id"\n                FROM\n                    public.events_req_form\n                WHERE\n                    "isActive" = true\n            )\n    )\n    AND "isActive" = true;\n\nEND $$ 	succeeded	DO	2023-03-04 18:06:19.922581+03	2023-03-04 18:06:19.937269+03
 \.
 
 
@@ -653,12 +668,7 @@ COPY cron.job_run_details (jobid, runid, job_pid, database, username, command, s
 --
 
 COPY public.ads (id, name, comment, "timeOfLife", author, translate, personal) FROM stdin;
-100	Всем встать!	Начинает работу Event Controller!	9999-01-01	admin	t	\N
-105	Запрос отклонён	Модератор admin отклонил ваш запрос "undefined". \nКомментарий модератора: 1	2023-3-1	System	f	brigade2
-106	Запрос отклонён	Модератор admin отклонил ваш запрос "dfdf". \nКомментарий модератора: Исправить ошибки.	2023-3-1	System	f	admin
-107	Запрос отклонён	Модератор malashin отклонил ваш запрос "Just For Test". \nКомментарий модератора: Исправить ошибки. Лентяи, ой я не могу 	2023-3-1	System	f	brigade2
-108	поора	пииисать	2023-02-28	admin	f	\N
-109	Запрос отклонён	Модератор malashin отклонил ваш запрос "new". \nКомментарий модератора: kakoy takoy new	2023-3-1	System	f	brigade2
+144	Объявления в EventController запущены!	Система объявлений в EventController начала свою работу. Обновления на странице объявлений /adscast происходят с периодичностью в минуту. Если объявление не появилось на экране, возможно, вам следует немного подождать :)	9999-01-01	System	t	\N
 \.
 
 
@@ -684,6 +694,7 @@ COPY public.ec_user (id, name, role, passhash) FROM stdin;
 48	admin	admin	$argon2id$v=19$m=65536,t=3,p=4$C8q5Dheb0rc+8KcvD7sDDA$oZOsLHVpqSN8iGvWEFMoIjJBp4IcYfWTe9JvVaLZUrE
 22	admin1	admin	$2b$08$MuwagbtN08lE0QRF3JaGvOXcUKqyBJURk8Rf2wg0Wl82RHCoDcNDW
 55	malashin	moder	$argon2id$v=19$m=65536,t=3,p=4$Xw+14xuY78pCpaSK91MsEw$p9wJgZHBZWUEKTFlnyDPvBmzPRvw4P0me/rVS2xPS5g
+57	System	moder	$argon2id$v=19$m=65536,t=3,p=4$5/tYQ2bHOZhX8ExzVj1pnw$taTyyABOpfN5SWbkLiMzX6fNQh19O5SFPbOOBW2ktIg
 \.
 
 
@@ -692,6 +703,13 @@ COPY public.ec_user (id, name, role, passhash) FROM stdin;
 --
 
 COPY public.events (name, src, "isActive", type, "time", "order", screen) FROM stdin;
+Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	1
+Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	1
+К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	1
+Аудитории - Гидра	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	15	4	1
+Гидра - Влажность	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	5	1
+Гидра - Температура	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	6	1
+JustForTest	123123	t	1	15	7	1
 \.
 
 
@@ -700,11 +718,6 @@ COPY public.events (name, src, "isActive", type, "time", "order", screen) FROM s
 --
 
 COPY public.events_req_form (id, name, comment, date, isspecial, author, lesson, breaktime, lunch, screen, "isAccepted", "whoAccept", "isActive", "inProcessing") FROM stdin;
-44	тест3		2023-02-28	t	admin	TEST	-	-	1	t	admin	t	f
-43	тест2		2023-03-12	t	admin	Копия теста	-	-	1	t	admin	f	f
-45	ыыы малаша		2023-03-02	f	admin	Kasha Malasha	-	-	1	t	admin	f	f
-37	Я тут новый		2024-05-14	f	admin	empty	-	EMPTY	1	t	admin	f	f
-48	hmn		2023-02-28	t	admin	MADE_BY_MODER	-	-	1	f	malashin	f	f
 \.
 
 
@@ -716,21 +729,17 @@ COPY public.events_tmp (id, name, src, "isActive", type, "time", "order", tmpid)
 654	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	80
 655	Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	80
 656	К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	80
-615	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	66
-616	Гидра - Температура	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	2	66
+733	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	79
+734	Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	79
+735	К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	79
+736	Аудитории - Гидра	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	12	4	79
 663	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	81
 664	Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	81
 665	К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	81
-623	Перерыв типа!	КАЙФУЕМ!	t	0	15	1	67
 666	Аудитории - Гидра	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	15	4	81
 667	Гидра - Влажность	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	5	81
-630	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	68
-631	Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	68
-632	К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	68
-633	Аудитории - Гидра	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	15	4	68
-634	Гидра - Влажность	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	5	68
-635	Пойду	похаваю до отвала проца	t	0	15	6	68
 668	Гидра - Температура	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	6	81
+737	вай	ww	t	1	12	5	79
 579	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	73
 580	Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	73
 581	К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	73
@@ -738,23 +747,33 @@ COPY public.events_tmp (id, name, src, "isActive", type, "time", "order", tmpid)
 583	Гидра - Влажность	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	5	73
 584	Гидра - Температура	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	6	73
 585	JustForTest	123123	t	1	15	7	73
-675	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	82
-676	Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	82
-677	К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	82
-678	Аудитории - Гидра	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	15	4	82
-679	Гидра - Влажность	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	5	82
-680	Гидра - Температура	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	6	82
+741	ПАРЫ	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	66
+742	ПАРЫ 	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	2	66
+743	ОБЕД	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	68
+744	ОБЕД	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	68
+745	ОБЕД	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	68
+746	ОБЕД	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	15	4	68
+747	ОБЕД	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	5	68
 681	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	83
 682	Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	83
 683	К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	83
 684	Аудитории - Гидра	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	15	4	83
 685	Гидра - Влажность	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	5	83
 686	Гидра - Температура	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	6	83
-692	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	79
-693	Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	79
-694	К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	79
-695	Аудитории - Гидра	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	15	4	79
-696	Гидра - Влажность	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	5	79
+755	ПЕРЕРЫВ	http://localhost:3000/adscast	t	1	15	1	85
+756	ПЕРЕРЫВ	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	2	85
+757	ПЕРЕРЫВ	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	3	85
+758	ПЕРЕРЫВ	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	4	85
+759	ПЕРЕРЫВ	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	15	5	85
+760	ПЕРЕРЫВ	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	6	85
+761	ПЕРЕРЫВ	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	7	85
+704	Объявления в системе	http://localhost:3000/adscast	t	1	15	1	84
+705	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	2	84
+706	Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	3	84
+707	К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	4	84
+708	Аудитории - Гидра	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	15	5	84
+709	Гидра - Влажность	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	6	84
+710	Гидра - Температура	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	7	84
 \.
 
 
@@ -763,22 +782,6 @@ COPY public.events_tmp (id, name, src, "isActive", type, "time", "order", tmpid)
 --
 
 COPY public.events_tmp_acc (id, name, src, "isActive", type, "time", "order", tmpid) FROM stdin;
-239	Гидра - Температура	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	1	76
-240	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	2	76
-241	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	77
-242	Гидра - Температура	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	2	77
-243	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	78
-244	Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	78
-245	К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	78
-246	Аудитории - Гидра	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	15	4	78
-247	Гидра - Влажность	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	5	78
-248	Гидра - Температура	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	6	78
-251	Карта К3	http://webrobo.mgul.ac.ru:3000/forms/K3_Pascal_map/	t	1	15	1	82
-252	Карта Артек	http://webrobo.mgul.ac.ru:3000/forms/Artek_Pascal_map/	t	1	15	2	82
-253	К3 - Артек	http://webrobo.mgul.ac.ru:3000/forms/K3-Artek/	t	1	15	3	82
-254	Аудитории - Гидра	http://webrobo.mgul.ac.ru:3000/forms/Hydra-K3g/	t	1	15	4	82
-255	Гидра - Влажность	http://webrobo.mgul.ac.ru:3000/forms/TV_Hum/	t	1	15	5	82
-256	Гидра - Температура	http://webrobo.mgul.ac.ru:3000/forms/TV_Temp/	t	1	15	6	82
 \.
 
 
@@ -797,14 +800,14 @@ COPY public.log (id, object, type, username, date, "time", e_group, name, e_name
 COPY public.tmp (id, name, author, isprivate, canview, last_modify) FROM stdin;
 70	EMPTY	admin	t	f	admin
 73	А Я ЕЩЁ ТУТ	Brigade7	f	t	brigade2
-66	Пары_тест	admin	t	f	admin
-67	Перерыв_тест	admin	t	f	admin
-68	Обед_тест	admin	t	f	admin
 80	bew	admin	t	t	admin
 81	MADE_BY_MODER	malashin	t	t	malashin
-82	Default	System	t	t	System
 83	прпрпррп	brigade2	t	f	brigade2
-79	new	admin	f	t	brigade2
+84	Default	System	t	t	System
+79	new	admin	f	t	admin
+66	Пары_тест	admin	t	f	admin
+68	Обед_тест	admin	t	f	admin
+85	Перерыв_тест	admin	t	f	admin
 \.
 
 
@@ -813,12 +816,6 @@ COPY public.tmp (id, name, author, isprivate, canview, last_modify) FROM stdin;
 --
 
 COPY public.tmp_acc (id, name, author, isprivate, canview, last_modify, "from") FROM stdin;
-65	empty	admin	t	f	admin	37
-66	EMPTY	admin	t	f	admin	37
-76	Копия теста	admin	t	f	admin	43
-77	TEST	admin	t	f	admin	44
-78	Kasha Malasha	malashin	t	t	malashin	45
-82	MADE_BY_MODER	malashin	t	t	malashin	48
 \.
 
 
@@ -835,22 +832,6 @@ COPY public.tokens (id, user_id, role, token) FROM stdin;
 --
 
 COPY public.user_ads (id, ads_id, user_id) FROM stdin;
-262	108	52
-263	107	52
-264	106	52
-265	105	52
-266	100	52
-267	108	48
-268	107	48
-269	106	48
-270	105	48
-271	100	48
-272	108	55
-273	107	55
-274	106	55
-275	105	55
-276	100	55
-277	109	52
 \.
 
 
@@ -865,14 +846,14 @@ SELECT pg_catalog.setval('cron.jobid_seq', 30, true);
 -- Name: runid_seq; Type: SEQUENCE SET; Schema: cron; Owner: alexander_perelight
 --
 
-SELECT pg_catalog.setval('cron.runid_seq', 41, true);
+SELECT pg_catalog.setval('cron.runid_seq', 56, true);
 
 
 --
 -- Name: ads_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander_perelight
 --
 
-SELECT pg_catalog.setval('public.ads_id_seq', 109, true);
+SELECT pg_catalog.setval('public.ads_id_seq', 160, true);
 
 
 --
@@ -886,28 +867,28 @@ SELECT pg_catalog.setval('public.ec_role_id_seq', 1, false);
 -- Name: ec_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander_perelight
 --
 
-SELECT pg_catalog.setval('public.ec_user_id_seq', 56, true);
+SELECT pg_catalog.setval('public.ec_user_id_seq', 57, true);
 
 
 --
 -- Name: events_req_form_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander_perelight
 --
 
-SELECT pg_catalog.setval('public.events_req_form_id_seq', 54, true);
+SELECT pg_catalog.setval('public.events_req_form_id_seq', 89, true);
 
 
 --
 -- Name: events_tmp_acc_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander_perelight
 --
 
-SELECT pg_catalog.setval('public.events_tmp_acc_id_seq', 285, true);
+SELECT pg_catalog.setval('public.events_tmp_acc_id_seq', 713, true);
 
 
 --
 -- Name: events_tmp_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander_perelight
 --
 
-SELECT pg_catalog.setval('public.events_tmp_id_seq', 696, true);
+SELECT pg_catalog.setval('public.events_tmp_id_seq', 761, true);
 
 
 --
@@ -935,14 +916,14 @@ SELECT pg_catalog.setval('public.table_name_id_seq', 1, false);
 -- Name: tmp_acc_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander_perelight
 --
 
-SELECT pg_catalog.setval('public.tmp_acc_id_seq', 88, true);
+SELECT pg_catalog.setval('public.tmp_acc_id_seq', 164, true);
 
 
 --
 -- Name: tmp_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander_perelight
 --
 
-SELECT pg_catalog.setval('public.tmp_id_seq', 83, true);
+SELECT pg_catalog.setval('public.tmp_id_seq', 85, true);
 
 
 --
@@ -956,7 +937,7 @@ SELECT pg_catalog.setval('public.tokens_id_seq', 1, false);
 -- Name: user_ads_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alexander_perelight
 --
 
-SELECT pg_catalog.setval('public.user_ads_id_seq', 277, true);
+SELECT pg_catalog.setval('public.user_ads_id_seq', 350, true);
 
 
 --
