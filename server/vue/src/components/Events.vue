@@ -363,7 +363,7 @@ export default {
       errorMessage: null,   // Текст ошибки
 
       currentTime: null,
-      // ${process.env.API_URL}
+      //  
       format: /[`!@#$%^&*()+=\[\]{};':"\\|,.<>\/?~]/
     }
   },
@@ -384,7 +384,7 @@ export default {
       this.sendCallback = new bootstrap.Modal(document.getElementById('SendModerModal'));
       this.errCallback = new bootstrap.Toast(document.getElementById("ToastError"));
 
-      let response = await fetch(`/event/alltmp`, {
+      let response = await fetch(` /event/alltmp`, {
         method: 'GET',
           // THIS IS IMPORTANT
         headers: new Headers({
@@ -410,7 +410,7 @@ export default {
     async getTmp(name) {
       await this.getTime();
       if (name !== "-") {
-        let response = await fetch(`/event/all`, this.options('PATCH', { name: name }));
+        let response = await fetch(` /event/all`, this.options('PATCH', { name: name }));
         this.events = (await response.json());
       
         if (this.events[0].name === "none" && this.events[0].src === "none"){
@@ -453,8 +453,8 @@ export default {
         this.errCallback.show();
       } else if (name !== "") {
         if (tmp_type === 'empty' || tmp_type === 'default' || tmp_type === 'copy') {
-          let callback = await fetch(`/event/addtmp`, this.options('PUT', { name: name, tmp_type: tmp_type, events: events }));
-          let responseAdd = await fetch(`/event/alltmp`, {});
+          let callback = await fetch(` /event/addtmp`, this.options('PUT', { name: name, tmp_type: tmp_type, events: events }));
+          let responseAdd = await fetch(` /event/alltmp`, {});
           this.tmpList = (await responseAdd.json());
           this.tmpName = name;
           this.name = "";
@@ -486,7 +486,7 @@ export default {
     async delTmp(name) {
       await this.getTime();
       if (name !== "-") {
-        await fetch(`/event/deltmp`, this.options('DELETE', { name: name }));
+        await fetch(` /event/deltmp`, this.options('DELETE', { name: name }));
         this.openedTmp = "";
         this.isGet = false;
         this.tmpName = "";
@@ -602,7 +602,7 @@ export default {
         this.events[i].isprivate = !this.canEdit;
         this.events[i].openedtmp = this.openedTmp;
       }
-      let response = await fetch(`/event/save`, this.options('PATCH', this.events));
+      let response = await fetch(` /event/save`, this.options('PATCH', this.events));
       console.log(response);
     },
     async sendForm() {
@@ -615,7 +615,7 @@ export default {
         this.lunchProg = '-';
       }
 
-      let response = await fetch(`/event/send`, this.options('PUT', {
+      let response = await fetch(` /event/send`, this.options('PUT', {
           name: this.nameProg, 
           comment: this.commProg, 
           stud_name: this.studProg, 

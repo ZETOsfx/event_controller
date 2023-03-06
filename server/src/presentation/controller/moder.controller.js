@@ -68,7 +68,7 @@ class ModerController {
             const { has_changes, upd_less, upd_break, upd_lunch } = req?.body; 
             
             const date_check = await db('events_req_form').select('*').where('date', obj_req.date).where('isAccepted', true);
-            if (date_check[0] === undefined) {
+            if (date_check[0] === undefined || obj_req.isAccepted) {
                 if (obj_req.name) {
                     const request = await db('events_req_form').select('*').where('name', obj_req.name);
 
@@ -109,10 +109,8 @@ class ModerController {
                                     await db('events_tmp_acc').insert(eventsTemp[i]);
                                 }  
                             }
-
                             if (obj_req.isspecial)
                                 break;
-
                             isNew = true;
                         }
                             // Вычищение неиспользованных копий
@@ -133,7 +131,7 @@ class ModerController {
                         }
 
                         if (has_changes && has_changes !== undefined && has_changes !== null)  {
-                            const last = await db('tmp_acc').select('*').where('name', request[0].lesson).where('from', request[0].id);
+                            const last = await db('tmp_acc').select('*').where('name', obj_req.lesson).where('from', request[0].id);
                             await db('events_tmp_acc').where('tmpid', last[0].id).del();
                             for (let i in upd_less) {
                                 delete upd_less[i].id;
@@ -143,7 +141,7 @@ class ModerController {
                             }
 
                             if (!obj_req.isspecial) {
-                                const lasty = await db('tmp_acc').select('*').where('name', request[0].breaktime).where('from', request[0].id);
+                                const lasty = await db('tmp_acc').select('*').where('name', obj_req.breaktime).where('from', request[0].id);
                                 await db('events_tmp_acc').where('tmpid', lasty[0].id).del();
                                 for (let i in upd_break) {
                                     delete upd_break[i].id;
@@ -152,7 +150,7 @@ class ModerController {
                                     await db('events_tmp_acc').insert(upd_break[i]);
                                 }
 
-                                const lastyk = await db('tmp_acc').select('*').where('name', request[0].lunch).where('from', request[0].id);
+                                const lastyk = await db('tmp_acc').select('*').where('name', obj_req.lunch).where('from', request[0].id);
                                 await db('events_tmp_acc').where('tmpid', lastyk[0].id).del();
                                 for (let i in upd_lunch) {
                                     delete upd_lunch[i].id;
@@ -161,6 +159,75 @@ class ModerController {
                                     await db('events_tmp_acc').insert(upd_lunch[i]);
                                 }
                             }
+                        }
+
+                        if (request[0].isActive) {
+                            if (request[0].isspecial) {
+                                const prog = await db('tmp_acc').select('*').where('name', request[0].lesson).where('from', request[0].id);
+                                const events = await db('events_tmp_acc').select('*').where('tmpid', prog[0].id).orderBy('order');
+                                for (let i in events) {
+                                    delete events[i].id;
+                                    delete events[i].tmpid;
+                                    await db('events').insert( events[i] );
+                                }
+                            } else {
+                                const Lessons = [ 
+                                    [30000, 31200, 'Перерыв'], // Перерыв, с 8:20
+                                    [31200, 36900, 'Пара'], // 1ая пара, с 8:40
+                                    [36900, 37500, 'Перерыв'], // Перерыв, с 10:15
+                                    [37500, 43200, 'Пара'], // 2ая пара, с 10:25
+                                    [43200, 46200, 'Обед'], // Обед, С 12:00
+                                    [46200, 51900, 'Пара'], // 3ая пара, с 12:50
+                                    [51900, 52500, 'Перерыв'], // Перерыв, с 14:25
+                                    [52500, 58200, 'Пара'], // 4ая параб с 14:35
+                                    [58200, 58800, 'Перерыв'], // Перерыв, с 16:10
+                                    [58800, 64500, 'Пара'], // 5ая пара, с 16:20
+                                ];
+                            
+                                function getState(curSec) {
+                                    for (let i in Lessons)
+                                        if (curSec >= Lessons[i][0] && curSec < Lessons[i][1]) 
+                                            return Lessons[i][2];
+                                        // После 17:55 и до 8:20 - Свободное время
+                                    return 'Свободка'; // Играет шаблон "Обед"
+                                }
+
+                                function WhatTime() {                                           // Узнать время в секундах с начала дня
+                                    let today = new Date();                                       // Получить текущее время и вернуть значение в секнудах
+                                    return  (today.getHours() * 60 + today.getMinutes()) * 60 + today.getSeconds();
+                                }
+
+                                switch (getState(WhatTime())) {
+                                    case 'Перерыв':
+                                        const prog_br = await db('tmp_acc').select('*').where('name', request[0].breaktime).where('from', request[0].id);
+                                        const events_br = await db('events_tmp_acc').select('*').where('tmpid', prog_br[0].id).orderBy('order');
+                                        for (let i in events_br) {
+                                            delete events_br[i].id;
+                                            delete events_br[i].tmpid;
+                                            await db('events').insert( events_br[i] );
+                                        }
+                                        break;
+                                    case 'Пара':
+                                        const prog_le = await db('tmp_acc').select('*').where('name', request[0].lesson).where('from', request[0].id);
+                                        const events_le = await db('events_tmp_acc').select('*').where('tmpid', prog_le[0].id).orderBy('order');
+                                        for (let i in events_le) {
+                                            delete events_le[i].id;
+                                            delete events_le[i].tmpid;
+                                            await db('events').insert( events_le[i] );
+                                        }
+                                        break;
+                                    case 'Обед':
+                                    default:
+                                        const prog_lu = await db('tmp_acc').select('*').where('name', request[0].lesson).where('from', request[0].id);
+                                        const events_lu = await db('events_tmp_acc').select('*').where('tmpid', prog_lu[0].id).orderBy('order');
+                                        for (let i in events_lu) {
+                                            delete events_lu[i].id;
+                                            delete events_lu[i].tmpid;
+                                            await db('events').insert( events_lu[i] );
+                                        }
+                                } 
+                            }
+
                         }
 
                         if (!request[0].isAccepted) {

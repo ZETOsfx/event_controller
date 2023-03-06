@@ -49,7 +49,7 @@ export default {
   methods: {
     async get() {
       this.activeItemId = -1;
-      let response = await fetch(`http://localhost:3000/event/json`, {});
+      let response = await fetch(`http://eventcontroller.ru/event/json`, {});
       this.list = (await response.json()).pages;
     },
     async buildPages() {

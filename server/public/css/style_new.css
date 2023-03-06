@@ -402,3 +402,7 @@ body.dark .home .text{
     -o-transform-origin: 0 0;
     -webkit-transform-origin: 0 0; */
 }
+
+.guide {
+    padding-top: 65px;
+}

@@ -428,7 +428,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-            <button @click='templateSave(1, 1)' type="button" class="btn btn-success">Сохранить</button>
+            <button @click='templateSave(1, 1)' type="button" class="btn btn-success" data-bs-dismiss="modal">Сохранить</button>
           </div>
         </div>
       </div>
@@ -666,7 +666,7 @@
           <!-- АКТИВНОЕ ОТОБРАЖЕНИЕ (ЧТО ИГРАЕТ СЕГОДНЯ) -->
           <div class="tab-pane fade" id="pills-display" role="tabpanel" aria-labelledby="pills-display-tab" tabindex="0">
 
-            <div v-for="(screen) in this.activeTmp" class="row row-cols-1 row-cols-lg-2 g-3">
+            <div v-for="(screen, index) in this.activeTmp" class="row row-cols-1 row-cols-lg-2 g-3">
                 <!-- ПЛАШКА ДЛЯ 3х ШАБЛОНОВ -->
                 <div v-if="!screen.isspecial" class="col-sm-6 mb-3">
                   <div class="card h-100">
@@ -721,8 +721,20 @@
                     <div class="card-footer text-end">
                       <div class="d-flex w-100 justify-content-between align-items-center">
                         <!-- Button trigger Delete follow modal -->
-                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button>
-                        <button type="button" class="btn btn-outline-success">Редактировать</button>
+                        <!-- <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button> -->
+                        <button v-if="!screen.isStartedProcess" @click="startProcess(screen)" type="button" class="btn btn-outline-success">Редактировать</button>
+
+                        <div v-if="screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name)" class="btn-group">
+                          <button @click="endProcess(screen)" type="button" class="btn btn-outline-secondary"> Отмена </button>
+                          <!-- Button trigger Details modal -->
+                          <button @click="buttonOpen(screen)"  type="button" class="btn btn-outline-info">Просмотр</button> 
+                          <!-- Button trigger Confirm modal -->
+                          <button @click="triggerModal('save', screen, index)" type="button" class="btn btn-success"> Сохранить </button>
+                        </div>
+                        <div v-if="screen.isStartedProcess && screen.whoAccept !== this.username.name">
+                          Ведется обработка: <i> "{{ screen.whoAccept }}" </i>
+                        </div>
+
                       </div>
                     </div>
                   </div>
@@ -764,10 +776,22 @@
                     </ul>
                     </div>
                     <div class="card-footer text-end">
-                      <div class="d-flex w-100 justify-content-between align-items-center">
+                      <div class="d-flex w-100 justify-content-end align-items-center">
                         <!-- Button trigger Delete follow modal -->
-                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button>
-                        <button type="button" class="btn btn-outline-success">Редактировать</button>
+                        <!-- <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button> -->
+                        <button v-if="!screen.isStartedProcess" @click="startProcess(screen)" type="button" class="btn btn-outline-success">Редактировать</button>
+
+                        <div v-if="screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name)" class="btn-group">
+                          <button @click="endProcess(screen)" type="button" class="btn btn-outline-secondary"> Отмена </button>
+                          <!-- Button trigger Details modal -->
+                          <button @click="buttonOpen(screen)"  type="button" class="btn btn-outline-info">Просмотр</button> 
+                          <!-- Button trigger Confirm modal -->
+                          <button @click="triggerModal('confirm', screen, index)" type="button" class="btn btn-success"> Сохранить </button>
+                        </div>
+                        <div v-if="screen.isStartedProcess && screen.whoAccept !== this.username.name">
+                          Ведется обработка: <i> "{{ screen.whoAccept }}" </i>
+                        </div>
+                        
                       </div>
                     </div>
                   </div>
@@ -776,7 +800,7 @@
               <!-- КОНЕЦ ЦИКЛА ЭКРАНОВ -->
             </div>
 
-            <div class="d-flex w-auto justify-content-start align-items-center gap-1 mt-2">
+            <!-- <div class="d-flex w-auto justify-content-start align-items-center gap-1 mt-2">
               <select class="form-select w-auto">
                 <option selected>- Выберите -</option>
                 <option value="1">Хол актового</option>
@@ -785,7 +809,7 @@
               <div>
                 <button type="button" class="btn btn-success">Добавить к ослеживанию</button>
               </div>
-            </div>
+            </div> -->
             <!-- КОНЕЦ: Что СЕЙЧАС отображается на экранах -->
           </div>
 
@@ -1116,8 +1140,8 @@ export default {
       this.errCallback = new bootstrap.Toast(document.getElementById("ToastError"));
 
         // Rendering page
-      await fetch(`/moder/`, {});
-      let response = await fetch(`/moder/requests`, {
+      await fetch(` /moder/`, {});
+      let response = await fetch(` /moder/requests`, {
         method: 'GET',
           // THIS IS IMPORTANT
         headers: new Headers({
@@ -1152,16 +1176,17 @@ export default {
     },
       // Переключение процесса обработки события <NAME> на противоположный (ALL)
     async switchProcess(name) {
-      await fetch(`/moder/switchprocess`, this.options('PATCH', { name: name }));
+      await fetch(` /moder/switchprocess`, this.options('PATCH', { name: name }));
       // this.reqList[name].whoAccept = (await response.json()).whoAccept;
     },
       // Начать процесс обработки
     async startProcess(obj) {
       await this.getTime();
+      console.log(obj);
       if (this.userProcess === '' && !obj.isStartedProcess) {
 
           // Собственные шаблоны и уже проверенные + те, что были отправлены в данном запросе
-        let templates = await fetch(`/moder/alltmp`, this.options('PATCH', { name: obj.name })) ;
+        let templates = await fetch(` /moder/alltmp`, this.options('PATCH', { name: obj.name })) ;
         this.templatesToReplace = (await templates.json());
 
         obj.isStartedProcess = true;
@@ -1216,9 +1241,9 @@ export default {
         }
         let response;
         if (struct.withChanges) {
-          response = await fetch(`/moder/access`, this.options('PATCH', { has_changes: struct.withChanges, obj_req: struct.obj, comment: struct.comment, upd_less: struct.upd_less, upd_lunch: struct.upd_lunch, upd_break: struct.upd_break }));
+          response = await fetch(` /moder/access`, this.options('PATCH', { has_changes: struct.withChanges, obj_req: struct.obj, comment: struct.comment, upd_less: struct.upd_less, upd_lunch: struct.upd_lunch, upd_break: struct.upd_break }));
         } else {
-          response = await fetch(`/moder/access`, this.options('PATCH', { obj_req: struct.obj, comment: struct.comment }));
+          response = await fetch(` /moder/access`, this.options('PATCH', { obj_req: struct.obj, comment: struct.comment }));
         }
         let message = (await response.json());
         if (message.message !== 'errdate') {
@@ -1243,7 +1268,7 @@ export default {
       await this.getTime();
       if (this.userProcess !== '') {
         // let response =
-            await fetch(`/moder/deny`, this.options('PUT', { name: struct.name, comment: struct.comment }));
+            await fetch(` /moder/deny`, this.options('PUT', { name: struct.name, comment: struct.comment }));
         this.reqList.splice(struct.index, 1);
         this.successMessage = 'Запрос "' + struct.name + '" был успешно отклонен.';
         this.succCallback.show();
@@ -1259,7 +1284,7 @@ export default {
       await this.getTime();
       if (this.userProcess !== '') {
         // let response =
-        await fetch(`/moder/deny`, this.options('PUT', { name: struct.name, comment: struct.comment }));
+        await fetch(` /moder/deny`, this.options('PUT', { name: struct.name, comment: struct.comment }));
         this.acceptedList.splice(struct.index, 1);
         this.successMessage = 'Запрос "' + struct.name + '" был успешно удален.';
         this.succCallback.show();
@@ -1279,9 +1304,9 @@ export default {
           struct.obj.lunch = struct.obj.lesson;
         }
         if (struct.withChanges) {
-          response = await fetch(`/moder/access`, this.options('PATCH', { has_changes: struct.withChanges, obj_req: struct.obj, comment: struct.comment, upd_less: struct.upd_less, upd_lunch: struct.upd_lunch, upd_break: struct.upd_break }));
+          response = await fetch(` /moder/access`, this.options('PATCH', { has_changes: struct.withChanges, obj_req: struct.obj, comment: struct.comment, upd_less: struct.upd_less, upd_lunch: struct.upd_lunch, upd_break: struct.upd_break }));
         } else {
-          response = await fetch(`/moder/access`, this.options('PATCH', { obj_req: struct.obj, comment: struct.comment }));
+          response = await fetch(` /moder/access`, this.options('PATCH', { obj_req: struct.obj, comment: struct.comment }));
         }
         let message = (await response.json());
         if (message.message !== 'errdate') {
@@ -1304,7 +1329,7 @@ export default {
       // Details
     async buttonOpen(obj) {
       if (!this.forModal.withChanges) {
-        let response = await fetch(`/moder/details`, this.options('PATCH', { obj: obj }));
+        let response = await fetch(` /moder/details`, this.options('PATCH', { obj: obj }));
         this.eventList = (await response.json());
 
         this.editFormS = [];
@@ -1330,11 +1355,11 @@ export default {
           }
       }
 
-      if (this.eventList.type === true)
+      if (this.eventList.type === true) {
         this.sendDetailSpecial.show();
-      else if (this.eventList.type === false)
+      } else if (this.eventList.type === false) {
         this.sendDetailWorkdays.show();
-      else {
+      } else {
         console.log('Форма сломана. Я уже сообщил администратору.');
       }
     },
@@ -1433,7 +1458,7 @@ export default {
     this.ProgressBar(this.activeTmp); // Запускаем бесконечную залупу
 
     window.addEventListener('beforeunload', async function (event) {
-      await fetch(`/moder/endprocess`, {
+      await fetch(` /moder/endprocess`, {
         method: 'PUT',
           headers: {
           'Content-type': 'application/json; charset=UTF-8'
