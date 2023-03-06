@@ -100,7 +100,7 @@ class EventController {
                         case 'default':     // Шаблон по умолчанию
                             await db('events_tmp').insert({
                                 name: "Объявления в системе",
-                                src: 'http://localhost:3000/adscast',
+                                src: 'http://eventcontroller.ru/adscast',
                                 isActive: true, // default
                                 type: 1,        // web-form
                                 time: 15,       // 15 sec
