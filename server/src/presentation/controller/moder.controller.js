@@ -68,26 +68,27 @@ class ModerController {
             const { has_changes, upd_less, upd_break, upd_lunch } = req?.body; 
             
             const date_check = await db('events_req_form').select('*').where('date', obj_req.date).where('isAccepted', true);
-            if (date_check[0] === undefined || obj_req.isAccepted) {
+            if (date_check[0] === undefined || obj_req.isAccepted || has_changes !== undefined) {
                 if (obj_req.name) {
                     const request = await db('events_req_form').select('*').where('name', obj_req.name);
 
                     if (request !== undefined && request[0].inProcessing && request[0].whoAccept === req.session.username) {
+                            // Списки шаблонов: изначальные + на замену
                         const pre_example = [request[0].lesson, request[0].breaktime, request[0].lunch];
                         const pre_updated = [obj_req.lesson, obj_req.breaktime, obj_req.lunch];
-
+                            // Списки шаблонов - уникальные (для избежания дублирования)
                         const example = pre_example.filter((value, index, array) => array.indexOf(value) === index);
                         const updated = pre_updated.filter((value, index, array) => array.indexOf(value) === index);
-                        if (!request[0].isAccepted) {
-                            await db('events_req_form').where('name', obj_req.name).update({
-                                lesson: obj_req.lesson,
-                                breaktime: obj_req.breaktime,
-                                lunch: obj_req.lunch,
-                                inProcessing: false,
-                                date: obj_req.date,
-                                isAccepted: true
-                            });
-                        }
+                            // Внесение новых параметров в базу
+                        await db('events_req_form').where('name', obj_req.name).update({
+                            lesson: obj_req.lesson,
+                            breaktime: obj_req.breaktime,
+                            lunch: obj_req.lunch,
+                            inProcessing: false,
+                            date: obj_req.date,
+                            isAccepted: true
+                        });
+                            // Создание новой резервной копии для каждого нового шаблона в запросе
                         let isNew = true;
                         for (let i in updated) {
                             for (let j in example) {
@@ -113,7 +114,7 @@ class ModerController {
                                 break;
                             isNew = true;
                         }
-                            // Вычищение неиспользованных копий
+                            // Вычищение неиспользованных копий (либо уже узамененные шаблоны)
                         let newerUsed = true;
                         for (let i in example) {
                             for (let j in updated) {
@@ -129,8 +130,8 @@ class ModerController {
                                 break;
                             newerUsed = true;
                         }
-
-                        if (has_changes && has_changes !== undefined && has_changes !== null)  {
+                            // Если прилетают детальные изменения (для Утверждения или Применения изменений)
+                        if (has_changes !== undefined) {
                             const last = await db('tmp_acc').select('*').where('name', obj_req.lesson).where('from', request[0].id);
                             await db('events_tmp_acc').where('tmpid', last[0].id).del();
                             for (let i in upd_less) {
@@ -160,7 +161,7 @@ class ModerController {
                                 }
                             }
                         }
-
+                            // Если редактируется активное отображение, то при необходимости вносим изменения сразу на транслсяцию
                         if (request[0].isActive) {
                             if (request[0].isspecial) {
                                 const prog = await db('tmp_acc').select('*').where('name', request[0].lesson).where('from', request[0].id);
@@ -229,7 +230,7 @@ class ModerController {
                             }
 
                         }
-
+                            // Поимка "Утверждения" - оповещение автора об утверждении шаблона
                         if (!request[0].isAccepted) {
                             const callback = 'Модератор "' + req.session.username + '" утвердил ваш запрос "' + request[0].name + '". \nКомментарий модератора: ' + comment;
 

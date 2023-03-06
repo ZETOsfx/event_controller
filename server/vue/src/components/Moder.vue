@@ -333,7 +333,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-            <button @click='templateSave(1, 1)' type="button" class="btn btn-success" data-bs-dismiss="modal">Сохранить</button>
+            <button @click='templateSave()' type="button" class="btn btn-success" data-bs-dismiss="modal">Сохранить</button>
           </div>
         </div>
       </div>
@@ -428,7 +428,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-            <button @click='templateSave(1, 1)' type="button" class="btn btn-success" data-bs-dismiss="modal">Сохранить</button>
+            <button @click='templateSave()' type="button" class="btn btn-success" data-bs-dismiss="modal">Сохранить</button>
           </div>
         </div>
       </div>
@@ -512,7 +512,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-            <button @click="buttonSave(this.forModal)" type="button" class="btn btn-danger">Сохранить</button>
+            <button @click="buttonSave(this.forModal)" type="button" class="btn btn-success">Уверен</button>
           </div>
         </div>
       </div>
@@ -871,7 +871,7 @@
                       <!-- Button trigger Deny modal -->
                       <button @click="triggerModal('delete', acc, index)" type="button" class="btn btn-outline-danger"> Удалить </button>
                       <!-- Button trigger Confirm modal -->
-                      <button @click="triggerModal('save', acc, index)" type="button" class="btn btn-success"> Сохранить </button>
+                      <button @click="triggerModal('save', acc, index)" type="button" class="btn btn-success"> Применить </button>
                     </div>
                     <div v-if="acc.isStartedProcess && acc.whoAccept !== this.username.name">
                       Событие находится в обработке у: <i> "{{ acc.whoAccept }}" </i>
@@ -920,7 +920,7 @@
                       <!-- Button trigger Deny modal -->
                       <button @click="triggerModal('delete', acc, index)" type="button" class="btn btn-outline-danger"> Удалить </button>
                       <!-- Button trigger Confirm modal -->
-                      <button @click="triggerModal('save', acc, index)" type="button" class="btn btn-success"> Сохранить </button>
+                      <button @click="triggerModal('save', acc, index)" type="button" class="btn btn-success"> Применить </button>
                     </div>
                     <div v-if="acc.isStartedProcess && acc.whoAccept !== this.username.name">
                       Событие находится в обработке у: <i> "{{ acc.whoAccept }}" </i>
@@ -1206,6 +1206,10 @@ export default {
       let name = obj.name;
       await this.switchProcess(name);
       this.userProcess = '';
+      this.forModal.withChanges = false;
+      this.forModal.upd_less = [];
+      this.forModal.upd_break = [];
+      this.forModal.upd_lunch = [];
     },
       // Заагрить модалку
     async triggerModal(type, obj, index) {
@@ -1240,7 +1244,7 @@ export default {
           struct.obj.lunch = struct.obj.lesson;
         }
         let response;
-        if (struct.withChanges) {
+        if (this.forModal.withChanges) {
           response = await fetch(` /moder/access`, this.options('PATCH', { has_changes: struct.withChanges, obj_req: struct.obj, comment: struct.comment, upd_less: struct.upd_less, upd_lunch: struct.upd_lunch, upd_break: struct.upd_break }));
         } else {
           response = await fetch(` /moder/access`, this.options('PATCH', { obj_req: struct.obj, comment: struct.comment }));
@@ -1248,12 +1252,17 @@ export default {
         let message = (await response.json());
         if (message.message !== 'errdate') {
           this.reqList[struct.index].isStartedProcess = false;
+          this.reqList[struct.index].isAccepted = true;
           this.acceptedList.push(this.reqList[struct.index]);
           this.reqList.splice(struct.index, 1);
           this.successMessage = 'Запрос "' + struct.name + '" был успешно утвержден.';
           this.succCallback.show();
           this.confirmModal.hide();
           this.userProcess = '';
+          this.forModal.withChanges = false;
+          this.forModal.upd_less = [];
+          this.forModal.upd_break = [];
+          this.forModal.upd_lunch = [];
         } else {
           this.errorMessage = 'Уже существует утвержденное событие на этот день.';
           this.errCallback.show();
@@ -1274,6 +1283,10 @@ export default {
         this.succCallback.show();
         this.denyModal.hide();
         this.userProcess = '';
+        this.forModal.withChanges = false;
+        this.forModal.upd_less = [];
+        this.forModal.upd_break = [];
+        this.forModal.upd_lunch = [];
       } else {
         this.errorMessage = 'Некорректный параметр. Начните обработку корректно.';
         this.errCallback.show();
@@ -1290,6 +1303,10 @@ export default {
         this.succCallback.show();
         this.deleteModal.hide();
         this.userProcess = '';
+        this.forModal.withChanges = false;
+        this.forModal.upd_less = [];
+          this.forModal.upd_break = [];
+          this.forModal.upd_lunch = [];
       } else {
         this.errorMessage = 'Некорректный параметр. Начните обработку корректно.';
         this.errCallback.show();
@@ -1303,24 +1320,24 @@ export default {
           struct.obj.breaktime = struct.obj.lesson;
           struct.obj.lunch = struct.obj.lesson;
         }
+        let response;
         if (struct.withChanges) {
           response = await fetch(` /moder/access`, this.options('PATCH', { has_changes: struct.withChanges, obj_req: struct.obj, comment: struct.comment, upd_less: struct.upd_less, upd_lunch: struct.upd_lunch, upd_break: struct.upd_break }));
         } else {
           response = await fetch(` /moder/access`, this.options('PATCH', { obj_req: struct.obj, comment: struct.comment }));
         }
         let message = (await response.json());
-        if (message.message !== 'errdate') {
-          this.reqList[struct.index].isStartedProcess = false;
-          this.acceptedList.push(this.reqList[struct.index]);
-          this.reqList.splice(struct.index, 1);
-          this.successMessage = 'Запрос "' + struct.name + '" был успешно утвержден.';
-          this.succCallback.show();
-          this.confirmModal.hide();
-          this.userProcess = '';
-        } else {
-          this.errorMessage = 'Уже существует утвержденное событие на этот день.';
-          this.errCallback.show();
-        }
+        console.log(message);
+
+        this.acceptedList[struct.index].isStartedProcess = false;
+        this.successMessage = 'В запрос "' + struct.name + '" успешно внесены изменения.';
+        this.succCallback.show();
+        this.saveModal.hide();
+        this.userProcess = '';
+        this.forModal.withChanges = false;
+        this.forModal.upd_less = [];
+        this.forModal.upd_break = [];
+        this.forModal.upd_lunch = [];
       } else {
         this.errorMessage = 'Некорректный параметр. Начните обработку корректно.';
         this.errCallback.show();
@@ -1364,12 +1381,10 @@ export default {
       }
     },
       // Save template corrections
-    async templateSave(index, list) {
-
+    async templateSave() {
         // 1. Форма не должна быть "испорчена" - возможно нарочное удаление структуры [.data]
         // 2. При внесении изменений в шаблон любого типа хотя бы в одной из форм должны быть события
         //    (невозможно сохранить, удалив все события из всех шаблонов, поскольку такой запрос нет смысла утверждать)
-
       if (this.eventList.data) {
         this.forModal.withChanges = true;
         this.forModal.upd_less = this.eventList.data.lesson;
@@ -1465,6 +1480,7 @@ export default {
         },
         body: JSON.stringify({ name: window.user.name }),
       });
+      this.forModal.withChanges = false;
 
       event.preventDefault();
       event.returnValue = '';
