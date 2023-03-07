@@ -366,8 +366,11 @@ class EventController {
                         }
 
                         if (break_name !== '-') {
-                            const break_tmp = await db('tmp').select('*').where('name', break_name);
-                            originTemp.push(break_tmp[0]);
+                                // Если в одном запросе стоит несколько одинаковых шаблонов, не нужно дублировать резервные копии
+                            if (break_name !== stud_name) {
+                                const break_tmp = await db('tmp').select('*').where('name', break_name);
+                                originTemp.push(break_tmp[0]);
+                            }
                         } else {
                             active = await db('events_req_form').select('*').where('isActive', true);
                             if (!active[0]) {
@@ -388,8 +391,10 @@ class EventController {
                         }
 
                         if (lunch_name !== '-') {
-                            const lunch_tmp = await db('tmp').select('*').where('name', lunch_name);
-                            originTemp.push(lunch_tmp[0]);
+                            if (lunch_name !== break_name && lunch_name !== stud_name) {
+                                const lunch_tmp = await db('tmp').select('*').where('name', lunch_name);
+                                originTemp.push(lunch_tmp[0]);
+                            }
                         } else {
                             active = await db('events_req_form').select('*').where('isActive', true);
                             if (!active[0]) {

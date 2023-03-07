@@ -92,7 +92,7 @@ app.get('/index', async (req, res) => {
 app.get('/adscast', async (req, res) => {
     const title = "Cast ads";
     let ads = await db('ads').select('*').where('translate', 'true').orderBy('id', 'desc');
-    res.render(createPath('ads_cast_uber_mega_feature'), { title, session: req.session, ads});
+    res.render(createPath('adscast'), { title, session: req.session, ads});
 });
 
 app.get('/guide', (req, res) => {

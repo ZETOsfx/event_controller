@@ -61,7 +61,7 @@ class ModerController {
         }
         res.end();
     }
-        // Утвердить
+        // Утвердить - Сохранить - Отредактировать трансляцию
     async Access(req, res) {
         if (req.session.role === 'admin' || req.session.role === 'moder') {
             const { obj_req, comment } = req?.body;
@@ -114,7 +114,7 @@ class ModerController {
                                 break;
                             isNew = true;
                         }
-                            // Вычищение неиспользованных копий (либо уже узамененные шаблоны)
+                            // Вычищение неиспользованных копий (либо уже замененные шаблоны)
                         let newerUsed = true;
                         for (let i in example) {
                             for (let j in updated) {
@@ -142,22 +142,26 @@ class ModerController {
                             }
 
                             if (!obj_req.isspecial) {
-                                const lasty = await db('tmp_acc').select('*').where('name', obj_req.breaktime).where('from', request[0].id);
-                                await db('events_tmp_acc').where('tmpid', lasty[0].id).del();
-                                for (let i in upd_break) {
-                                    delete upd_break[i].id;
-                                    upd_break[i].order = i + 1;
-                                    upd_break[i].tmpid = lasty[0].id;
-                                    await db('events_tmp_acc').insert(upd_break[i]);
+                                if (obj_req.breaktime !== obj_req.lesson) {
+                                    const lasty = await db('tmp_acc').select('*').where('name', obj_req.breaktime).where('from', request[0].id);
+                                    await db('events_tmp_acc').where('tmpid', lasty[0].id).del();
+                                    for (let i in upd_break) {
+                                        delete upd_break[i].id;
+                                        upd_break[i].order = i + 1;
+                                        upd_break[i].tmpid = lasty[0].id;
+                                        await db('events_tmp_acc').insert(upd_break[i]);
+                                    }
                                 }
 
-                                const lastyk = await db('tmp_acc').select('*').where('name', obj_req.lunch).where('from', request[0].id);
-                                await db('events_tmp_acc').where('tmpid', lastyk[0].id).del();
-                                for (let i in upd_lunch) {
-                                    delete upd_lunch[i].id;
-                                    upd_lunch[i].order = i + 1;
-                                    upd_lunch[i].tmpid = lastyk[0].id;
-                                    await db('events_tmp_acc').insert(upd_lunch[i]);
+                                if (obj_req.lunch !== obj_req.lesson && obj_req.lunch !== obj_req.breaktime) {
+                                    const lastyk = await db('tmp_acc').select('*').where('name', obj_req.lunch).where('from', request[0].id);
+                                    await db('events_tmp_acc').where('tmpid', lastyk[0].id).del();
+                                    for (let i in upd_lunch) {
+                                        delete upd_lunch[i].id;
+                                        upd_lunch[i].order = i + 1;
+                                        upd_lunch[i].tmpid = lastyk[0].id;
+                                        await db('events_tmp_acc').insert(upd_lunch[i]);
+                                    }
                                 }
                             }
                         }
@@ -424,7 +428,8 @@ class ModerController {
                     }
                 }
 
-                if (obj.breaktime !== '-') {
+
+                if (obj.breaktime !== '-' && obj.breaktime !== obj.lesson) {
                     if (break_reserve) {
                             // Отправленный редактором
                         copy_tmp_breaktime = await db('tmp_acc').where('from', _req[0].id).where('name', obj.breaktime).select('*');
@@ -434,9 +439,11 @@ class ModerController {
                         copy_tmp_breaktime = await db('tmp').where('name', obj.breaktime).select('*');
                         events_breaktime = await db('events_tmp').where('tmpid', copy_tmp_breaktime[0].id).select('*');
                     }
+                } else {
+                    events_breaktime = 'lesson';
                 }
 
-                if (obj.lunch !== '-') {
+                if (obj.lunch !== '-' && obj.lunch !== obj.breaktime && obj.lunch !== obj.lesson) {
                     if (lunch_reserve) {
                             // Отправленный редактором
                         copy_tmp_lunch = await db('tmp_acc').where('from', _req[0].id).where('name', obj.lunch).select('*');
@@ -446,6 +453,11 @@ class ModerController {
                         copy_tmp_lunch = await db('tmp').where('name', obj.lunch).select('*');
                         events_lunch = await db('events_tmp').where('tmpid', copy_tmp_lunch[0].id).select('*');
                     }
+                } else {
+                    if (obj.lunch === obj.lesson)
+                        events_lunch = 'lesson';
+                    else
+                        events_lunch = 'breaktime';
                 }
 
                 res.json({

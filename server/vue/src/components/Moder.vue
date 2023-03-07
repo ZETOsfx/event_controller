@@ -161,10 +161,10 @@
 
               <!-- Перерыв -->
               <div class="tab-pane fade show" id="pills-break" role="tabpanel" tabindex="0">
-                <div v-if="this.eventList.data.breaktime === '-'">
-                  В последовательности на пары изменений нет.
+                <div v-if="this.eventList.data.breaktime === 'lesson'">
+                  На этот пункт установлен шаблон, аналогичный представленному во вкладке "Пары".
                 </div>
-                <div v-if="this.eventList.data.breaktime !== '-'">
+                <div v-if="this.eventList.data.breaktime !== 'lesson'">
                   <div v-for="(event, index) in this.eventList.data.breaktime" class="row gx-3 gy-2 align-items-center p-1">
                     <div v-if="!editFormB[index].isDeleted" class="col-sm-3">
                       <label class="visually-hidden" for="specificSizeInputName2">Name</label>
@@ -246,10 +246,13 @@
 
               <!-- Обед -->
               <div class="tab-pane fade show" id="pills-dinner" role="tabpanel" tabindex="0">
-                <div v-if="this.eventList.data.lunch === '-'">
-                  В последовательности на пары изменений нет.
+                <div v-if="this.eventList.data.lunch === 'lesson'">
+                  На этот пункт установлен шаблон, аналогичный представленному во вкладке "Пары".
                 </div>
-                <div v-if="this.eventList.data.lunch !== '-'">
+                <div v-if="this.eventList.data.lunch === 'breaktime'">
+                  На этот пункт установлен шаблон, аналогичный представленному во вкладке "Перерыв".
+                </div>
+                <div v-if="this.eventList.data.lunch !== 'lesson' && this.eventList.data.lunch !== 'breaktime'">
                   <div v-for="(event, index) in this.eventList.data.lunch" class="row gx-3 gy-2 align-items-center p-1">
                     <div v-if="!editFormL[index].isDeleted" class="col-sm-3">
                       <label class="visually-hidden" for="specificSizeInputName8">Name</label>
@@ -1359,13 +1362,13 @@ export default {
             this.editFormS[i].isDisabled = true;
           }
 
-        if (this.eventList.data.breaktime !== '-')
+        if (this.eventList.data.breaktime !== 'lesson')
           for (let i in this.eventList.data.breaktime) {
             if (!this.editFormB[i]) this.editFormB[i] = {}
             this.editFormB[i].isDisabled = true;
           }
 
-        if (this.eventList.data.lunch !== '-')
+        if (this.eventList.data.lunch !== 'lesson' && this.eventList.data.lunch !== 'breaktime')
           for (let i in this.eventList.data.lunch) {
             if (!this.editFormL[i]) this.editFormL[i] = {}
             this.editFormL[i].isDisabled = true;
@@ -1480,7 +1483,6 @@ export default {
         },
         body: JSON.stringify({ name: window.user.name }),
       });
-      this.forModal.withChanges = false;
 
       event.preventDefault();
       event.returnValue = '';

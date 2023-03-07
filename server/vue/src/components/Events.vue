@@ -471,12 +471,12 @@ export default {
                 this.successMessage = 'Шаблон \"' + name + '\" был успешно создан.';
                 break;
             }
+            await this.getTmp(name);
             this.succCallback.show();
           } else {
             this.errorMessage = 'Шаблон c именем: \"' + name + '\" уже существует. Придумайте другое.';
             this.errCallback.show();
           }
-          await this.getTmp(name);
         }
       } else {
         this.errorMessage = 'Заполните имя нового шаблона!';
