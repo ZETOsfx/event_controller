@@ -21,7 +21,9 @@ router.patch('/access', ModerController.Access);
 router.put('/deny', ModerController.Deny);
     // Открыть выбранный в поле шаблон
 router.patch('/details', ModerController.Details);
-
+    // Установка на воспроизведение 
+router.put('/setactive', ModerController.SetActive);
+    // Автоматическое опрерывание обработки при выходе
 router.put('/endprocess', ModerController.EndProcess);
 
 module.exports = router;

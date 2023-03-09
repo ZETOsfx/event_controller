@@ -521,6 +521,25 @@
       </div>
     </div>
 
+    <!-- Modal for Set Active -->
+    <div class="modal fade" id="activeModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabela">Подтверждение</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Вы собираетесь установить шаблон "{{ this.forModal.name }}" на трансляцию. <strong>Текущий активный шаблон будет удалён из системы</strong>. <br><br> Вы уверены?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button @click="setActive(this.forModal)" type="button" class="btn btn-success">Уверен</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container">
       <h6 class="text p-0 mt-4"> Управление отображением </h6>
       <!-- Подстилка - content -->
@@ -864,9 +883,15 @@
                     </div>
 
                     <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
-                    <button v-if="!acc.isStartedProcess" @click="startProcess(acc)" class="btn btn-outline-secondary">
-                        Обработать
-                    </button>
+                    <div v-if="!acc.isStartedProcess" class="btn-group">
+                      <button @click="startProcess(acc)" class="btn btn-outline-secondary">
+                          Обработать
+                      </button>
+                      <!-- Button trigger SetActive modal -->
+                      <button @click="triggerModal('active', acc, index)" type="button" class="btn btn-outline-warning">
+                        Играть сейчас
+                      </button>
+                    </div>
                     <div v-if="acc.isStartedProcess && (this.userProcess === acc.name || acc?.whoAccept === this.username.name)" class="btn-group">
                       <button @click="endProcess(acc)" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
                       <!-- Button trigger Details modal -->
@@ -913,13 +938,21 @@
                     </div>
 
                     <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
-                    <button v-if="!acc.isStartedProcess" @click="startProcess(acc)" class="btn btn-outline-secondary">
-                        Обработать
-                    </button>
+                    <div v-if="!acc.isStartedProcess" class="btn-group">
+                      <button @click="startProcess(acc)" class="btn btn-outline-secondary">
+                          Обработать
+                      </button>
+                      <!-- Button trigger SetActive modal -->
+                      <button @click="triggerModal('active', acc, index)" type="button" class="btn btn-outline-warning">
+                        Играть сейчас
+                      </button>
+                    </div>
                     <div v-if="acc.isStartedProcess && (this.userProcess === acc.name || acc?.whoAccept === username)" class="btn-group">
                       <button @click="endProcess(acc)" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
                       <!-- Button trigger Details modal -->
                       <button @click="buttonOpen(acc)" type="button" class="btn btn-outline-info">Просмотр</button>
+                      <!-- Button trigger SetActive modal -->
+                      <button @click="setActive(acc)" type="button" class="btn btn-outline-warning">Играть сейчас</button>
                       <!-- Button trigger Deny modal -->
                       <button @click="triggerModal('delete', acc, index)" type="button" class="btn btn-outline-danger"> Удалить </button>
                       <!-- Button trigger Confirm modal -->
@@ -992,6 +1025,7 @@ export default {
       confirmModal: '',
       deleteModal: '',
       saveModal: '',
+      actModal: '',
 
       currentTime: null,      // Текущее время (для отображения toggle)
       username: '',           // Информация о проф  иле (name: '', role: '')
@@ -1138,6 +1172,7 @@ export default {
       this.confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
       this.saveModal = new bootstrap.Modal(document.getElementById('saveModal'));
       this.deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+      this.actModal = new bootstrap.Modal(document.getElementById('activeModal'));
 
       this.succCallback = new bootstrap.Toast(document.getElementById("ToastSuccess"));
       this.errCallback = new bootstrap.Toast(document.getElementById("ToastError"));
@@ -1233,6 +1268,9 @@ export default {
           break;
         case 'save':
           this.saveModal.show();
+          break;
+        case 'active':
+          this.actModal.show();
           break;
         default:
           // Угрозы
@@ -1393,6 +1431,23 @@ export default {
         this.forModal.upd_less = this.eventList.data.lesson;
         this.forModal.upd_break = this.eventList.data.breaktime;
         this.forModal.upd_lunch = this.eventList.data.lunch;
+      }
+    },
+      // Set Active Now button
+    async setActive(req) {
+      if (req.obj.isAccepted) {
+        let response = await fetch(` /moder/setactive`, this.options('PUT', { name: req.name }));
+
+        this.activeTmp = [];
+        this.activeTmp.push(this.acceptedList[req.index]);
+        this.acceptedList.splice(req.index, 1);
+
+        this.successMessage = 'Запрос "' + req.name + '" был успешно установлен на воспроизведение.';
+        this.succCallback.show();
+        this.actModal.hide();
+
+      } else {
+        console.log('error');
       }
     },
 
