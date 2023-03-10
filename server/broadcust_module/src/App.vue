@@ -25,6 +25,7 @@ import customImage from "./components/image.vue";
 import customVideo from "./components/video.vue";
 import customIframe from "./components/iframe.vue";
 
+import io from "socket.io-client";
 
 export default {
   components: {
@@ -36,6 +37,7 @@ export default {
     return {
       list: null,
       now: Date.now(),
+      socket: {},
       pages: {
         image: [{id: null, src: null}],
         video: [{id: null, src: null}],
@@ -47,10 +49,51 @@ export default {
     }
   },
   methods: {
+    connect() {
+        // server URL
+      this.socket = io('http://localhost:3000/');
+
+      this.socket.on('active:upd', () => {
+        window.location.reload();
+      });
+    },
     async get() {
       this.activeItemId = -1;
-      let response = await fetch(`http://eventcontroller.ru/event/json`, {});
+      // http://eventcontroller.ru/event/json
+      // http://localhost:3000/event/json
+      let response = await fetch(`http://localhost:3000/event/json`, {});
       this.list = (await response.json()).pages;
+
+
+
+      function refreshAt(hours, minutes, seconds) {
+        var now = new Date();
+        var then = new Date();
+
+        if (now.getHours() > hours || (now.getHours() === hours && now.getMinutes() > minutes) ||
+            now.getHours() === hours && now.getMinutes() === minutes && now.getSeconds() >= seconds) {
+            then.setDate(now.getDate() + 1);
+        }
+
+        then.setHours(hours);
+        then.setMinutes(minutes);
+        then.setSeconds(seconds);
+
+        var timeout = (then.getTime() - now.getTime());
+        setTimeout(function() { window.location.reload() }, timeout);
+      }
+
+      refreshAt(8,20,3);
+      refreshAt(8,40,3);
+      refreshAt(10,15,3);
+      refreshAt(10,25,3);
+      refreshAt(12,0,3);
+      refreshAt(12,50,3);
+      refreshAt(14,25,3);
+      refreshAt(14,35,3);
+      refreshAt(16,10,3);
+      refreshAt(16,20,3);
+      refreshAt(17,55,3);
     },
     async buildPages() {
       console.log("start")
@@ -82,9 +125,9 @@ export default {
     },
     async formLoad(e) {
       return
-        let data = e.path[0].dataset;
-        if (data.id < 0) return;
-        console.log(e.path[0], 213)
+        // let data = e.path[0].dataset;
+        // if (data.id < 0) return;
+        // console.log(e.path[0], 213)
     },
     async timer() {
       this.now = Date.now();
@@ -99,6 +142,7 @@ export default {
     }
   },
   async mounted() {
+    this.connect();
     await this.get();
     this.buildPages().then(() => {
       this.isInit = false;

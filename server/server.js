@@ -56,6 +56,10 @@ io.on('connection', (socket) => {
     socket.on('del-process', (data) => {
         socket.broadcast.emit('process:deny', data);
     });
+
+    socket.on('upd-active', () => {
+        socket.broadcast.emit('active:upd');
+    })
         // Выход из страницы 
     socket.on('disconnect', () => {
         console.log(`USER ${ socket.id } left.`);
@@ -130,14 +134,8 @@ app.get('/adscast', async (req, res) => {
 });
 
 app.get('/guide', (req, res) => {
-    // if (req.session.loggedin) {
-        const title = "Guide";
-        res.render(createPath('guide'), { title, session: req.session });
-    // } else {
-    //     const title = "Error";
-    //     res.status(404).render(createPath('error'), { title });
-    // }
-    // res.end();
+    const title = "Guide";
+    res.render(createPath('guide'), { title, session: req.session });
 });
 
 // app.get('/cast', (req, res) => {

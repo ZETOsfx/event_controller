@@ -1629,7 +1629,7 @@ export default {
       // Set Active Now button
     async setActive(req) {
       if (req.obj.isAccepted) {
-        let response = await fetch(` /moder/setactive`, this.options('PUT', { name: req.name }));
+        await fetch(` /moder/setactive`, this.options('PUT', { name: req.name }));
 
         this.activeTmp = [];
         this.activeTmp.push(this.acceptedList[req.index]);
