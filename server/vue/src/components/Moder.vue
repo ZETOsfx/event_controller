@@ -611,11 +611,11 @@
                     </div>
 
                     <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
-                    <button v-if="!req.isStartedProcess" @click="startProcess(req)" class="btn btn-outline-secondary">
+                    <button v-if="!req.isStartedProcess" @click="startProcess(req, 'req')" class="btn btn-outline-secondary">
                         Обработать
                     </button>
                     <div v-if="req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === this.username.name)" class="btn-group">
-                      <button @click="endProcess(req)" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
+                      <button @click="endProcess(req, 'req')" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
                       <!-- Button trigger Details modal -->
                       <button @click="buttonOpen(req)"  type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger Deny modal -->
@@ -661,11 +661,11 @@
                     </div>
 
                     <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
-                    <button v-if="!req.isStartedProcess" @click="startProcess(req)" class="btn btn-outline-secondary">
+                    <button v-if="!req.isStartedProcess" @click="startProcess(req, 'req')" class="btn btn-outline-secondary">
                         Обработать
                     </button>
                     <div v-if="req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === username)" class="btn-group">
-                      <button @click="endProcess(req)" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
+                      <button @click="endProcess(req, 'req')" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
                       <!-- Button trigger Details modal -->
                       <button @click="buttonOpen(req)" type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger Deny modal -->
@@ -744,10 +744,10 @@
                       <div class="d-flex w-100 justify-content-between align-items-center">
                         <!-- Button trigger Delete follow modal -->
                         <!-- <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button> -->
-                        <button v-if="!screen.isStartedProcess" @click="startProcess(screen)" type="button" class="btn btn-outline-success">Редактировать</button>
+                        <button v-if="!screen.isStartedProcess" @click="startProcess(screen, 'act')" type="button" class="btn btn-outline-success">Редактировать</button>
 
                         <div v-if="screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name)" class="btn-group">
-                          <button @click="endProcess(screen)" type="button" class="btn btn-outline-secondary"> Отмена </button>
+                          <button @click="endProcess(screen, 'act')" type="button" class="btn btn-outline-secondary"> Отмена </button>
                           <!-- Button trigger Details modal -->
                           <button @click="buttonOpen(screen)"  type="button" class="btn btn-outline-info">Просмотр</button> 
                           <!-- Button trigger Confirm modal -->
@@ -801,10 +801,10 @@
                       <div class="d-flex w-100 justify-content-end align-items-center">
                         <!-- Button trigger Delete follow modal -->
                         <!-- <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button> -->
-                        <button v-if="!screen.isStartedProcess" @click="startProcess(screen)" type="button" class="btn btn-outline-success">Редактировать</button>
+                        <button v-if="!screen.isStartedProcess" @click="startProcess(screen, 'act')" type="button" class="btn btn-outline-success">Редактировать</button>
 
                         <div v-if="screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name)" class="btn-group">
-                          <button @click="endProcess(screen)" type="button" class="btn btn-outline-secondary"> Отмена </button>
+                          <button @click="endProcess(screen, 'act')" type="button" class="btn btn-outline-secondary"> Отмена </button>
                           <!-- Button trigger Details modal -->
                           <button @click="buttonOpen(screen)"  type="button" class="btn btn-outline-info">Просмотр</button> 
                           <!-- Button trigger Confirm modal -->
@@ -884,7 +884,7 @@
 
                     <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
                     <div v-if="!acc.isStartedProcess" class="btn-group">
-                      <button @click="startProcess(acc)" class="btn btn-outline-secondary">
+                      <button @click="startProcess(acc, 'acc')" class="btn btn-outline-secondary">
                           Обработать
                       </button>
                       <!-- Button trigger SetActive modal -->
@@ -893,7 +893,7 @@
                       </button>
                     </div>
                     <div v-if="acc.isStartedProcess && (this.userProcess === acc.name || acc?.whoAccept === this.username.name)" class="btn-group">
-                      <button @click="endProcess(acc)" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
+                      <button @click="endProcess(acc, 'acc')" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
                       <!-- Button trigger Details modal -->
                       <button @click="buttonOpen(acc)" type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger Deny modal -->
@@ -939,7 +939,7 @@
 
                     <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
                     <div v-if="!acc.isStartedProcess" class="btn-group">
-                      <button @click="startProcess(acc)" class="btn btn-outline-secondary">
+                      <button @click="startProcess(acc, 'acc')" class="btn btn-outline-secondary">
                           Обработать
                       </button>
                       <!-- Button trigger SetActive modal -->
@@ -948,7 +948,7 @@
                       </button>
                     </div>
                     <div v-if="acc.isStartedProcess && (this.userProcess === acc.name || acc?.whoAccept === username)" class="btn-group">
-                      <button @click="endProcess(acc)" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
+                      <button @click="endProcess(acc, 'acc')" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
                       <!-- Button trigger Details modal -->
                       <button @click="buttonOpen(acc)" type="button" class="btn btn-outline-info">Просмотр</button>
                       <!-- Button trigger SetActive modal -->
@@ -982,10 +982,13 @@
 </template>
 
 <script>
+import io from "socket.io-client";
 
 export default {
   data() {
     return {
+      connected: false,       // Socket.io connection 
+
       allFormList: [],        // Все упакованные данные для модератора (heap data)
       acceptedList: [],       // Утвержденные на данный момент расписания <Request form>
       reqList: [],            // Запросы редакторов на утверждение <Request form>
@@ -1033,6 +1036,71 @@ export default {
     }
   },
   methods: {
+    connect() {
+      this.connected = true;
+      this.socket = io('http://localhost:3000/');
+
+      this.socket.on('process:start', (data) => {
+        if (data.list === "req") {
+            for (let i in this.reqList) {
+              if (this.reqList[i].name === data.process) {
+                this.reqList[i].isStartedProcess = true;
+                this.reqList[i].inProcessing = true;
+                this.reqList[i].whoAccept = data.user;
+              }
+            }
+          } else if (data.list === "act") {
+            for (let i in this.activeTmp) {
+              if (this.activeTmp[i].name === data.process) {
+                this.activeTmp[i].isStartedProcess = true;
+                this.activeTmp[i].inProcessing = true;
+                this.activeTmp[i].whoAccept = data.user;
+              }
+            }
+          } else if (data.list === "acc") {
+            for (let i in this.acceptedList) {
+              if (this.acceptedList[i].name === data.process) {
+                this.acceptedList[i].isStartedProcess = true;
+                this.acceptedList[i].inProcessing = true;
+                this.acceptedList[i].whoAccept = data.user;
+              }
+            }
+          } else 
+            console.log('error');
+      });
+
+      this.socket.on('process:end', (data) => {
+        switch (data.list) {
+          case 'req':
+            for (let i in this.reqList) {
+              if (this.reqList[i].name === data.process) {
+                this.reqList[i].isStartedProcess = false;
+                this.reqList[i].inProcessing = false;
+              }
+            }
+            break;
+          case 'act':
+            for (let i in this.activeTmp) {
+              if (this.activeTmp[i].name === data.process) {
+                this.reqList[i].isStartedProcess = false;
+                this.activeTmp[i].inProcessing = false;
+              }
+            }
+            break;
+          case 'acc':
+            for (let i in this.acceptedList) {
+              if (this.acceptedList[i].name === data.process) {
+                this.reqList[i].isStartedProcess = false;
+                this.acceptedList[i].inProcessing = false;
+              }
+            }
+            break;
+          default:
+            console.log('error');
+        }
+      });
+    },
+
     async ProgressBar(active) {
       let Lessons = [
         [30000, 31200, 'Перерыв'],                                    // Перерыв, с 8:20
@@ -1218,10 +1286,17 @@ export default {
       // this.reqList[name].whoAccept = (await response.json()).whoAccept;
     },
       // Начать процесс обработки
-    async startProcess(obj) {
+    async startProcess(obj, list) {
       await this.getTime();
-      console.log(obj);
       if (this.userProcess === '' && !obj.isStartedProcess) {
+        
+        const data = {
+          list: list,
+          process: obj.name,
+          user: this.username.name
+        }
+          // Обновление данных об обработках у других модераторов
+        this.socket.emit('new-process', data);
 
           // Собственные шаблоны и уже проверенные + те, что были отправлены в данном запросе
         let templates = await fetch(` /moder/alltmp`, this.options('PATCH', { name: obj.name })) ;
@@ -1239,7 +1314,15 @@ export default {
       }
     },
       // Завершить процесс обработки
-    async endProcess(obj) {
+    async endProcess(obj, list) {
+      const data = {
+        list: list,
+        process: obj.name,
+        user: this.username.name
+      }
+        // Обновление данных об обработках у других модераторов
+      this.socket.emit('end-process', data);
+
       obj.isStartedProcess = false;
       let name = obj.name;
       await this.switchProcess(name);
@@ -1526,6 +1609,7 @@ export default {
 
       // Действие при загрузке страницы
   mounted() {
+    this.connect();
     this.getRequests(); // Получение списка всех запросов для последующей отрисовки
     this.username = window.user;
     this.ProgressBar(this.activeTmp); // Запускаем бесконечную залупу

@@ -3,6 +3,8 @@ require('dotenv').config();
 const PORT = process.env.PORT || 5000;
 
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const session = require('express-session');
 const favicon = require('serve-favicon');
@@ -25,13 +27,36 @@ const adsRouter   = require('./src/presentation/routes/ads.routes'  );
 const cors = require('cors');
 const morgan = require('morgan');
 
-// ----- APPLICATION -----
-    
+// ----- APPLICATION SETTINGS -----
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+    }
+});
+
+    // Socket.IO connection
+io.on('connection', (socket) => {
+    console.log(`IO connection: ${ socket.id } is connected.`);
+
+    socket.on('new-process', (data) => {
+        socket.broadcast.emit('process:start', data);
+    });
+
+    socket.on('end-process', (data) => {
+        socket.broadcast.emit('process:end', data);
+    });
+
+    socket.on('disconnect', () => {
+        console.log(`USER ${ socket.id } left.`);
+    });
+});
 
 app.set('view-engine', 'ejs');
 
-app.listen(PORT, (error) => {
+server.listen(PORT, (error) => {
     error ? console.log(error) : console.log(`listening port ${PORT}`);
 });
         // --- LOGGING ---
