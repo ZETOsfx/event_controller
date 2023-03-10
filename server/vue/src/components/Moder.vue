@@ -1082,7 +1082,7 @@ export default {
           case 'act':
             for (let i in this.activeTmp) {
               if (this.activeTmp[i].name === data.process) {
-                this.reqList[i].isStartedProcess = false;
+                this.activeTmp[i].isStartedProcess = false;
                 this.activeTmp[i].inProcessing = false;
               }
             }
@@ -1090,7 +1090,28 @@ export default {
           case 'acc':
             for (let i in this.acceptedList) {
               if (this.acceptedList[i].name === data.process) {
+                this.acceptedList[i].isStartedProcess = false;
+                this.acceptedList[i].inProcessing = false;
+              }
+            }
+            break;
+            // Завершение всех обработок данного пользователя во всех листах
+          case 'all': 
+            for (let i in this.reqList) {
+              if (this.reqList[i].isStartedProcess && this.reqlist[i].whoAccept === data.name) {
                 this.reqList[i].isStartedProcess = false;
+                this.reqList[i].inProcessing = false;
+              }
+            }
+            for (let i in this.activeTmp) {
+              if (this.activeTmp[i].isStartedProcess && this.activeTmp[i].whoAccept === data.name) {
+                this.activeTmp[i].isStartedProcess = false;
+                this.activeTmp[i].inProcessing = false;
+              }
+            }
+            for (let i in this.acceptedList) {
+              if (this.acceptedList[i].isStartedProcess && this.acceptedList[i].whoAccept === data.name) {
+                this.acceptedList[i].isStartedProcess = false;
                 this.acceptedList[i].inProcessing = false;
               }
             }
@@ -1098,6 +1119,64 @@ export default {
           default:
             console.log('error');
         }
+      });
+
+      this.socket.on('process:confirm', async (data) => {
+          // New data - уже с пометкой прерванной обработки
+        let response = await fetch(` /moder/requests`, {
+          method: 'GET',
+            // THIS IS IMPORTANT
+          headers: new Headers({
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+          })
+        });
+        this.allFormList = (await response.json());    
+
+          // Утверждение 
+        if (data.list === 'req') {
+          for (let i in this.allFormList) 
+            if (this.allFormList[i].name === data.process) 
+              this.acceptedList.push(this.allFormList[i]);
+
+          for (let i in this.reqList) 
+            if (this.reqList[i].name === data.process) 
+              this.reqList.splice(i, 1);
+          // ОБРАБОТКА ПРЕРВАНА С НОВЫМИ ДАННЫМИ
+            
+          // Сохранение
+        } else if (data.list === 'acc') {
+          let tmp; 
+
+          for (let i in this.allFormList) 
+            if (this.allFormList[i].name === data.process) 
+              tmp = this.allFormList[i];
+
+          for (let i in this.acceptedList) 
+            if (this.acceptedList[i].name === data.process) 
+              this.acceptedList[i] = tmp;
+          // ОБРАБОТКА ПРЕРВАНА С НОВЫМИ ДАННЫМИ
+
+        } else 
+          console.log('error');
+      });
+
+      this.socket.on('process:deny', (data) => {
+          // Отклонение 
+        if (data.list === 'req') {
+          for (let i in this.reqList) 
+            if (this.reqList[i].name === data.process) 
+              this.reqList.splice(i, 1);
+
+          // Удаление из утвержденных
+        } else if (data.list === 'acc') {
+          for (let i in this.acceptedList) 
+            if (this.acceptedList[i].name === data.process) 
+              this.acceptedList.splice(i, 1);
+
+        } else 
+          console.log('error');
       });
     },
 
@@ -1387,6 +1466,14 @@ export default {
           this.forModal.upd_less = [];
           this.forModal.upd_break = [];
           this.forModal.upd_lunch = [];
+
+          const data = {
+            list: 'req',
+            process: struct.name,
+            user: this.username.name
+          }
+          this.socket.emit('con-process', data);
+
         } else {
           this.errorMessage = 'Уже существует утвержденное событие на этот день.';
           this.errCallback.show();
@@ -1403,6 +1490,14 @@ export default {
         // let response =
             await fetch(` /moder/deny`, this.options('PUT', { name: struct.name, comment: struct.comment }));
         this.reqList.splice(struct.index, 1);
+
+        const data = {
+          list: 'req',
+          process: struct.name,
+          user: this.username.name
+        }
+        this.socket.emit('del-process', data);
+
         this.successMessage = 'Запрос "' + struct.name + '" был успешно отклонен.';
         this.succCallback.show();
         this.denyModal.hide();
@@ -1423,6 +1518,14 @@ export default {
         // let response =
         await fetch(` /moder/deny`, this.options('PUT', { name: struct.name, comment: struct.comment }));
         this.acceptedList.splice(struct.index, 1);
+
+        const data = {
+          list: 'acc',
+          process: struct.name,
+          user: this.username.name
+        }
+        this.socket.emit('del-process', data);
+
         this.successMessage = 'Запрос "' + struct.name + '" был успешно удален.';
         this.succCallback.show();
         this.deleteModal.hide();
@@ -1452,6 +1555,13 @@ export default {
         }
         let message = (await response.json());
         console.log(message);
+
+        const data = {
+          list: 'acc',
+          process: struct.name,
+          user: this.username.name
+        }
+        this.socket.emit('con-process', data);
 
         this.acceptedList[struct.index].isStartedProcess = false;
         this.successMessage = 'В запрос "' + struct.name + '" успешно внесены изменения.';
@@ -1528,6 +1638,8 @@ export default {
         this.successMessage = 'Запрос "' + req.name + '" был успешно установлен на воспроизведение.';
         this.succCallback.show();
         this.actModal.hide();
+
+        this.ProgressBar(this.activeTmp);
 
       } else {
         console.log('error');
@@ -1615,7 +1727,14 @@ export default {
     this.ProgressBar(this.activeTmp); // Запускаем бесконечную залупу
 
     window.addEventListener('beforeunload', async function (event) {
-      await fetch(` /moder/endprocess`, {
+       // Обновление данных об обработках у других модераторов
+      // this.socket.emit('end-process', {
+      //   list: 'all',
+      //   process: '-',
+      //   user: this.username.name
+      // });
+
+      await fetch(`/moder/endprocess`, {
         method: 'PUT',
           headers: {
           'Content-type': 'application/json; charset=UTF-8'

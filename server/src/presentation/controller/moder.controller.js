@@ -6,6 +6,33 @@ const db = require('../../../config/db_connect');    // Database connection
 const path = require('path');
 const createPath = (page) => path.resolve(__dirname, '../views', `${page}.ejs`);
 
+const Lessons = [ 
+    [30000, 31200, 'Перерыв'],  // Перерыв, с 8:20
+    [31200, 36900, 'Пара'],     // 1ая пара, с 8:40
+    [36900, 37500, 'Перерыв'],  // Перерыв, с 10:15
+    [37500, 43200, 'Пара'],     // 2ая пара, с 10:25
+    [43200, 46200, 'Обед'],     // Обед, С 12:00
+    [46200, 51900, 'Пара'],     // 3ая пара, с 12:50
+    [51900, 52500, 'Перерыв'],  // Перерыв, с 14:25
+    [52500, 58200, 'Пара'],     // 4ая пара, с 14:35
+    [58200, 58800, 'Перерыв'],  // Перерыв, с 16:10
+    [58800, 64500, 'Пара'],     // 5ая пара, с 16:20
+];
+
+function getState(curSec) {
+    for (let i in Lessons)
+        if (curSec >= Lessons[i][0] && curSec < Lessons[i][1]) 
+            return Lessons[i][2];
+        // После 17:55 и до 8:20 - Свободное время
+    return 'Свободка'; // Играет шаблон "Обед"
+}
+
+function WhatTime() {               // Узнать время в секундах с начала дня
+    let today = new Date();         // Получить текущее время и вернуть значение в секнудах
+    return  (today.getHours() * 60 + today.getMinutes()) * 60 + today.getSeconds();
+}
+
+
 class ModerController {
         // Рендеринг страницы
     async onLoad(req, res) {
@@ -176,32 +203,6 @@ class ModerController {
                                     await db('events').insert( events[i] );
                                 }
                             } else {
-                                const Lessons = [ 
-                                    [30000, 31200, 'Перерыв'],  // Перерыв, с 8:20
-                                    [31200, 36900, 'Пара'],     // 1ая пара, с 8:40
-                                    [36900, 37500, 'Перерыв'],  // Перерыв, с 10:15
-                                    [37500, 43200, 'Пара'],     // 2ая пара, с 10:25
-                                    [43200, 46200, 'Обед'],     // Обед, С 12:00
-                                    [46200, 51900, 'Пара'],     // 3ая пара, с 12:50
-                                    [51900, 52500, 'Перерыв'],  // Перерыв, с 14:25
-                                    [52500, 58200, 'Пара'],     // 4ая пара, с 14:35
-                                    [58200, 58800, 'Перерыв'],  // Перерыв, с 16:10
-                                    [58800, 64500, 'Пара'],     // 5ая пара, с 16:20
-                                ];
-                            
-                                function getState(curSec) {
-                                    for (let i in Lessons)
-                                        if (curSec >= Lessons[i][0] && curSec < Lessons[i][1]) 
-                                            return Lessons[i][2];
-                                        // После 17:55 и до 8:20 - Свободное время
-                                    return 'Свободка'; // Играет шаблон "Обед"
-                                }
-
-                                function WhatTime() {                                           // Узнать время в секундах с начала дня
-                                    let today = new Date();                                       // Получить текущее время и вернуть значение в секнудах
-                                    return  (today.getHours() * 60 + today.getMinutes()) * 60 + today.getSeconds();
-                                }
-
                                 switch (getState(WhatTime())) {
                                     case 'Перерыв':
                                         const prog_br = await db('tmp_acc').select('*').where('name', request[0].breaktime).where('from', request[0].id);
@@ -477,8 +478,79 @@ class ModerController {
     async SetActive(req, res) {
         if (req.session.role === 'admin' || req.session.role === 'moder') {
             const { name } = req?.body;
-            
-            
+
+            if (name) {
+                    // Устанавливаемый шаблон
+                const new_req = await db('events_req_form').select('*').where({ name });
+
+                if (new_req !== undefined) {
+                    const request = await db('events_req_form').select('*').where('isActive', true);
+                        // Если существует активный запрос, его необходимо вычистить
+                    if (request[0] !== undefined) {
+                            // Все шаблоны активного запроса
+                        const tmp = await db('tmp_acc').select('*').where('from', request[0].id);
+                        for (let i in tmp) {
+                            try {
+                                    // Удаление всех событий каждого шаблона
+                                await db('events_tmp_acc').where('tmpid', tmp[i].id).del();
+                                    // Поочередное удаление всех шаблонов после событий
+                                await db('tmp_acc').where('id', tmp[i].id).del();
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        }
+                            // Удаление активного шаблона
+                        await db('events_req_form').select('*').where('isActive', true).del();
+                    }
+                        // Делаем шаблон активным
+                    await db('events_req_form').where({ name }).update({ 
+                        isActive: true
+                    });
+                        // Устанавливаем на воспроизведение тот шаблон, 
+                        // который должен играть прямо сейчас
+                    await db('events').truncate();
+                    if (new_req[0].isspecial) {
+                        const prog = await db('tmp_acc').select('*').where('name', new_req[0].lesson).where('from', new_req[0].id);
+                        const events = await db('events_tmp_acc').select('*').where('tmpid', prog[0].id).orderBy('order');
+                        for (let i in events) {
+                            delete events[i].id;
+                            delete events[i].tmpid;
+                            await db('events').insert( events[i] );
+                        }
+                    } else {
+                        switch (getState(WhatTime())) {
+                            case 'Перерыв':
+                                const prog_br = await db('tmp_acc').select('*').where('name', new_req[0].breaktime).where('from', new_req[0].id);
+                                const events_br = await db('events_tmp_acc').select('*').where('tmpid', prog_br[0].id).orderBy('order');
+                                for (let i in events_br) {
+                                    delete events_br[i].id;
+                                    delete events_br[i].tmpid;
+                                    await db('events').insert( events_br[i] );
+                                }
+                                break;
+                            case 'Пара':
+                                const prog_le = await db('tmp_acc').select('*').where('name', new_req[0].lesson).where('from', new_req[0].id);
+                                const events_le = await db('events_tmp_acc').select('*').where('tmpid', prog_le[0].id).orderBy('order');
+                                for (let i in events_le) {
+                                    delete events_le[i].id;
+                                    delete events_le[i].tmpid;
+                                    await db('events').insert( events_le[i] );
+                                }
+                                break;
+                            case 'Обед':
+                            default:
+                                const prog_lu = await db('tmp_acc').select('*').where('name', new_req[0].lesson).where('from', new_req[0].id);
+                                const events_lu = await db('events_tmp_acc').select('*').where('tmpid', prog_lu[0].id).orderBy('order');
+                                for (let i in events_lu) {
+                                    delete events_lu[i].id;
+                                    delete events_lu[i].tmpid;
+                                    await db('events').insert( events_lu[i] );
+                                }
+                        } 
+                    }
+                } else 
+                    console.log('Прилетело некорректное имя шаблона.')
+            }
         } else {
             const title = "Error";
             res.status(404).render(createPath('error'), { title });

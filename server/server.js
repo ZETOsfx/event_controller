@@ -40,15 +40,23 @@ const io = new Server(server, {
     // Socket.IO connection
 io.on('connection', (socket) => {
     console.log(`IO connection: ${ socket.id } is connected.`);
-
+        // Взятие в обработку
     socket.on('new-process', (data) => {
         socket.broadcast.emit('process:start', data);
     });
-
+        // Выход из обработки 
     socket.on('end-process', (data) => {
         socket.broadcast.emit('process:end', data);
     });
-
+        // Утверждение / Сохранение
+    socket.on('con-process', (data) => {
+        socket.broadcast.emit('process:confirm', data);
+    });
+        // Оклонение / Удаление 
+    socket.on('del-process', (data) => {
+        socket.broadcast.emit('process:deny', data);
+    });
+        // Выход из страницы 
     socket.on('disconnect', () => {
         console.log(`USER ${ socket.id } left.`);
     });

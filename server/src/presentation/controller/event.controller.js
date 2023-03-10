@@ -306,7 +306,7 @@ class EventController {
             const req_here = await db('events_req_form').select('id').where({ name });
 
             if (req_here[0] !== undefined) {
-                res.json({ message: 'Запрос с таким заголовком уже был успешно отправлен. Возможно, вы спамите. Сообщаем администратору...'});
+                res.json({ message: 'Запрос с таким заголовком уже существует. Для однозначной идентификации придумайте другой.'});
             } else {
                 if (isSpec) {
                     if (name && stud_name !== '-' && screen && date) {
