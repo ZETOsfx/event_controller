@@ -16,7 +16,17 @@
                 <ul class="list-group">
                   <% if (ads) { for (var i in ads) { %>
                     <% if (ads[i].personal === null || ads[i].personal === session.username) { %>
-                        <li class="list-group-item <%= ads[i].personal === session.username ? 'list-group-item-info' : '' %> d-flex justify-content-between align-items-center">
+                        <li class="list-group-item 
+                        <% if (ads[i].personal === session.username) {          %>
+                        <%     if (ads[i].name === 'Запрос отправлен') {        %>
+                        <%=       'list-group-item-info'                        %>
+                        <%     } else if (ads[i].name === 'Запрос отклонён') {  %>
+                        <%=       'list-group-item-danger'                      %>
+                        <%     } else {                                         %>
+                        <%=       'list-group-item-success'                     %>
+                        <%     }                                                %>
+                        <% }                                                    %> 
+                        d-flex justify-content-between align-items-center">
 
                           <div class="ms-2 me-auto">
                             <div class="fw">

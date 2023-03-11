@@ -1,10 +1,20 @@
 import { createApp } from 'vue'
+
+// --- CAST ---
+
+import mitt from 'mitt';
+import '../../public/css/style.css'
 import App from './App.vue'
+
+const emitter = mitt();
+const app = createApp(App);
+app.config.globalProperties.emitter = emitter;
+app.mount('#castForm');
+
+// --- VKLADKAS ---
 
 import Events from './components/Events.vue'
 import Moders from './components/Moder.vue'
-
-// import WebSock from "./WebSock";
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"

@@ -294,7 +294,6 @@ class EventController {
         res.end();
     }
         // Отправка шаблона на модерацию
-    
     async sendTemplate(req, res) {
         if (req.session.loggedin && (req.session.role === 'admin' || req.session.role === 'editor' || req.session.role === 'moder')) {
             const { name, screen, date, isSpec = false } = req?.body;
@@ -445,6 +444,46 @@ class EventController {
                         res.json({ message: 'Некорректные параметры отправки шаблона стандартного типа. Проверьте правильность заполнения полей в форме отправки.'});
                     }
                 }
+                    // Оповещение для редактора об успешной отправке запроса на модерацию
+                const callback = 'Ваш запрос под заголовком "' + name + '" был успешно отправлен на модерацию.';
+
+                let date_ob = new Date();
+                let dd = ("0" + date_ob.getDate()).slice(-2);
+                let mm = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+                let yyyy = date_ob.getFullYear();
+
+                let datek;
+                if (((Number(mm) % 2 === 1 && Number(mm) <= 7) || (Number(mm) > 7 && Number(mm) % 2 === 0)) && Number(dd) > 28) {
+                    if (Number(mm) + 1 < 10)
+                        datek = yyyy + '-0' + (Number(mm) + 1) + '-0' + (3 - (31 - Number(dd)));
+                    else
+                        datek = yyyy + '-' + (Number(mm) + 1) + '-0' + (3 - (31 - Number(dd)));
+                } else if ((Number(mm) === 4 || Number(mm) === 6 || Number(mm) === 9 || Number(mm) === 11) && Number(dd) > 27) {
+                    if (Number(mm) + 1 < 10)
+                        datek = yyyy + '-0' + (Number(mm) + 1) + '-0' + (3 - (30 - Number(dd)));
+                    else
+                        datek = yyyy + '-' + (Number(mm) + 1) + '-0' + (3 - (30 - Number(dd)));
+                } else if (Number(mm) === 2 && Number(dd) > 25) {
+                    if (Number(mm) + 1 < 10)
+                        datek = yyyy + '-0' + (Number(mm) + 1) + '-0' + (3 - (28 - Number(dd)));
+                    else
+                        datek = yyyy + '-' + (Number(mm) + 1) + '-0' + (3 - (28 - Number(dd)));
+                } else {
+                    if (Number(dd) + 3 < 10)
+                        datek = yyyy + '-' + mm + '-0' + (Number(dd) + 3);
+                    else
+                        datek = yyyy + '-' + mm + '-' + (Number(dd) + 3);
+                }
+
+                // Оповестить автора запроса об отклонении
+                await db('ads').insert({
+                    name: "Запрос отправлен",
+                    comment: callback,
+                    timeOfLife: datek,
+                    author: "System",
+                    translate: "false",
+                    personal: req.session.username
+                });
             }
         } else {
             const title = "Error";
@@ -455,7 +494,7 @@ class EventController {
 
         res.end();
     }
-
+    
         // Отправка на трансляцию (get)
     async getEventsFormatJSON(req, res) {
         res.header('Access-Control-Allow-Origin', '*');

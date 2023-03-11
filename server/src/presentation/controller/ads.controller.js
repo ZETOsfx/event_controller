@@ -48,16 +48,18 @@ class AdsController {
         const { id } = req.body;
         const ad = await db('ads').where('id', id);
 
-        if (!(req.session.loggedin && (req.session.role === 'admin' || req.session.role === 'moder' || req.session.role === 'adsender'))) {
-            const title = "Error";
-            res.status(404).render(createPath('error'), { title });
-            res.end();
-        }
+        if (ad[0] !== undefined) {
+            if (!(req.session.loggedin && (req.session.role === 'admin' || req.session.role === 'moder' || req.session.role === 'adsender' || (req.session.role === 'editor' && ad[0].personal === req.session.username)))) {
+                const title = "Error";
+                res.status(404).render(createPath('error'), { title });
+                res.end();
+            }
 
-            // Удаление из числа прочитанных (если было прочитано)
-        await db('user_ads').where('ads_id', id).del();
-            // Удаление из базы уведомлений
-        await db('ads').where('id', id).del();
+                // Удаление из числа прочитанных (если было прочитано)
+            await db('user_ads').where('ads_id', id).del();
+                // Удаление из базы уведомлений
+            await db('ads').where('id', id).del();
+        }
 
         res.redirect('/ads');
         res.end();

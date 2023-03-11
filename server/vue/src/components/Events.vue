@@ -323,9 +323,12 @@
 </template>
 
 <script>
+import io from "socket.io-client";
+
 export default {
   data() {
     return {
+      socket: {},
         // --- ПОЛЯ ДЛЯ ОТПРАВКИ ЗАПРОСОВ ---
       openedTmp: "",        // Имя открытого шаблона
       lastModify: "",       // Последний профиль, вносивший изменения в шаблон
@@ -368,6 +371,11 @@ export default {
     }
   },
   methods: {
+    connect() {
+      this.socket = io(`${process.env.API_URL}`);
+
+      // this.socket.on('process:start', (data) => {});
+    },
     async getTime() {
         // Дата - время коллбека
       let date_ob = new Date();
@@ -453,6 +461,11 @@ export default {
         this.errCallback.show();
       } else if (name !== "") {
         if (tmp_type === 'empty' || tmp_type === 'default' || tmp_type === 'copy') {
+          if (tmp_type === 'copy' && this.openedTmp === '') {
+            this.errorMessage = 'Для создания копии шаблона необходимо открыть шаблон, который нужно скопировать!';
+            this.errCallback.show();
+            return;
+          }
           let callback = await fetch(` /event/addtmp`, this.options('PUT', { name: name, tmp_type: tmp_type, events: events }));
           let responseAdd = await fetch(` /event/alltmp`, {});
           this.tmpList = (await responseAdd.json());
@@ -604,6 +617,9 @@ export default {
       }
       let response = await fetch(` /event/save`, this.options('PATCH', this.events));
       console.log(response);
+      this.successMessage = 'Шаблон "' + this.openedTmp + '" был успешно сохранен.';
+      this.succCallback.show();
+      this.openedTmp = "";
     },
     async sendForm() {
       this.sendCallback.show();
@@ -638,6 +654,11 @@ export default {
           // Скрыть мочалку отправки
         this.sendCallback.hide();
           // Обнуление для не дублирования при нескольких запросах подряд
+        const data = {
+          request: this.nameProg,
+        }
+        this.socket.emit('new-request', data);
+
         this.nameProg = ''
         this.commProg = ''
         this.studProg = '-'
@@ -699,6 +720,7 @@ export default {
     },
   },
   mounted() {
+    this.connect();
     this.allTmp();
   }
 }

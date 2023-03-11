@@ -741,7 +741,7 @@
                     </ul>
                     </div>
                     <div class="card-footer text-end">
-                      <div class="d-flex w-100 justify-content-between align-items-center">
+                      <div class="d-flex w-100 justify-content-end align-items-center">
                         <!-- Button trigger Delete follow modal -->
                         <!-- <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button> -->
                         <button v-if="!screen.isStartedProcess" @click="startProcess(screen, 'act')" type="button" class="btn btn-outline-success">Редактировать</button>
@@ -951,8 +951,6 @@
                       <button @click="endProcess(acc, 'acc')" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
                       <!-- Button trigger Details modal -->
                       <button @click="buttonOpen(acc)" type="button" class="btn btn-outline-info">Просмотр</button>
-                      <!-- Button trigger SetActive modal -->
-                      <button @click="setActive(acc)" type="button" class="btn btn-outline-warning">Играть сейчас</button>
                       <!-- Button trigger Deny modal -->
                       <button @click="triggerModal('delete', acc, index)" type="button" class="btn btn-outline-danger"> Удалить </button>
                       <!-- Button trigger Confirm modal -->
@@ -969,8 +967,8 @@
             </ul>
             <!-- КОНЕЦ: Очередь на отображение -->
           </div>
+          
           <!-- КОНЕЦ: Содержимое вкладок -->
-
         </div>
         <!-- КОНЕЦ: Подстилка - content -->
       </div>
@@ -1038,7 +1036,7 @@ export default {
   methods: {
     connect() {
       this.connected = true;
-      this.socket = io('http://localhost:3000/');
+      this.socket = io(`${process.env.API_URL}`);
 
       this.socket.on('process:start', (data) => {
         if (data.list === "req") {
@@ -1177,6 +1175,22 @@ export default {
 
         } else 
           console.log('error');
+      });
+
+      this.socket.on('request:new', async (data) => {
+        let response = await fetch(` /moder/requests`, {
+          method: 'GET',
+          headers: new Headers({
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+          })
+        });
+        this.allFormList = (await response.json());    
+
+        for (let i in this.allFormList) 
+          if (this.allFormList[i].name === data.request) 
+            this.reqList.push(this.allFormList[i]);
       });
     },
 

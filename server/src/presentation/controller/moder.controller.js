@@ -233,7 +233,6 @@ class ModerController {
                                         }
                                 } 
                             }
-
                         }
                             // Поимка "Утверждения" - оповещение автора об утверждении шаблона
                         if (!request[0].isAccepted) {
@@ -539,7 +538,7 @@ class ModerController {
                                 break;
                             case 'Обед':
                             default:
-                                const prog_lu = await db('tmp_acc').select('*').where('name', new_req[0].lesson).where('from', new_req[0].id);
+                                const prog_lu = await db('tmp_acc').select('*').where('name', new_req[0].lunch).where('from', new_req[0].id);
                                 const events_lu = await db('events_tmp_acc').select('*').where('tmpid', prog_lu[0].id).orderBy('order');
                                 for (let i in events_lu) {
                                     delete events_lu[i].id;

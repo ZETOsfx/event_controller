@@ -56,10 +56,14 @@ io.on('connection', (socket) => {
     socket.on('del-process', (data) => {
         socket.broadcast.emit('process:deny', data);
     });
-
+        // Изменение на активной трансляции
     socket.on('upd-active', () => {
         socket.broadcast.emit('active:upd');
-    })
+    });
+        // В реальном времени прилетает новый запрос
+    socket.on('new-request', (data) => {
+        socket.broadcast.emit('request:new', data);
+    });
         // Выход из страницы 
     socket.on('disconnect', () => {
         console.log(`USER ${ socket.id } left.`);
@@ -109,13 +113,9 @@ app.get('/js/vue.js', (req, res) => {
 
 // AuthRouter.routeInit(app, express);  // JWT auth
 app.use('/account', userRouter);
-// app.use('/api', apiRouter);          // ?
 app.use('/event', eventRouter);
 app.use('/moder', moderRouter);
 app.use('/ads', adsRouter);
-
-
-// ----- ОБЩИЕ СТРАНИЦЫ ------
 
 app.get('/', (req, res) => {
     res.redirect('index');
@@ -138,11 +138,10 @@ app.get('/guide', (req, res) => {
     res.render(createPath('guide'), { title, session: req.session });
 });
 
-// app.get('/cast', (req, res) => {
-//     res.render(createPath('mainview'), {});
-// });
+app.get('/cast', (req, res) => {
+    res.render(createPath('mainview'), {});
+});
 
-// 404
 app.use((req, res) => {
     const title = "Error";
     res
