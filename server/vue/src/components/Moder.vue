@@ -1732,7 +1732,6 @@ export default {
       }
     },
   },
-
       // Действие при загрузке страницы
   mounted() {
     this.connect();

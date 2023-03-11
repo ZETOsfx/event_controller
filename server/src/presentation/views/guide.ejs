@@ -23,7 +23,7 @@
                   <li> <a href="#Editor1" class="dropdown-item">Интефейс страницы редактора</a> </li>
                   <li> <a href="#Editor21" class="dropdown-item">Шаблоны и работа с ними</a></li>
                   <li> <a href="#Editor22" class="dropdown-item">Видимость шаблонов</a></li>
-                  <li> <a href="#Editor3" class="dropdown-item">Отправление программы трансляции</a></li>
+                  <li> <a href="#Editor3" class="dropdown-item">Отправка программы трансляции</a></li>
                   <li> <a href="#Editor4" class="dropdown-item">Важно</a></li>
                 </ul>
             </li>
@@ -56,7 +56,7 @@
                 </ul>
             </li>
             <li>
-              <a href="#limitation" class="nav-link">Ограничения</a>
+              <!-- <a href="#limitation" class="nav-link">Ограничения</a> -->
             </li>
           </ul>
         </div>
@@ -65,9 +65,15 @@
   </div>
   <div class="container intro" style="margin-top: 80px">
     <div class="content" data-bs-spy="scroll" data-bs-offset="60" data-bs-target="#guideNavbar">
-
-      <br> <br> <br> <br>
-      
+      <h3 id="navigation" class=""><strong> Здравстуйте, пользователи! </strong></h3>
+      <p>
+        Данная страница преденаначена для описания работы в EventController. Мы постарались подробно описать заложенный принцип взаимодействия, рассказать про работу в интерфейсе а также упомянуть нюансы использования некоторых функций. Наша задача сделать гайд максимально подробным, поэтому по мере усовершенствования системы, нахождения ошибок и багов и их исправления данная страница может дополняться и видоизменяться. 
+      </p>
+      <p>
+        Приятной работы в системе!
+      </p>
+      <p></p>
+      <!---------------------------------------------- НАВИГАЦИЯ ---------------------------------------------->
       <h3 id="navigation" class="guide"><strong> Навигация по сайту </strong></h3>
       <p class="lead">
         <p> Для навигации по сайту используется навигационная панель слева страницы</p> 
@@ -99,11 +105,11 @@
       <div class="accordion">
         <div class="accordion-item">
           <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#e1" aria-expanded="false">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPage1" aria-expanded="false">
               Как выглядит страница Редактора
             </button>
           </h2>
-          <div id="e1" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+          <div id="EditorPage1" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
             <div class="accordion-body">
               <img src="https://i.imgur.com/q7o66QJ.png" class="img-fluid">
             </div>
@@ -115,13 +121,13 @@
       <div class="accordion">
         <div class="accordion-item">
           <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#e2" aria-expanded="false">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPage2" aria-expanded="false">
               Как выглядит страница Уведомлений у Редактора
             </button>
           </h2>
-          <div id="e2" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+          <div id="EditorPage2" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
             <div class="accordion-body">
-              <img src="https://i.imgur.com/6fIYaHL.png" class="img-fluid">
+              <img src="https://i.imgur.com/NjZf8S7.jpg" class="img-fluid">
             </div>
           </div>
         </div>    
@@ -138,11 +144,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac11" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorInterface1" aria-expanded="false">
                 "Блок управления" на странице редактора
               </button>
             </h2>
-            <div id="ac11" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="EditorInterface1" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
                 <img src="https://i.imgur.com/hfWfgwE.png" class="img-fluid">
               </div>
@@ -189,11 +195,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac21" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPattern1" aria-expanded="false">
                 Создание шаблонов
               </button>
             </h2>
-            <div id="ac21" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="EditorPattern1" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
                 Кнопка для создание пустого шаблона (в нём не будет событий)
                 <img src="https://i.imgur.com/0fKTV1a.png" class="img-fluid">
@@ -212,11 +218,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac22" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPattern2" aria-expanded="false">
                 Как это выглядит
               </button>
             </h2>
-            <div id="ac22" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="EditorPattern2" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
                 <img src="https://i.imgur.com/6zj7T7Z.png" class="img-fluid">
               </div>
@@ -251,11 +257,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac23" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPattern3" aria-expanded="false">
                 Как выглядит событие в шаблоне
               </button>
             </h2>
-            <div id="ac23" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="EditorPattern3" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
                 <img src="https://i.imgur.com/52IFbVE.png" class="img-fluid">
               </div>
@@ -267,11 +273,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac24" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPattern4" aria-expanded="false">
                 Добавлять новые шаблоны, удалять ненужные или неактуальные
               </button>
             </h2>
-            <div id="ac24" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="EditorPattern4" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
                 <img src="https://i.imgur.com/v0KBGie.png" class="img-fluid">
                 <p></p>
@@ -289,11 +295,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac25" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPattern5" aria-expanded="false">
                 Добавлять новые события в шаблонах, редактирвоать имеющиеся или удалять ненужные или неактуальные
               </button>
             </h2>
-            <div id="ac25" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="EditorPattern5" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
                 <p>
                   Для того, чтобы редактировать событие в шаблоне нужно нажать на кнопку "Редактировать" справа от времени события
@@ -332,11 +338,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac26" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPattern6" aria-expanded="false">
                 Менять порядок проигрывания событий внутри
               </button>
             </h2>
-            <div id="ac26" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="EditorPattern6" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
                 До:
                 <img src="https://i.imgur.com/Pj4vhOA.png" class="img-fluid">
@@ -360,11 +366,11 @@
           <div class="accordion">
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac27" aria-expanded="false">
-                  Это выглядит вот так
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPattern7" aria-expanded="false">
+                  Как это выглядит
                 </button>
               </h2>
-              <div id="ac27" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div id="EditorPattern7" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
                 <div class="accordion-body">
                   Ни один режим не включен:
                   <img src="https://i.imgur.com/pTqEtRp.png" class="img-fluid">
@@ -405,11 +411,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac28" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPattern8" aria-expanded="false">
                 Если шаблон ваш
               </button>
             </h2>
-            <div id="ac28" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="EditorPattern8" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
                 <img src="https://i.imgur.com/6hlmPzQ.png" class="img-fluid">
               </div>
@@ -419,11 +425,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac29" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPattern9" aria-expanded="false">
                 Если шаблон не ваш, но доступен вам для редактирования
               </button>
             </h2>
-            <div id="ac29" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="EditorPattern9" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
                 <img src="https://i.imgur.com/B3SffSP.png" class="img-fluid">
               </div>
@@ -433,11 +439,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac210" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorPattern10" aria-expanded="false">
                 Если шаблон не ваш, и не доступен вам для редактирования
               </button>
             </h2>
-            <div id="ac210" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="EditorPattern10" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
                 <img src="https://i.imgur.com/88l82OL.png" class="img-fluid">
               </div>
@@ -450,17 +456,17 @@
         </p>
       </div>
       <div id="Editor3" class="guide">
-        <h5><strong> 3. Отправление программы трансляции на утверждение </strong></h5>
+        <h5><strong> 3. Отправка программы трансляции на утверждение </strong></h5>
         <p>
           Для того, чтобы отправить программу трансляции на модерацию, для начала вам нужно подготовить шаблоны, которые вы хотите отправить, и запомнить их названия. Далее необходимо нажать на кнопку <strong>"Отправить"</strong> справа от надписи "Открыть" шаблон. После нажатия появляется диалоговое окно:
           <div class="accordion">
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac31" aria-expanded="false">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorSendForm1" aria-expanded="false">
                   Как выглядит интерфейс отправки формы модератору
                 </button>
               </h2>
-              <div id="ac31" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div id="EditorSendForm1" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
                 <div class="accordion-body">
                   <img src="https://i.imgur.com/MHkJiJT.png" class="img-fluid">
                 </div>
@@ -472,16 +478,16 @@
             При этом программа трансляции может быть представлена как в виде 3х шаблонов, каждый из которых отвечает за определённый промежуток времени (будние дни), как и в виде одного шаблона на целый день (особое расписание).
           </p>
           <p>
-            Ознакомится с тем, в какой момент времени происходит переключение шаблонов в программе трансляции, и на какой шаблон происходит переклчение можно из таблицы ниже:
+            Ознакомится с тем, в какой момент времени происходит переключение шаблонов в программе трансляции, и на какой шаблон происходит переключение можно из таблицы ниже:
           </p>
           <div class="accordion">
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac32" aria-expanded="false">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorSendForm2" aria-expanded="false">
                   Таблица смены шаблонов программы трансляции для будних дней
                 </button>
               </h2>
-              <div id="ac32" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div id="EditorSendForm2" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
                 <div class="accordion-body">
                   <table class="table table-striped">
                     <thead>
@@ -579,11 +585,11 @@
           <div class="accordion">
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac33" aria-expanded="false">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorSendForm3" aria-expanded="false">
                   Указание типа программы трансляции при отправке:
                 </button>
               </h2>
-              <div id="ac33" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div id="EditorSendForm3" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
                 <div class="accordion-body">
                   <p>Стандартная (3 разных шаблона на ПАРЫ, ПЕРЕРЫВ и ОБЕД)</p>
                   <img src="https://i.imgur.com/QGzIErQ.png" class="img-fluid">
@@ -611,13 +617,13 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac34" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditorSendForm4" aria-expanded="false">
                 Уведомления у редактора после принятия / отклонения отправленного ими шаблона
               </button>
             </h2>
-            <div id="ac34" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="EditorSendForm4" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
-                <img src="https://i.imgur.com/T0jIdeK.png" class="img-fluid">
+                <img src="https://i.imgur.com/JSawg8u.png" class="img-fluid">
               </div>
             </div>
           </div> 
@@ -641,11 +647,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac3" aria-expanded="false">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#AdsenderPage1" aria-expanded="false">
                 Как выглядит страница Уведомлений у Менеджера
               </button>
             </h2>
-            <div id="ac3" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div id="AdsenderPage1" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
               <div class="accordion-body">
                 <img src="https://i.imgur.com/G2S8IfI.png" class="img-fluid">
               </div>
@@ -661,11 +667,11 @@
           <div class="accordion">
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#41" aria-expanded="false">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#AdsenderInterface1" aria-expanded="false">
                   Блок управления уведолениями на странице Уведомлений
                 </button>
               </h2>
-              <div id="41" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div id="AdsenderInterface1" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
                 <div class="accordion-body">
                   <img src="https://i.imgur.com/EaKKdg5.png" class="img-fluid">
                   <p></p>
@@ -675,7 +681,7 @@
                   <p>
                     Т.е. для редакторов данная страница будет выглядеть следующим образом:
                   </p>
-                  <img src="https://i.imgur.com/b7BQnqm.png" class="img-fluid">
+                  <img src="https://i.imgur.com/TlLNqpD.png" class="img-fluid">
                 </div>
               </div>
             </div>    
@@ -712,18 +718,259 @@
             <strong> 9. Кнопка "Удалить" напротив уведомления </strong> - при нажатии на кнопку данное уведомление удалится из системы. У редакторов данная кнопка доступна только напротив "синих" уведомлений от системы (10)
           </p>
           <p>
-            <strong> 10. Персональное уведомление </strong> - данное уведомление адресуются конкретному пользователю из системы. <strong>Другие пользователи его не видят.</strong> Оно имеет синий цвет и оповещают редакторов о том, в каком состоянии находится отправлнный ими запрос на модерирование - был ли он отклонён или одобрен модератором, а также содержит комментарий от модератора (который он указывает при соответсвующим действии). Такие уведомления заносяться в автоматисеское удаление через 3 дня, однако, при желании, редактор может его удалить самостоятельно.
+            <strong> 10. Уведомление "Запрос отклонён" </strong> - Персональное уведомление. Оно адресуются конкретному пользователю из системы. <strong>Другие пользователи его не видят.</strong> Оно имеет красный цвет и оповещают редакторов о том, что отправлнный ими запрос на модерирование был отклонён, а также содержит комментарий от модератора. Такие уведомления заносяться в автоматисеское удаление через 3 дня, однако, при желании, редактор может его удалить самостоятельно.
+          </p>
+          <p>
+            <strong> 11. Уведомление "Запрос утверждён" </strong> - Аналогчино пункту 10, но имеет зелёный цвет и оповещают об утверждении отправленного ими запроса. 
+          </p>
+          <p>
+            <strong> 12. Уведомление "Запрос отправлен" </strong> - Аналогчино пункту 10, но имеет голубой цвет и информирует о том, что запрос был успешно отправлен на модерацию.
           </p>
         </div>
 
       <hr />
-
+      <!---------------------------------------------- МОДЕРАТОР ---------------------------------------------->
       <h3 id="Moder" class="guide"><strong> Модератор (Moder) </strong></h3>
         <p class="lead" class="guide">
-          <i> Утверждает и редактирует расписание на трансляции событий. Их задачи:</i>
+          <i> Человек, который утверждает и редактирует расписание на трансляции событий.</i>
+          <p> Основная рабочая страница для Модератора являестя <a href="./moder">страница модератора.</a> </p> 
         </p>
+        <p> 
+          На странице модератора есть 3 вкладки:
+        </p>
+        <div class="accordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ModerInterface1" aria-expanded="false">
+                Вкладка "Запросы на модерирование"
+              </button>
+            </h2>
+            <div id="ModerInterface1" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div class="accordion-body">
+                <img src="https://i.imgur.com/ptwLjwn.png" class="img-fluid">
+              </div>
+            </div>
+          </div>    
+        </div>
+        <div class="accordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ModerInterface2" aria-expanded="false">
+                Вкладка "Активное отображение"
+              </button>
+            </h2>
+            <div id="ModerInterface2" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div class="accordion-body">
+                <img src="https://i.imgur.com/vFzCI1o.png" class="img-fluid">
+              </div>
+            </div>
+          </div>    
+        </div>
+        <div class="accordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ModerInterface3" aria-expanded="false">
+                Вкладка "Очередь отображения"
+              </button>
+            </h2>
+            <div id="ModerInterface3" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div class="accordion-body">
+                <img src="https://i.imgur.com/I1yIyKy.png" class="img-fluid">
+              </div>
+            </div>
+          </div>    
+        </div>
+        <p></p>
+        <p>
+          Помимо этого, немаловажными для редактора являются <a href="./event">страница редактора</a> и <a href="./ads">страница уведомлений</a>. 
+        </p>
+        <p>
+          О том, почему данные страницы важны для модератора описано <a href="#Moder4">вот здесь.</a>
+        </p>
+        <p>
+          Возвращаясь к функционалу Модератора - каждая из вышеперечисленных вкладок отвечает за определённые действие в системе. Раскажем про это поподробнее:
+        </p>
+
         <div id="Moder1" class="guide">
-          <h5><strong> 1. Обработка запросов редакторов </strong></h5>
+          <h5><strong> 1. Вкладка "Запросы на модерирование" </strong></h5>
+          <p>
+            На данной вкладке отображаются все запросы, отправленные на утверждение.   
+          </p>
+          <div class="accordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ModerRequest1" aria-expanded="false">
+                  Как выглядят запросы на странице модератора
+                </button>
+              </h2>
+              <div id="ModerRequest1" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                <div class="accordion-body">
+                  <img src="https://i.imgur.com/x2WANdk.png" class="img-fluid">
+                </div>
+              </div>
+            </div>    
+          </div>
+          <p></p>
+          <p>
+            Разберём элементы вкладки поподробнее: 
+          </p>
+          <p>
+            <strong> 1. Заголвок и комментарий запроса </strong> - в данном месте отобраюается то, какой заголвок и комментарий написал пользователь при отравке данной программы трансляции, а также имя этого пользователя.
+          </p>
+          <p>
+            <i> 1.1. Отправлен шаблон для "Будних дней" </i> 
+          </p>
+          <p>
+            <i> 1.2. Отправлен шаблон для "Дня по особому расписанию" </i> 
+          </p>
+          <p>
+            <strong> 2. Селектор выбора экрана </strong> - при отпрвке шаблона бригада указывает, на каком экране будет воспроизваотиться присланная ими программа. В дальнешем, при <a href="#123">обработке программы трансляции</a> модератор, при необходимости, может поменять экран отображения.
+          </p>
+          <p>
+            <strong> 3. Селектор выбора даты </strong> - при отпрвке шаблона бригада указывает, на какую дату они хотят установить присланную ими программ. В дальнешем, при <a href="#123">обработке программы трансляции</a> модератор, при необходимости, может поменять дату.
+          </p>
+          <p>
+            <strong> 4. Отправленная программа трансляции </strong> - может быть представлена как в виде одного шаблона, содержимого которого будет по кругу воспроизводится целый день, так и в виде 3х шаблонов, каждый из которых будет отображаться в заданное для него время.
+          </p>
+          <p>
+            <i> 4.1. Отправлена программа для "Будних дней" </i> - представлена в виде 3х шаблонов, для ПАР, ПЕРЕРЫВА, и ОБЕДА. Напротив соответсвующих надписей располагаются селекторы с указанием присланных шаблонов. Поменять присланные шаблоны, а также поменять их содержимое возможно при <a href="#123">обработке программы трансляции.</a>
+          </p>
+          <p>
+            Ознакомится с тем, в какой момент времени происходит переключение шаблонов в программе трансляции, и на какой шаблон происходит переключение можно из таблицы ниже:
+          </p>
+          <div class="accordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ModerRequest2" aria-expanded="false">
+                  Таблица смены шаблонов программы трансляции для будних дней
+                </button>
+              </h2>
+              <div id="ModerRequest2" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                <div class="accordion-body">
+                  <table class="table table-striped">
+                    <thead>
+                      Таблица смены шаблонов программы трансляции для будних дней
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Начало</th>
+                        <th scope="col">Конец</th>
+                        <th scope="col">Шаблон</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">1</th>
+                        <td>00:01</td>
+                        <td>08:20</td>
+                        <td>Обед</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">2</th>
+                        <td>08:20</td>
+                        <td>08:40</td>
+                        <td>Перерыв</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">3</th>
+                        <td>08:40</td>
+                        <td>10:15</td>
+                        <td>Пара (1)</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">4</th>
+                        <td>10:15</td>
+                        <td>10:25</td>
+                        <td>Перерыв</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">5</th>
+                        <td>10:25</td>
+                        <td>12:00</td>
+                        <td>Пара (2)</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">6</th>
+                        <td>12:00</td>
+                        <td>12:50</td>
+                        <td>Обед</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">7</th>
+                        <td>12:50</td>
+                        <td>14:25</td>
+                        <td>Пара (3)</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">8</th>
+                        <td>14:25</td>
+                        <td>14:35</td>
+                        <td>Перерыв</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">9</th>
+                        <td>14:35</td>
+                        <td>16:10</td>
+                        <td>Пара (4)</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">10</th>
+                        <td>16:10</td>
+                        <td>16:20</td>
+                        <td>Перерыв</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">11</th>
+                        <td>16:20</td>
+                        <td>17:55</td>
+                        <td>Пара (5)</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">12</th>
+                        <td>17:55</td>
+                        <td>00:01</td>
+                        <td>Обед</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>    
+          </div>
+          <p></p>
+          <p>
+            <i> 4.2. Отправлен программа для "Дня по особому расписанию" </i> - аналогично пункту 4.1, однако представлена в виде одного шаблона.
+          </p>
+          <p>
+            <strong> ! ВАЖНО: </strong> Обратите внимание, что в системе может находится несколько запросов на одну и туже дату, однако при <a href="#123">обработке</a> в случае наличия уже <a href="#Moder2">утверждённых шаблонов</a> на данную дату система выдаст ошибку. Т.е. <strong>на одну дату нельзя утвердить более однго шаблона.</strong>
+          </p>
+          <p>
+            <strong> 5. Переключение типа программы трансляции </strong> - изменяет тип программы трансляции. В запросе отображается тот тип, который указали при отправке запроса. При <a href="#123">обработке</a> модератор, при необходимости, данный тип может поменять.
+          </p>
+          <p>
+            <i> 5.1. Отправлена программа трансляции для "Будних дней" </i> - селектор находится в выключенном положении. В пункте 4 можно указать 3 шаблона, отдельно для каждого промежутка. (Ознакомится с таблицей смены шаблонов можно в п.4)
+          </p>
+          <p>
+            <i> 5.2. Отправлена программа трансляции для "Дня по особому расписанию" </i> - селектор находится в включенном положении. В пункте 4 можно указать только 1 шаблон, который будет отображаться на экране целый день.
+          </p>
+          <p>
+            <strong> 6. Кнопка "Обработать" </strong> - при нажатии на данную кнопку разблокируется возможность редактировать выбранную программу транслции. 
+          </p>
+          <p>
+            <strong> ! ВАЖНО: </strong> При нажатии на данную кнопку возможность обработки данной программи у других пользователей <strong>автоматически блокируется.</strong> 
+          </p>
+          <p>
+            Также стоит отметить, что <strong>1 пользователеь может одноврененно обрабатывать только 1 программу.</strong> При попытке начать обработку ещё одной трансляции модератор получит сообщение об ошибке. 
+          </p>
+          <p>
+            Подробнее про это можно прочитать в пункте про <a href="#123">обработке программы трансляции.</a>
+          </p>
+
+
+
+
+
+
+
           <p>
             Все новые запросы редакторов на утверждение появляются в разделе <strong> "Запросы на утверждение" </strong> вкладки Модерации.
           </p>
@@ -756,20 +1003,7 @@
             <strong> ! ВАЖНО: </strong> в уже утвержденных запросах можно вносить изменения в размещенные внутри шаблоны. При том на одну дату может быть утвержден максимум одна программа трансляции (один утвержденный запрос на отображение).
           </p>
         </div>
-        <div class="accordion">
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ac4" aria-expanded="false">
-                Как выглядит вкладка запросов у Модератора
-              </button>
-            </h2>
-            <div id="ac4" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
-              <div class="accordion-body">
-                <img src="https://i.imgur.com/wFh97u6.png" class="img-fluid">
-              </div>
-            </div>
-          </div>    
-        </div>
+
         <div id="Moder2" class="guide">
           <h5><strong> 2. Планирование трансляций </strong></h5>
           <p>
@@ -789,6 +1023,7 @@
               </div>
             </div>    
           </div>
+          <p></p>
         </div>
         <div id="Moder3" class="guide">
           <h5><strong> 3. Изменение параметров активной трансляции </strong></h5>
@@ -809,10 +1044,18 @@
             </div>
           </div>    
         </div>
+        <p></p>
         <div id="Moder4" class="guide">
           <h5><strong> Что ещё может делать модератор? </strong></h5>
           <p>
-            По дополнительным возможностям модератор может делать все то же самое, что <a href="#Editor" >редактор</a> и <a href="#Adsender">менеджер.</a> Подробнее в описании функционала соответствующих ролей.
+            В отличии от двух предыдущих ролей: "Редактор" и "Менеджер", каждая из которых имеет разный функционал, который не пересекается между собой, в роль модератора включён функционал предыдущих ролей. 
+          </p>
+          <p>
+            То есть говоря иначе, по дополнительным возможностям <strong>модератор может делать все то же самое, что <a href="#Editor">редактор</a> и <a href="#Adsender">менеджер.</a></strong> 
+          </p>
+          <p>
+            Подробнее про работу на этих вкладках можно прочитать в описании функционала соответствующих ролей, где всё описано достаточно детально. 
+          </p>
         </div>
 
       <hr />

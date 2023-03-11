@@ -15,9 +15,9 @@ toggle.addEventListener("click" , () => {
 });
 
 let getMode = localStorage.getItem("mode");
-    if (getMode && getMode === "dark") {
-        body.classList.toggle("dark"); 
-    } 
+if (getMode && getMode === "dark") {
+    body.classList.toggle("dark"); 
+} 
 
 let getStatus = localStorage.getItem("status");
 if (getStatus && getStatus === "open") {
@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     } else {
         // Default (when Media-Queries are not supported)
+        body.setAttribute("data-bs-theme", "dark");
     }
 
     let getMode = localStorage.getItem("mode");
