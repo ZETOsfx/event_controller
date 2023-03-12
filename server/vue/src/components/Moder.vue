@@ -613,7 +613,7 @@
 
                 <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
                   <div class="form-check form-switch">
-                    <input v-model="req.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault26" :disabled="!(req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === this.username.name))"/>
+                    <input v-model="req.isspecial" @click="templateSave()" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault26" :disabled="!(req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === this.username.name))"/>
                     <label class="form-check-label" for="flexSwitchCheckDefault26"> Особое расписание </label>
                   </div>
 
@@ -673,41 +673,37 @@
                         <li class="list-group-item">
                             <div v-if="!screen.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
                                 Пары:
-                                <select class="form-select form-select-sm w-75" disabled>
-                                    <option selected>{{ screen.lesson }}</option>
-                                    <option value="1">По умолчанию (web-forms)</option>
-                                    <option value="2">По умолчанию (новости)</option>
+                                <select v-model="screen.lesson" class="form-select form-select-sm w-75" :disabled="!(screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name))">
+                                  <option selected :value="screen.lesson"> {{ screen.lesson }} </option>
+                                  <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
                                 </select>
                             </div>
                             <div v-if="!screen.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
                                 Перерыв:
-                                <select class="form-select form-select-sm w-75" disabled>
-                                    <option selected>{{ screen.breaktime }}</option>
-                                    <option value="1">По умолчанию (web-forms)</option>
-                                    <option value="2">По умолчанию (новости)</option>
+                                <select v-model="screen.breaktime" class="form-select form-select-sm w-75" :disabled="!(screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name))">
+                                  <option selected :value="screen.breaktime"> {{ screen.breaktime }} </option>
+                                  <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
                                 </select>
                             </div>
                             <div v-if="!screen.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
                                 Обед:
-                                <select class="form-select form-select-sm w-75" disabled>
-                                    <option selected>{{ screen.lunch }}</option>
-                                    <option value="1">По умолчанию (web-forms)</option>
-                                    <option value="2">По умолчанию (новости)</option>
+                                <select v-model="screen.lunch" class="form-select form-select-sm w-75" :disabled="!(screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name))">
+                                  <option selected :value="screen.lunch"> {{ screen.lunch }} </option>
+                                  <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
                                 </select>
                             </div>
 
                             <div v-if="screen.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
                                 Шаблон:
-                                <select class="form-select form-select-sm w-75" disabled>
-                                    <option selected>{{ screen.lesson }}</option>
-                                    <option value="1">По умолчанию (web-forms)</option>
-                                    <option value="2">По умолчанию (новости)</option>
+                                <select v-model="screen.lesson" class="form-select form-select-sm w-75" :disabled="!(screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name))">
+                                  <option selected :value="screen.lesson"> {{ screen.lesson }} </option>
+                                  <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
                                 </select>
                             </div>
 
                             <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
                                 <div class="form-check form-switch">
-                                    <input v-model="screen.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault1" :disabled="!(screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name))"/>
+                                    <input v-model="screen.isspecial" @click="templateSave()" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault1" :disabled="!(screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name))"/>
                                     <label class="form-check-label" for="flexSwitchCheckDefault1"> Особое расписание </label>
                                 </div>
                             </div>
@@ -774,21 +770,21 @@
                 </div>
                 <div v-if="!acc.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
                   Пары:
-                  <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
+                  <select v-model="acc.lesson" class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
                     <option selected :value="acc.lesson"> {{ acc.lesson }} </option>
                     <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
                   </select>
                 </div>
                 <div v-if="!acc.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
                   Перерыв:
-                  <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
+                  <select v-model="acc.breaktime" class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
                     <option selected :value="acc.breaktime"> {{ acc.breaktime }} </option>
                     <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
                   </select>
                 </div>
                 <div v-if="!acc.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
                   Обед:
-                  <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
+                  <select v-model="acc.lunch" class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
                     <option selected :value="acc.lunch"> {{ acc.lunch }} </option>
                     <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
                   </select>
@@ -796,7 +792,7 @@
 
                 <div v-if="acc.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
                   Шаблон:
-                  <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
+                  <select v-model="acc.lesson" class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
                     <option selected :value="acc.lesson"> {{ acc.lesson }} </option>
                     <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
                   </select>
@@ -804,7 +800,7 @@
 
                 <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
                   <div class="form-check form-switch">
-                    <input v-model="acc.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" :disabled="!(acc.isStartedProcess && (this.userProcess === acc.name || acc.whoAccept === this.username.name))"/>
+                    <input v-model="acc.isspecial" @click="templateSave()" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" :disabled="!(acc.isStartedProcess && (this.userProcess === acc.name || acc.whoAccept === this.username.name))"/>
                     <label class="form-check-label" for="flexSwitchCheckDefault"> Особое расписание </label>
                   </div>
 
@@ -1061,7 +1057,7 @@ export default {
             this.reqList.push(this.allFormList[i]);
       });
     },
-
+      // Красивая, но бесконечная хрень (она будет жить дольше тебя)
     async ProgressBar(active) {
       let Lessons = [
         [30000, 31200, 'Перерыв'],                                    // Перерыв, с 8:20
@@ -1139,6 +1135,7 @@ export default {
         }
         setTimeout(async function () { await startTime(active); }, 1000);
       }
+
       await startTime(this.activeTmp);
 
       async function refreshAt(hours, minutes, seconds, active) {
@@ -1488,13 +1485,10 @@ export default {
           }
       }
 
-      if (this.eventList.type === true) {
+      if (obj.isspecial) 
         this.sendDetailSpecial.show();
-      } else if (this.eventList.type === false) {
+      else 
         this.sendDetailWorkdays.show();
-      } else {
-        console.log('Форма сломана. Я уже сообщил администратору.');
-      }
     },
       // Save template corrections
     async templateSave() {
