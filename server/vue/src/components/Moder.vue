@@ -567,119 +567,74 @@
 
             <ul class="list-group moder">
               <li v-for="(req, index) in this.reqList" class="list-group-item">
-
-                <!-- Шаблон для будних дней -->
-                <div v-if="!req.isspecial">
-                  <div class="me-auto">
-                    <div class="fw align-items-center">
-                      <strong> {{ req.name }} </strong> <small>(отправлено: <i>@{{ req.author }}</i>)</small>
-                    </div>
-                    <small class="fw align-items-center"> {{ req.comment }} </small>
+                <!-- Шаблон -->
+                <div class="me-auto">
+                  <div class="fw align-items-center">
+                    <strong> {{ req.name }} </strong> <small>(отправлено: <i>@{{ req.author }}</i>)</small>
                   </div>
-                  <div class="d-flex w-100 justify-content-between gap-1 mt-2">
-                    <select class="form-select" aria-label="Default select example" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)">
-                      <option selected>Кафедра К3 - основной</option>
-                      <!-- <option value="1">Кафедра К3 - новости</option> -->
-                    </select>
-                    <input v-model="req.date" id="startDate1" class="form-control" type="date" :value="req.date" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)"/>
-                  </div>
-                  <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                    Пары:
-                    <select v-model="req.lesson" class="form-select form-select-sm w-75" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)">
-                      <option selected :value="req.lesson"> {{ req.lesson }} </option>
-                      <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                    </select>
-                  </div>
-                  <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                    Перерыв:
-                    <select  v-model="req.breaktime" class="form-select form-select-sm w-75" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)">
-                      <option selected :value="req.breaktime"> {{ req.breaktime }} </option>
-                      <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                    </select>
-                  </div>
-                  <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                    Обед:
-                    <select  v-model="req.lunch" class="form-select form-select-sm w-75" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)">
-                      <option selected :value="req.lunch"> {{ req.lunch }} </option>
-                      <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                    </select>
-                  </div>
-                  <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
-                    <div class="form-check form-switch">
-                      <input :value="req.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault26" disabled/>
-                      <label class="form-check-label" for="flexSwitchCheckDefault26"> Особое расписание </label>
-                    </div>
-
-                    <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
-                    <button v-if="!req.isStartedProcess" @click="startProcess(req, 'req')" class="btn btn-outline-secondary">
-                        Обработать
-                    </button>
-                    <div v-if="req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === this.username.name)" class="btn-group">
-                      <button @click="endProcess(req, 'req')" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
-                      <!-- Button trigger Details modal -->
-                      <button @click="buttonOpen(req)"  type="button" class="btn btn-outline-info">Просмотр</button>
-                      <!-- Button trigger Deny modal -->
-                      <button @click="triggerModal('deny', req, index)" type="button" class="btn btn-outline-danger"> Отклонить</button>
-                      <!-- Button trigger Confirm modal -->
-                      <button @click="triggerModal('confirm', req, index)" type="button" class="btn btn-success"> Утвердить </button>
-                    </div>
-                    <div v-if="req.isStartedProcess && req.whoAccept !== this.username.name">
-                      Событие находится в обработке у: <i> "{{ req.whoAccept }}" </i>
-                    </div>
-                  </div>
-
-                <!-- КОНЕЦ: Шаблон для будних дней -->
+                  <small class="fw align-items-center"> {{ req.comment }} </small>
+                </div>
+                <div class="d-flex w-100 justify-content-between gap-1 mt-2">
+                  <select class="form-select" aria-label="Default select example" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)">
+                    <option selected>Кафедра К3 - основной</option>
+                    <!-- <option value="1">Кафедра К3 - новости</option> -->
+                  </select>
+                  <input v-model="req.date" id="startDate1" class="form-control" type="date" :value="req.date" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)"/>
+                </div>
+                <div v-if="!req.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                  Пары:
+                  <select v-model="req.lesson" class="form-select form-select-sm w-75" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)">
+                    <option selected :value="req.lesson"> {{ req.lesson }} </option>
+                    <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+                  </select>
+                </div>
+                <div v-if="!req.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                  Перерыв:
+                  <select  v-model="req.breaktime" class="form-select form-select-sm w-75" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)">
+                    <option selected :value="req.breaktime"> {{ req.breaktime }} </option>
+                    <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+                  </select>
+                </div>
+                <div v-if="!req.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                  Обед:
+                  <select  v-model="req.lunch" class="form-select form-select-sm w-75" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)">
+                    <option selected :value="req.lunch"> {{ req.lunch }} </option>
+                    <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+                  </select>
                 </div>
 
-                <!-- Шаблон дня по особому расписанию -->
-                <div v-if="req.isspecial">
-                  <div class="me-auto">
-                    <div class="fw align-items-center">
-                      <strong> {{ req.name }} </strong> <small>(отправлено: <i>@{{ req.author }}</i>)</small>
-                    </div>
-                    <small class="fw align-items-center">{{ req.comment }}</small>
-                  </div>
-                  <div class="d-flex w-100 justify-content-between gap-1 mt-2">
-                    <select class="form-select" aria-label="Default select example" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)">
-                      <option selected>Кафедра К3 - основной</option>
-                      <!-- <option value="1">Кафедра К3 - новостной</option>
-                      <option value="2">Хол актового</option> -->
-                    </select>
-                    <input v-model="req.date" id="startDate4" class="form-control" type="date" :value="req.date" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)"/>
-                  </div>
-                  <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                    Шаблон:
-                    <select  v-model="req.lesson" class="form-select form-select-sm w-75" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)">
-                      <option selected :value="req.lesson"> {{ req.lesson }} </option>
-                      <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                    </select>
-                  </div>
-                  <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
-                    <div class="form-check form-switch">
-                      <input :value="req.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault37" checked disabled/>
-                      <label class="form-check-label" for="flexSwitchCheckDefault37"> Особое расписание </label>
-                    </div>
-
-                    <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
-                    <button v-if="!req.isStartedProcess" @click="startProcess(req, 'req')" class="btn btn-outline-secondary">
-                        Обработать
-                    </button>
-                    <div v-if="req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === username)" class="btn-group">
-                      <button @click="endProcess(req, 'req')" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
-                      <!-- Button trigger Details modal -->
-                      <button @click="buttonOpen(req)" type="button" class="btn btn-outline-info">Просмотр</button>
-                      <!-- Button trigger Deny modal -->
-                      <button @click="triggerModal('deny', req, index)" type="button" class="btn btn-outline-danger"> Отклонить</button>
-                      <!-- Button trigger Confirm modal -->
-                      <button @click="triggerModal('confirm', req, index)" type="button" class="btn btn-success"> Утвердить </button>
-                    </div>
-                    <div v-if="req.isStartedProcess && req.whoAccept !== this.username.name">
-                      Событие находится в обработке у: <i> "{{ req.whoAccept }}" </i>
-                    </div>
-                  </div>
-                  <!-- КОНЕЦ: Шаблон дня по особому расписанию -->
+                <div v-if="req.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                  Шаблон:
+                  <select  v-model="req.lesson" class="form-select form-select-sm w-75" :disabled="(!this.reqList[index].isStartedProcess || req.whoAccept !== this.username.name)">
+                    <option selected :value="req.lesson"> {{ req.lesson }} </option>
+                    <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+                  </select>
                 </div>
 
+                <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
+                  <div class="form-check form-switch">
+                    <input v-model="req.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault26" :disabled="!(req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === this.username.name))"/>
+                    <label class="form-check-label" for="flexSwitchCheckDefault26"> Особое расписание </label>
+                  </div>
+
+                  <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
+                  <button v-if="!req.isStartedProcess" @click="startProcess(req, 'req')" class="btn btn-outline-secondary">
+                      Обработать
+                  </button>
+                  <div v-if="req.isStartedProcess && (this.userProcess === req.name || req.whoAccept === this.username.name)" class="btn-group">
+                    <button @click="endProcess(req, 'req')" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
+                    <!-- Button trigger Details modal -->
+                    <button @click="buttonOpen(req)"  type="button" class="btn btn-outline-info">Просмотр</button>
+                    <!-- Button trigger Deny modal -->
+                    <button @click="triggerModal('deny', req, index)" type="button" class="btn btn-outline-danger"> Отклонить</button>
+                    <!-- Button trigger Confirm modal -->
+                    <button @click="triggerModal('confirm', req, index)" type="button" class="btn btn-success"> Утвердить </button>
+                  </div>
+                  <div v-if="req.isStartedProcess && req.whoAccept !== this.username.name">
+                    Событие находится в обработке у: <i> "{{ req.whoAccept }}" </i>
+                  </div>
+                </div>
+                <!-- КОНЕЦ: Шаблон -->
               </li>
             </ul>
             <!-- КОНЕЦ: Входящие запросы на модерацю -->
@@ -689,56 +644,76 @@
           <div class="tab-pane fade" id="pills-display" role="tabpanel" aria-labelledby="pills-display-tab" tabindex="0">
 
             <div v-for="(screen, index) in this.activeTmp" class="row row-cols-1 row-cols-lg-2 g-3">
-                <!-- ПЛАШКА ДЛЯ 3х ШАБЛОНОВ -->
-                <div v-if="!screen.isspecial" class="col-sm-6 mb-3">
+                <!-- ПЛАШКА -->
+                <div class="col-sm-6 mb-3">
                   <div class="card h-100">
                     <div class="card-header">
                       <h5 class="card-title m-0">Кафедра К3 - основной</h5>
                     </div>
                     <div class="card-body">
-                      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+
+                      <div v-if="!screen.isspecial" class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
                         <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" id="progress_workdays"> </div>
                       </div>
-                      <div class="d-flex w-100 justify-content-between align-items-center">
+                      <div v-if="!screen.isspecial" class="d-flex w-100 justify-content-between align-items-center">
                           <div id="time_workdays"></div>
                           <div id="nameInfo_workdays"></div>
                       </div>
+
+                      <div v-if="screen.isspecial" class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" id="progress_specdays"> </div>
+                      </div>
+                      <div v-if="screen.isspecial" class="d-flex w-100 justify-content-between align-items-center">
+                          <div id="time_specdays"></div>
+                          <div id="nameInfo_specdays"></div>
+                      </div>
+
                       <ul class="list-group display mt-1">
-                      <!-- Шаблон для будних дней -->
-                      <li class="list-group-item">
-                          <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                              Пары:
-                              <select class="form-select form-select-sm w-75" disabled>
-                                  <option selected>{{ screen.lesson }}</option>
-                                  <option value="1">По умолчанию (web-forms)</option>
-                                  <option value="2">По умолчанию (новости)</option>
-                              </select>
-                          </div>
-                          <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                              Перерыв:
-                              <select class="form-select form-select-sm w-75" disabled>
-                                  <option selected>{{ screen.breaktime }}</option>
-                                  <option value="1">По умолчанию (web-forms)</option>
-                                  <option value="2">По умолчанию (новости)</option>
-                              </select>
-                          </div>
-                          <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                              Обед:
-                              <select class="form-select form-select-sm w-75" disabled>
-                                  <option selected>{{ screen.lunch }}</option>
-                                  <option value="1">По умолчанию (web-forms)</option>
-                                  <option value="2">По умолчанию (новости)</option>
-                              </select>
-                          </div>
-                          <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
-                              <div class="form-check form-switch">
-                                  <input :value="screen.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault1" disabled/>
-                                  <label class="form-check-label" for="flexSwitchCheckDefault1"> Особое расписание </label>
-                              </div>
-                          </div>
-                      <!-- КОНЕЦ: Шаблон для будних дней -->
-                      </li>
-                    </ul>
+                        <!-- Шаблон для будних дней -->
+                        <li class="list-group-item">
+                            <div v-if="!screen.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                                Пары:
+                                <select class="form-select form-select-sm w-75" disabled>
+                                    <option selected>{{ screen.lesson }}</option>
+                                    <option value="1">По умолчанию (web-forms)</option>
+                                    <option value="2">По умолчанию (новости)</option>
+                                </select>
+                            </div>
+                            <div v-if="!screen.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                                Перерыв:
+                                <select class="form-select form-select-sm w-75" disabled>
+                                    <option selected>{{ screen.breaktime }}</option>
+                                    <option value="1">По умолчанию (web-forms)</option>
+                                    <option value="2">По умолчанию (новости)</option>
+                                </select>
+                            </div>
+                            <div v-if="!screen.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                                Обед:
+                                <select class="form-select form-select-sm w-75" disabled>
+                                    <option selected>{{ screen.lunch }}</option>
+                                    <option value="1">По умолчанию (web-forms)</option>
+                                    <option value="2">По умолчанию (новости)</option>
+                                </select>
+                            </div>
+
+                            <div v-if="screen.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                                Шаблон:
+                                <select class="form-select form-select-sm w-75" disabled>
+                                    <option selected>{{ screen.lesson }}</option>
+                                    <option value="1">По умолчанию (web-forms)</option>
+                                    <option value="2">По умолчанию (новости)</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
+                                <div class="form-check form-switch">
+                                    <input v-model="screen.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault1" :disabled="!(screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name))"/>
+                                    <label class="form-check-label" for="flexSwitchCheckDefault1"> Особое расписание </label>
+                                </div>
+                            </div>
+                        <!-- КОНЕЦ: Шаблон для будних дней -->
+                        </li>
+                      </ul>
                     </div>
                     <div class="card-footer text-end">
                       <div class="d-flex w-100 justify-content-end align-items-center">
@@ -760,64 +735,7 @@
                       </div>
                     </div>
                   </div>
-                <!-- КОНЕЦ: ПЛАШКА ДЛЯ 3х ШАБЛОНОВ -->
-                </div>
-                <!-- ПЛАШКА ДЛЯ ОСОБОГО ДНЯ -->
-                <div v-if="screen.isspecial" class="col-sm-6 mb-3">
-                  <div class="card h-100">
-                    <div class="card-header">
-                      <h5 class="card-title m-0">Кафедра К3 - основной</h5>
-                    </div>
-                    <div class="card-body">
-                      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" id="progress_special"> </div>
-                      </div>
-                      <div class="d-flex w-100 justify-content-between align-items-center">
-                          <div id="time_special"></div>
-                          <div id="nameInfo_special"></div>
-                      </div>
-                      <ul class="list-group display mt-1">
-                      <!-- Шаблон для дня по особому расписанию -->
-                      <li class="list-group-item">
-                          <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                              Шаблон:
-                              <select class="form-select form-select-sm w-75" disabled>
-                                  <option selected>{{ screen.lesson }}</option>
-                                  <option value="1">По умолчанию (web-forms)</option>
-                                  <option value="2">По умолчанию (новости)</option>
-                              </select>
-                          </div>
-                          <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
-                              <div class="form-check form-switch">
-                                  <input :value="screen.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault2" disabled checked/>
-                                  <label class="form-check-label" for="flexSwitchCheckDefault2"> Особое расписание </label>
-                              </div>
-                          </div>
-                      <!-- КОНЕЦ: Шаблон для дня по особому расписанию -->
-                      </li>
-                    </ul>
-                    </div>
-                    <div class="card-footer text-end">
-                      <div class="d-flex w-100 justify-content-end align-items-center">
-                        <!-- Button trigger Delete follow modal -->
-                        <!-- <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFollowModal"> Не отслеживать</button> -->
-                        <button v-if="!screen.isStartedProcess" @click="startProcess(screen, 'act')" type="button" class="btn btn-outline-success">Редактировать</button>
-
-                        <div v-if="screen.isStartedProcess && (this.userProcess === screen.name || screen.whoAccept === this.username.name)" class="btn-group">
-                          <button @click="endProcess(screen, 'act')" type="button" class="btn btn-outline-secondary"> Отмена </button>
-                          <!-- Button trigger Details modal -->
-                          <button @click="buttonOpen(screen)"  type="button" class="btn btn-outline-info">Просмотр</button> 
-                          <!-- Button trigger Confirm modal -->
-                          <button @click="triggerModal('confirm', screen, index)" type="button" class="btn btn-success"> Сохранить </button>
-                        </div>
-                        <div v-if="screen.isStartedProcess && screen.whoAccept !== this.username.name">
-                          Ведется обработка: <i> "{{ screen.whoAccept }}" </i>
-                        </div>
-                        
-                      </div>
-                    </div>
-                  </div>
-                <!-- КОНЕЦ: ПЛАШКА ДЛЯ ОСОБОГО ДНЯ -->
+                <!-- КОНЕЦ: ПЛАШКА -->
                 </div>
               <!-- КОНЕЦ ЦИКЛА ЭКРАНОВ -->
             </div>
@@ -840,134 +758,84 @@
 
             <ul class="list-group moder">
               <li v-for="(acc, index) in this.acceptedList" class="list-group-item">
-                <!-- Шаблон для будних дней -->
-                <div v-if="!acc.isspecial">
-                  <div class="me-auto">
-                    <div class="fw align-items-center">
-                      <strong>{{ acc.name }}</strong> <small>(Send: <i>@{{ acc.author }}</i>,  accepted: <i>{{ acc.whoAccept }}</i>)</small>
-                    </div>
-                    <small class="fw align-items-center"> {{ acc.comment }} </small>
+                <!-- Шаблон -->
+                <div class="me-auto">
+                  <div class="fw align-items-center">
+                    <strong>{{ acc.name }}</strong> <small>(Send: <i>@{{ acc.author }}</i>,  accepted: <i>{{ acc.whoAccept }}</i>)</small>
                   </div>
-                  <div class="d-flex w-100 justify-content-between gap-1 mt-2">
-                    <select class="form-select" aria-label="Default select example" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
-                      <option selected>Кафедра К3 - основной</option>
-                      <!-- <option value="1">Кафедра К3 - новости</option> -->
-                    </select>
-                    <input v-model="acc.date" id="startDate3" class="form-control" type="date" :value="acc.date" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)"/>
-                  </div>
-                  <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                    Пары:
-                    <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
-                      <option selected :value="acc.lesson"> {{ acc.lesson }} </option>
-                      <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                    </select>
-                  </div>
-                  <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                    Перерыв:
-                    <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
-                      <option selected :value="acc.breaktime"> {{ acc.breaktime }} </option>
-                      <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                    </select>
-                  </div>
-                  <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                    Обед:
-                    <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
-                      <option selected :value="acc.lunch"> {{ acc.lunch }} </option>
-                      <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                    </select>
-                  </div>
-                  <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
-                    <div class="form-check form-switch">
-                      <input :value="acc.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" disabled/>
-                      <label class="form-check-label" for="flexSwitchCheckDefault"> Особое расписание </label>
-                    </div>
-
-                    <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
-                    <div v-if="!acc.isStartedProcess" class="btn-group">
-                      <button @click="startProcess(acc, 'acc')" class="btn btn-outline-secondary">
-                          Обработать
-                      </button>
-                      <!-- Button trigger SetActive modal -->
-                      <button @click="triggerModal('active', acc, index)" type="button" class="btn btn-outline-warning">
-                        Играть сейчас
-                      </button>
-                    </div>
-                    <div v-if="acc.isStartedProcess && (this.userProcess === acc.name || acc?.whoAccept === this.username.name)" class="btn-group">
-                      <button @click="endProcess(acc, 'acc')" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
-                      <!-- Button trigger Details modal -->
-                      <button @click="buttonOpen(acc)" type="button" class="btn btn-outline-info">Просмотр</button>
-                      <!-- Button trigger Deny modal -->
-                      <button @click="triggerModal('delete', acc, index)" type="button" class="btn btn-outline-danger"> Удалить </button>
-                      <!-- Button trigger Confirm modal -->
-                      <button @click="triggerModal('save', acc, index)" type="button" class="btn btn-success"> Применить </button>
-                    </div>
-                    <div v-if="acc.isStartedProcess && acc.whoAccept !== this.username.name">
-                      Событие находится в обработке у: <i> "{{ acc.whoAccept }}" </i>
-                    </div>
-                  </div>
-                <!-- КОНЕЦ: Шаблон для будних дней -->
+                  <small class="fw align-items-center"> {{ acc.comment }} </small>
+                </div>
+                <div class="d-flex w-100 justify-content-between gap-1 mt-2">
+                  <select class="form-select" aria-label="Default select example" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
+                    <option selected>Кафедра К3 - основной</option>
+                    <!-- <option value="1">Кафедра К3 - новости</option> -->
+                  </select>
+                  <input v-model="acc.date" id="startDate3" class="form-control" type="date" :value="acc.date" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)"/>
+                </div>
+                <div v-if="!acc.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                  Пары:
+                  <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
+                    <option selected :value="acc.lesson"> {{ acc.lesson }} </option>
+                    <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+                  </select>
+                </div>
+                <div v-if="!acc.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                  Перерыв:
+                  <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
+                    <option selected :value="acc.breaktime"> {{ acc.breaktime }} </option>
+                    <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+                  </select>
+                </div>
+                <div v-if="!acc.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                  Обед:
+                  <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
+                    <option selected :value="acc.lunch"> {{ acc.lunch }} </option>
+                    <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+                  </select>
                 </div>
 
-                <!-- Шаблон дня по особому расписанию -->
-                <div v-if="acc.isspecial">
-                  <div class="me-auto">
-                    <div class="fw align-items-center">
-                      <strong>{{ acc.name }}</strong> <small>(Send: <i>@{{ acc.author }}</i>,  accepted: <i>{{ acc.whoAccept }}</i>)</small>
-                    </div>
-                    <small class="fw align-items-center">{{ acc.comment }}</small>
-                  </div>
-                  <div class="d-flex w-100 justify-content-between gap-1 mt-2">
-                    <select class="form-select" aria-label="Default select example" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
-                      <option selected>Кафедра К3 - основной</option>
-                      <!-- <option value="1">Кафедра К3 - новостной</option>
-                      <option value="2">Хол актового</option> -->
-                    </select>
-                    <input v-model="acc.date" id="startDate2" class="form-control" type="date"  :value="acc.date" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)"/>
-                  </div>
-                  <div class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
-                    Шаблон:
-                    <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
-                      <option selected :value="acc.lesson"> {{ acc.lesson }} </option>
-                      <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
-                    </select>
-                  </div>
-                  <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
-                    <div class="form-check form-switch">
-                      <input :value="acc.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault3" checked disabled/>
-                      <label class="form-check-label" for="flexSwitchCheckDefault3"> Особое расписание </label>
-                    </div>
-
-                    <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
-                    <div v-if="!acc.isStartedProcess" class="btn-group">
-                      <button @click="startProcess(acc, 'acc')" class="btn btn-outline-secondary">
-                          Обработать
-                      </button>
-                      <!-- Button trigger SetActive modal -->
-                      <button @click="triggerModal('active', acc, index)" type="button" class="btn btn-outline-warning">
-                        Играть сейчас
-                      </button>
-                    </div>
-                    <div v-if="acc.isStartedProcess && (this.userProcess === acc.name || acc?.whoAccept === username)" class="btn-group">
-                      <button @click="endProcess(acc, 'acc')" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
-                      <!-- Button trigger Details modal -->
-                      <button @click="buttonOpen(acc)" type="button" class="btn btn-outline-info">Просмотр</button>
-                      <!-- Button trigger Deny modal -->
-                      <button @click="triggerModal('delete', acc, index)" type="button" class="btn btn-outline-danger"> Удалить </button>
-                      <!-- Button trigger Confirm modal -->
-                      <button @click="triggerModal('save', acc, index)" type="button" class="btn btn-success"> Применить </button>
-                    </div>
-                    <div v-if="acc.isStartedProcess && acc.whoAccept !== this.username.name">
-                      Событие находится в обработке у: <i> "{{ acc.whoAccept }}" </i>
-                    </div>
-                  </div>
-                  <!-- КОНЕЦ: Шаблон дня по особому расписанию -->
+                <div v-if="acc.isspecial" class=" d-flex w-100 justify-content-between align-items-center gap-1 mt-1">
+                  Шаблон:
+                  <select class="form-select form-select-sm w-75" :disabled="(!this.acceptedList[index].isStartedProcess || acc.whoAccept !== this.username.name)">
+                    <option selected :value="acc.lesson"> {{ acc.lesson }} </option>
+                    <option v-for="tmp in templatesToReplace" :value="tmp.name" > {{ tmp.name }}  ( by: {{ tmp.author }} ) - upd: {{ tmp.last_modify }} </option>
+                  </select>
                 </div>
 
+                <div class="d-flex w-100 justify-content-between align-items-center gap-1 mt-2">
+                  <div class="form-check form-switch">
+                    <input v-model="acc.isspecial" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" :disabled="!(acc.isStartedProcess && (this.userProcess === acc.name || acc.whoAccept === this.username.name))"/>
+                    <label class="form-check-label" for="flexSwitchCheckDefault"> Особое расписание </label>
+                  </div>
+
+                  <!--КНОПКИ ОБРАБОТКИ СОБЫТИЯ-->
+                  <div v-if="!acc.isStartedProcess" class="btn-group">
+                    <button @click="startProcess(acc, 'acc')" class="btn btn-outline-secondary">
+                        Обработать
+                    </button>
+                    <!-- Button trigger SetActive modal -->
+                    <button @click="triggerModal('active', acc, index)" type="button" class="btn btn-outline-warning">
+                      Играть сейчас
+                    </button>
+                  </div>
+                  <div v-if="acc.isStartedProcess && (this.userProcess === acc.name || acc?.whoAccept === this.username.name)" class="btn-group">
+                    <button @click="endProcess(acc, 'acc')" type="button" class="btn btn-outline-secondary"> Отменить обработку </button>
+                    <!-- Button trigger Details modal -->
+                    <button @click="buttonOpen(acc)" type="button" class="btn btn-outline-info">Просмотр</button>
+                    <!-- Button trigger Deny modal -->
+                    <button @click="triggerModal('delete', acc, index)" type="button" class="btn btn-outline-danger"> Удалить </button>
+                    <!-- Button trigger Confirm modal -->
+                    <button @click="triggerModal('save', acc, index)" type="button" class="btn btn-success"> Применить </button>
+                  </div>
+                  <div v-if="acc.isStartedProcess && acc.whoAccept !== this.username.name">
+                    Событие находится в обработке у: <i> "{{ acc.whoAccept }}" </i>
+                  </div>
+                <!-- КОНЕЦ: Шаблон -->
+                </div>
               </li>
             </ul>
             <!-- КОНЕЦ: Очередь на отображение -->
           </div>
-          
           <!-- КОНЕЦ: Содержимое вкладок -->
         </div>
         <!-- КОНЕЦ: Подстилка - content -->
@@ -1265,8 +1133,8 @@ export default {
             document.getElementById('progress_workdays').style['width'] = await getPercent(WhatTime(), false) + '%';
           } else {
             // Специальное расписание
-            document.getElementById('time_special').innerHTML = actualTime;
-            document.getElementById('progress_special').style['width'] = await getPercent(WhatTime(), true) + '%';
+            document.getElementById('time_specdays').innerHTML = actualTime;
+            document.getElementById('progress_specdays').style['width'] = await getPercent(WhatTime(), true) + '%';
           }
         }
         setTimeout(async function () { await startTime(active); }, 1000);
@@ -1292,7 +1160,7 @@ export default {
             if (!active[i].isspecial) {
               document.getElementById('nameInfo_workdays').innerHTML = await getName(WhatTime(),false);
             } else {
-              document.getElementById('nameInfo_special').innerHTML = await getName(WhatTime(),true);
+              document.getElementById('nameInfo_specdays').innerHTML = await getName(WhatTime(), true);
             }
           }
         }, timeout);
@@ -1308,7 +1176,7 @@ export default {
           if (!active[i].isspecial) {
             document.getElementById('nameInfo_workdays').innerHTML = await getName(WhatTime(), false);
           } else {
-            document.getElementById('nameInfo_special').innerHTML = await getName(WhatTime(), true);
+            document.getElementById('nameInfo_specdays').innerHTML = await getName(WhatTime(), true);
           }
         }
       }, 1000);

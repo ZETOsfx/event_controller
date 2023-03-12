@@ -163,8 +163,6 @@
       </div>
     </div>
 
-
-
     <div class="container">
       <h6 class="text p-0 mt-4"> Работа с трансляцией </h6>
 

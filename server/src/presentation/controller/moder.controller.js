@@ -112,6 +112,7 @@ class ModerController {
                             breaktime: obj_req.breaktime,
                             lunch: obj_req.lunch,
                             inProcessing: false,
+                            isspecial: obj_req.isspecial,
                             date: obj_req.date,
                             isAccepted: true
                         });
